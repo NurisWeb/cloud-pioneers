@@ -1,0 +1,32 @@
+---
+import { Button } from '@/components/ui/button';
+
+interface Props {
+	eyebrow?: string;
+	headline: string;
+	buttonLabel: string;
+	href?: string;
+	glow?: 'cyan' | 'violet' | 'green';
+}
+
+const { eyebrow, headline, buttonLabel, href = '#kontakt', glow = 'cyan' } = Astro.props;
+
+const glowColor = { cyan: '#7DE3F6', violet: '#B9A6FF', green: '#6FE7A0' }[glow];
+---
+
+<section class="relative overflow-hidden border-y border-border/60 bg-card/30">
+	<div
+		class="pointer-events-none absolute -top-24 left-1/2 h-64 w-[720px] -translate-x-1/2 rounded-full opacity-20 blur-[90px]"
+		style={{ backgroundColor: glowColor }}
+		aria-hidden="true"
+	></div>
+	<div class="relative mx-auto flex max-w-6xl flex-col items-center gap-5 px-6 py-16 text-center md:flex-row md:justify-between md:text-left" data-reveal>
+		<div>
+			{eyebrow && <p class="font-mono text-[11px] tracking-[0.14em] uppercase" style={{ color: glowColor }}>{eyebrow}</p>}
+			<h3 class="mt-2 font-heading text-2xl font-medium md:text-3xl">{headline}</h3>
+		</div>
+		<Button size="lg" asChild class="shrink-0">
+			<a href={href}>{buttonLabel}</a>
+		</Button>
+	</div>
+</section>

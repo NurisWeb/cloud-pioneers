@@ -1,0 +1,19 @@
+---
+const stats = [
+	{ value: '212 ms', label: 'p95-Antwortzeit' },
+	{ value: '37 %', label: 'weniger Duplikate durch Dedup' },
+	{ value: '0,98', label: 'Ø Validator-Score' },
+	{ value: '5', label: 'spezialisierte Agenten pro Lauf' },
+];
+---
+
+<section class="mx-auto max-w-6xl px-6 py-24 md:py-32">
+	<div class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/60 bg-border/60 md:grid-cols-4">
+		{stats.map((s) => (
+			<div class="bg-background px-6 py-10 text-center">
+				<p class="font-mono text-3xl font-medium text-foreground md:text-4xl">{s.value}</p>
+				<p class="mt-2 text-xs text-muted-foreground">{s.label}</p>
+			</div>
+		))}
+	</div>
+</section>

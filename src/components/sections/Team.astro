@@ -1,0 +1,82 @@
+---
+// TODO: Fotos ergänzen. Namen-Reihenfolge/Rollenzuordnung bei Bedarf anpassen.
+const team = [
+	{
+		name: 'Ömer Türker',
+		role: 'Gründer & Cloud Architect',
+		bio: 'Baut die Infrastruktur, auf der alles andere steht — AWS und Azure, seit über zehn Jahren, für Unternehmen, die sich Ausfälle nicht leisten können.',
+		tags: ['AWS', 'Azure', 'IaC'],
+		signal: 'cyan',
+	},
+	{
+		name: 'Marcel Cönen',
+		role: 'Lead AI Engineer',
+		bio: 'Orchestriert Agenten, nicht Prompts. Von RAG-Pipelines bis Multi-Agent-Systemen mit echtem Audit-Trail.',
+		tags: ['Agentic AI', 'RAG', 'Embeddings'],
+		signal: 'violet',
+	},
+	{
+		name: 'Gökay Sahin',
+		role: 'Platform & Security Engineer',
+		bio: 'Rollen, Netzwerke, Secrets. Wenn ein Auditor fragt, steht die Antwort schon im Log.',
+		tags: ['IAM', 'Observability', 'Compliance'],
+		signal: 'green',
+	},
+	{
+		name: 'Michel Leotta',
+		role: 'Data & Test Engineering Lead',
+		bio: 'Zerlegt riesige Anforderungspools in Signale — aus Signalen werden Testfälle, automatisiert und nachvollziehbar.',
+		tags: ['Requirements Mining', 'Testautomatisierung'],
+		signal: 'cyan',
+	},
+	{
+		name: 'Tobias Bremer',
+		role: 'Delivery Lead',
+		bio: 'Übersetzt zwischen Vorstand und Terminal. Verantwortet jedes Projekt vom Kickoff bis Go-Live.',
+		tags: ['Enterprise Delivery', 'Stakeholder'],
+		signal: 'violet',
+	},
+];
+
+const dot: Record<string, string> = { cyan: 'bg-signal-cyan', violet: 'bg-signal-violet', green: 'bg-signal-green' };
+const ring: Record<string, string> = { cyan: 'border-signal-cyan/50', violet: 'border-signal-violet/50', green: 'border-signal-green/50' };
+const glowVar: Record<string, string> = { cyan: '#7DE3F6', violet: '#B9A6FF', green: '#6FE7A0' };
+---
+
+<section id="ueber-uns" class="relative overflow-hidden border-t border-border/60 py-24 md:py-32">
+	<div
+		class="pointer-events-none absolute -top-40 right-[-10%] h-[420px] w-[420px] rounded-full bg-signal-violet/10 blur-[120px]"
+		aria-hidden="true"
+	></div>
+
+	<div class="relative mx-auto max-w-6xl px-6">
+		<div class="max-w-xl" data-reveal>
+			<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Über uns</p>
+			<h2 class="mt-3 text-3xl font-medium md:text-4xl">Fünf Leute, ein Betrieb</h2>
+			<p class="mt-4 text-muted-foreground">
+				Kein anonymes Consulting-Grid. Wir sind fünf Personen, die für Konzerne bauen — und die Verantwortung
+				dafür persönlich tragen.
+			</p>
+		</div>
+
+		<div class="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" data-reveal-group>
+			{team.map((person) => (
+				<div class="glow-card rounded-xl border border-border/60 bg-card/40 p-6" style={{ '--glow': glowVar[person.signal] }}>
+					<div class={`flex h-11 w-11 items-center justify-center rounded-full border ${ring[person.signal]}`}>
+						<span class={`h-2.5 w-2.5 rounded-full ${dot[person.signal]}`}></span>
+					</div>
+					<h3 class="mt-4 font-heading text-lg font-medium">{person.name}</h3>
+					<p class="text-sm text-muted-foreground">{person.role}</p>
+					<p class="mt-3 text-sm leading-relaxed text-muted-foreground">{person.bio}</p>
+					<div class="mt-4 flex flex-wrap gap-1.5">
+						{person.tags.map((tag) => (
+							<span class="rounded-full border border-border/60 px-2.5 py-1 font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
+								{tag}
+							</span>
+						))}
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>

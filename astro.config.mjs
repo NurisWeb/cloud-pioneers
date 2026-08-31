@@ -1,5 +1,34 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
+import react from '@astrojs/react';
+
+import tailwindcss from '@tailwindcss/vite';
+
+import sitemap from '@astrojs/sitemap';
+
+import { PAGES } from './src/lib/seo.ts';
+
+const noindexPaths = new Set(
+  Object.values(PAGES)
+    .filter((page) => page.noindex)
+    .map((page) => page.path)
+);
+
 // https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  // TODO: echte Domain eintragen, sobald verfügbar (steuert Sitemap + canonical URLs)
+  site: 'https://cloud-pioneers.de',
+
+  integrations: [
+    react(),
+    sitemap({
+      // noindex-Seiten aus seo.ts (Impressum, Datenschutz) gehören nicht in die Sitemap.
+      filter: (url) => !noindexPaths.has(new URL(url).pathname.replace(/\/$/, '') || '/'),
+    }),
+  ],
+
+  vite: {
+    plugins: [tailwindcss()]
+  }
+});

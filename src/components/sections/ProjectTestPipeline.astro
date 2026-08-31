@@ -1,0 +1,46 @@
+---
+import PipelineDiagram from './PipelineDiagram.astro';
+
+const stack = ['Requirements Mining', 'Signalerkennung', 'LLM-Testfallgenerierung', 'Human-Review-Gate', 'Traceability'];
+---
+
+<section class="relative overflow-hidden py-24 md:py-32">
+	<div class="mx-auto max-w-6xl px-6">
+		<div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+			<div data-reveal>
+				<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Beispielprojekt</p>
+				<h2 class="mt-3 text-3xl font-medium md:text-4xl">Aus zehntausenden Anforderungen werden Testfälle</h2>
+				<p class="mt-4 text-muted-foreground">
+					Ein Kunde sitzt auf einem riesigen, historisch gewachsenen Pool aus Tickets, Änderungsanträgen und
+					Fachanforderungen. Von Hand war er nie vollständig testbar. Unsere Pipeline liest den gesamten
+					Pool, erkennt Signale — Widersprüche, neue Constraints, stille Änderungen — und leitet daraus
+					priorisierte Testfälle ab.
+				</p>
+				<p class="mt-3 text-muted-foreground">
+					Ein LLM schreibt die Testfälle inklusive Erwartungswerten, ein Reviewer-Gate lässt keinen davon
+					ungeprüft durch. Jede Ableitung ist bis zur Ursprungsanforderung zurückverfolgbar.
+				</p>
+				<ul class="mt-6 space-y-2 text-sm text-muted-foreground">
+					<li class="flex items-baseline gap-2"><span class="text-signal-cyan">—</span> Kontinuierliche Verarbeitung, kein Batch-Nachzügler</li>
+					<li class="flex items-baseline gap-2"><span class="text-signal-cyan">—</span> Volle Rückverfolgbarkeit: Testfall → Signal → Anforderung</li>
+					<li class="flex items-baseline gap-2"><span class="text-signal-cyan">—</span> Mensch entscheidet am Gate, nicht das Modell</li>
+				</ul>
+			</div>
+
+			<div class="glow-card rounded-xl border border-border/60 bg-card/40 p-8" style="--glow:#7DE3F6" data-reveal>
+				<PipelineDiagram nodes={stack} color="#7DE3F6" />
+				<div class="mt-8 grid grid-cols-2 gap-4 border-t border-border/60 pt-6 font-mono text-sm">
+					<div>
+						<p class="text-2xl font-medium text-foreground">40k+</p>
+						<p class="mt-1 text-xs text-muted-foreground">Anforderungen im Pool</p>
+					</div>
+					<div>
+						<p class="text-2xl font-medium text-foreground">100%</p>
+						<p class="mt-1 text-xs text-muted-foreground">reviewt vor Freigabe</p>
+					</div>
+				</div>
+				<p class="mt-4 font-mono text-[10px] tracking-wide text-muted-foreground/70 uppercase">Illustrativer Ablauf, keine Kundenzahlen</p>
+			</div>
+		</div>
+	</div>
+</section>

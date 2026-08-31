@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES } from '@/lib/seo';
+
+// TODO: Von Datenschutz-Fachperson/Anwalt prüfen lassen, bevor live.
+// Platzhaltertext deckt keine konkreten Verarbeitungen (Hosting, Analytics,
+// Formulare) ab — muss an die tatsächlich eingesetzten Dienste angepasst werden.
+---
+
+<Layout seo={PAGES.datenschutz}>
+	<main class="mx-auto max-w-2xl px-6 py-24 md:py-32">
+		<h1 class="text-3xl font-medium md:text-4xl">Datenschutzerklärung</h1>
+
+		<section class="mt-10 space-y-3 text-muted-foreground">
+			<h2 class="font-heading text-lg font-medium text-foreground">1. Verantwortlicher</h2>
+			<p>[Firmenname, Anschrift] — Kontakt: kontakt@cloud-pioneers.de</p>
+		</section>
+
+		<section class="mt-8 space-y-3 text-muted-foreground">
+			<h2 class="font-heading text-lg font-medium text-foreground">2. Verarbeitung beim Besuch dieser Website</h2>
+			<p>
+				[Hier eintragen: welche Server-Logs, Hosting-Anbieter, Cookies oder Analyse-Tools tatsächlich
+				eingesetzt werden — inkl. Rechtsgrundlage nach Art. 6 DSGVO und Speicherdauer.]
+			</p>
+		</section>
+
+		<section class="mt-8 space-y-3 text-muted-foreground">
+			<h2 class="font-heading text-lg font-medium text-foreground">3. Kontaktaufnahme</h2>
+			<p>
+				[Hier eintragen: was mit Daten aus Kontaktformular/E-Mail-Anfragen passiert, Speicherdauer,
+				Rechtsgrundlage.]
+			</p>
+		</section>
+
+		<section class="mt-8 space-y-3 text-muted-foreground">
+			<h2 class="font-heading text-lg font-medium text-foreground">4. Ihre Rechte</h2>
+			<p>
+				Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
+				Datenübertragbarkeit sowie Widerspruch. Wenden Sie sich dazu an kontakt@cloud-pioneers.de.
+			</p>
+		</section>
+	</main>
+</Layout>

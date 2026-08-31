@@ -1,0 +1,41 @@
+---
+import PipelineDiagram from './PipelineDiagram.astro';
+
+const stack = ['Rollenanalyse', 'Agent übernimmt Routine', 'Mensch prüft Grenzfälle', 'Monitoring & Rollback'];
+---
+
+<section class="relative overflow-hidden border-t border-border/60 bg-card/30 py-24 md:py-32">
+	<div
+		class="pointer-events-none absolute top-1/2 left-[-8%] h-[380px] w-[380px] -translate-y-1/2 rounded-full bg-signal-green/10 blur-[110px]"
+		aria-hidden="true"
+	></div>
+
+	<div class="relative mx-auto max-w-6xl px-6">
+		<div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+			<div class="order-2 glow-card rounded-xl border border-border/60 bg-background p-8 lg:order-1" style="--glow:#6FE7A0" data-reveal>
+				<PipelineDiagram nodes={stack} color="#6FE7A0" />
+				<div class="mt-8 space-y-3 border-t border-border/60 pt-6 text-sm text-muted-foreground">
+					<p class="flex items-baseline gap-2"><span class="text-signal-green">—</span> Jede Übernahme ist reversibel: ein Schalter, kein Projekt</p>
+					<p class="flex items-baseline gap-2"><span class="text-signal-green">—</span> Betroffene Rollen werden vor dem Rollout einbezogen, nicht danach informiert</p>
+					<p class="flex items-baseline gap-2"><span class="text-signal-green">—</span> Freigewordene Zeit fließt in Aufgaben, die Urteilsvermögen brauchen</p>
+				</div>
+			</div>
+
+			<div class="order-1 lg:order-2" data-reveal>
+				<p class="font-mono text-[11px] tracking-[0.14em] text-signal-green uppercase">Aktuelles Projekt</p>
+				<h2 class="mt-3 text-3xl font-medium md:text-4xl">Personal mit KI gewissenhaft ablösen</h2>
+				<p class="mt-4 text-muted-foreground">
+					Ein Kunde hatte ein Team, das im Kern Ticket-Triage und Datenabgleich machte — Routine, die
+					qualifizierte Leute band. Wir haben nicht "Personal ersetzt", um Personal zu ersetzen. Wir haben
+					die Routine an Agenten übergeben, in Stufen, mit Monitoring und einem Rollback-Schalter für jede
+					einzelne Stufe.
+				</p>
+				<p class="mt-3 text-muted-foreground">
+					Gewissenhaft heißt hier konkret: Governance-Checkpoints vor jedem Rollout, vollständiges Logging
+					jeder Agenten-Entscheidung, und ein Validator, der Grenzfälle an Menschen zurückgibt statt sie zu
+					raten.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>

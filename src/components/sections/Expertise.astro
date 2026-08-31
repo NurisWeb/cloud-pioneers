@@ -1,0 +1,81 @@
+---
+const columns = [
+	{
+		title: 'Cloud-Plattformen',
+		signal: 'cyan',
+		items: [
+			'AWS: Bedrock Agents, ECS, SQS, RDS, Vector Store',
+			'Azure: AI Foundry Agents, AKS, Service Bus',
+			'IAM- und Netzwerk-Hardening auf beiden Plattformen',
+			'Multi-Cloud- und Hybrid-Deployments',
+		],
+	},
+	{
+		title: 'Agentic AI',
+		signal: 'violet',
+		items: [
+			'Multi-Agent-Orchestrierung, nicht nur Einzel-Prompts',
+			'Agents-in-the-Loop mit definierten Eskalationspfaden',
+			'Tool-Use & Function-Calling gegen echte Systeme',
+			'Validator-Pattern statt blindem Vertrauen ins Modell',
+		],
+	},
+	{
+		title: 'Wissensrepräsentation',
+		signal: 'green',
+		items: [
+			'Embeddings & Vektorsuche für semantischen Kontext',
+			'Knowledge-Graphen für Beziehungen, die Vektoren verlieren',
+			'Hybrid-Retrieval: Graph + Vektor + klassische Filter',
+			'Deduplizierung und Konsistenzprüfung im Datenraum',
+		],
+	},
+	{
+		title: 'Observability & Harness',
+		signal: 'cyan',
+		items: [
+			'Vollständiges Logging jedes Agentenschritts',
+			'Reproduzierbare Evals über einen festen Test-Harness',
+			'Kein Blackbox-Verhalten — jede Entscheidung ist auditierbar',
+			'Rollback- und Kill-Switches auf Agenten-Ebene',
+		],
+	},
+];
+
+const textColor: Record<string, string> = { cyan: 'text-signal-cyan', violet: 'text-signal-violet', green: 'text-signal-green' };
+const glowVar: Record<string, string> = { cyan: '#7DE3F6', violet: '#B9A6FF', green: '#6FE7A0' };
+---
+
+<section id="expertise" class="relative overflow-hidden border-t border-border/60 py-24 md:py-32">
+	<div
+		class="pointer-events-none absolute top-0 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-signal-cyan/5 blur-[140px]"
+		aria-hidden="true"
+	></div>
+
+	<div class="relative mx-auto max-w-6xl px-6">
+		<div class="max-w-xl" data-reveal>
+			<p class="font-mono text-[11px] tracking-[0.14em] text-signal-violet uppercase">Expertise</p>
+			<h2 class="mt-3 text-3xl font-medium md:text-4xl">Zwei Ebenen, ein Team</h2>
+			<p class="mt-4 text-muted-foreground">
+				Cloud-Infrastruktur und AI Engineering laufen bei uns nicht in getrennten Teams. Wer die Agenten baut,
+				kennt auch das Netzwerk, in dem sie laufen.
+			</p>
+		</div>
+
+		<div class="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2" data-reveal-group>
+			{columns.map((col) => (
+				<div class="glow-card rounded-xl border border-border/60 bg-card/40 p-7" style={{ '--glow': glowVar[col.signal] }}>
+					<h3 class={`font-heading text-lg font-medium ${textColor[col.signal]}`}>{col.title}</h3>
+					<ul class="mt-4 space-y-2.5 text-sm text-muted-foreground">
+						{col.items.map((item) => (
+							<li class="flex items-baseline gap-2">
+								<span class="text-foreground/30">—</span>
+								{item}
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+		</div>
+	</div>
+</section>

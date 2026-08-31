@@ -1,11 +1,52 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { PAGES } from '@/lib/seo';
+import HeroSheetStack from '../components/HeroSheetStack.jsx';
+import SiteHeader from '../components/sections/SiteHeader.astro';
+import TrustBar from '../components/sections/TrustBar.astro';
+import Team from '../components/sections/Team.astro';
+import CtaBanner from '../components/sections/CtaBanner.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import Architecture from '../components/sections/Architecture.astro';
+import ProjectTestPipeline from '../components/sections/ProjectTestPipeline.astro';
+import ProjectStaffing from '../components/sections/ProjectStaffing.astro';
+import Expertise from '../components/sections/Expertise.astro';
+import Proof from '../components/sections/Proof.astro';
+import Security from '../components/sections/Security.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
+import SiteFooter from '../components/sections/SiteFooter.astro';
 ---
 
-<Layout>
-	<Welcome />
+<Layout seo={PAGES.home}>
+	<HeroSheetStack client:load />
+	<SiteHeader />
+	<TrustBar />
+	<Team />
+	<CtaBanner
+		eyebrow="Nächster Schritt"
+		headline="Ein Team, das für Konzerne liefert — auch für Ihren Use-Case."
+		buttonLabel="Team kennenlernen"
+		glow="violet"
+	/>
+	<HowItWorks />
+	<Architecture />
+	<CtaBanner
+		eyebrow="Neugierig geworden"
+		headline="So sieht das bei Ihren Daten aus — 30 Minuten reichen."
+		buttonLabel="Termin sichern"
+		glow="cyan"
+	/>
+	<ProjectTestPipeline />
+	<ProjectStaffing />
+	<Expertise />
+	<CtaBanner
+		eyebrow="Sprechen wir konkret"
+		headline="Ein Anwendungsfall aus Ihrem Betrieb, 30 Minuten Zeit."
+		buttonLabel="Termin sichern"
+		glow="green"
+	/>
+	<Proof />
+	<Security />
+	<ContactSection />
+	<SiteFooter />
 </Layout>

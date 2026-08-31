@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES } from '@/lib/seo';
+
+// TODO: Platzhalter durch echte Angaben ersetzen — Pflichtangaben nach § 5 TMG.
+// Ohne korrekte Angaben ist die Seite abmahnfähig. Nicht ungeprüft live schalten.
+---
+
+<Layout seo={PAGES.impressum}>
+	<main class="mx-auto max-w-2xl px-6 py-24 md:py-32">
+		<h1 class="text-3xl font-medium md:text-4xl">Impressum</h1>
+
+		<section class="mt-10 space-y-1 text-muted-foreground">
+			<p class="text-foreground">Angaben gemäß § 5 TMG</p>
+			<p>[Firmenname, Rechtsform]</p>
+			<p>[Straße, Hausnummer]</p>
+			<p>[PLZ, Ort]</p>
+		</section>
+
+		<section class="mt-8 space-y-1 text-muted-foreground">
+			<p class="text-foreground">Vertreten durch</p>
+			<p>[Name der Geschäftsführung]</p>
+		</section>
+
+		<section class="mt-8 space-y-1 text-muted-foreground">
+			<p class="text-foreground">Kontakt</p>
+			<p>E-Mail: kontakt@cloud-pioneers.de</p>
+			<p>Telefon: [Telefonnummer]</p>
+		</section>
+
+		<section class="mt-8 space-y-1 text-muted-foreground">
+			<p class="text-foreground">Registereintrag</p>
+			<p>Registergericht: [Amtsgericht]</p>
+			<p>Registernummer: [HRB-Nummer]</p>
+		</section>
+
+		<section class="mt-8 space-y-1 text-muted-foreground">
+			<p class="text-foreground">Umsatzsteuer-ID</p>
+			<p>Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz: [USt-IdNr.]</p>
+		</section>
+	</main>
+</Layout>

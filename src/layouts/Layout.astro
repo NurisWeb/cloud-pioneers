@@ -1,16 +1,86 @@
+---
+import '../styles/global.css';
+import {
+	SITE,
+	absoluteUrl,
+	ogImageUrl,
+	organizationJsonLd,
+	websiteJsonLd,
+	webPageJsonLd,
+	type PageSeo,
+} from '@/lib/seo';
+
+interface Props {
+	seo: PageSeo;
+	/** Zusätzliches JSON-LD für die Seite (z. B. FAQPage, Product). Optional. */
+	extraJsonLd?: Record<string, unknown>[];
+}
+
+const { seo, extraJsonLd = [] } = Astro.props;
+
+const canonicalUrl = absoluteUrl(seo.path);
+const socialImage = ogImageUrl(seo.slug);
+const jsonLd = [organizationJsonLd(), websiteJsonLd(), webPageJsonLd(seo), ...extraJsonLd];
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="de" class="dark">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<meta name="color-scheme" content="dark" />
+
+		<title>{seo.title}</title>
+		<meta name="description" content={seo.description} />
+		<link rel="canonical" href={canonicalUrl} />
+		{seo.noindex && <meta name="robots" content="noindex, nofollow" />}
+
+		<!-- Open Graph (Facebook, WhatsApp, LinkedIn, ...) -->
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={SITE.name} />
+		<meta property="og:locale" content={SITE.locale} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:title" content={seo.ogTitle ?? seo.title} />
+		<meta property="og:description" content={seo.description} />
+		<meta property="og:image" content={socialImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={seo.ogTitle ?? seo.title} />
+
+		<!-- Twitter / X Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={seo.ogTitle ?? seo.title} />
+		<meta name="twitter:description" content={seo.description} />
+		<meta name="twitter:image" content={socialImage} />
+
+		<!-- Schema.org -->
+		{jsonLd.map((entry) => (
+			<script type="application/ld+json" set:html={JSON.stringify(entry)} />
+		))}
+
+		<slot name="head" />
 	</head>
 	<body>
 		<slot />
 	</body>
+
+	<script>
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('is-visible');
+						observer.unobserve(entry.target);
+					}
+				}
+			},
+			{ threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+		);
+		document.querySelectorAll('[data-reveal], [data-reveal-group]').forEach((el) => observer.observe(el));
+	</script>
 </html>
 
 <style>
@@ -18,6 +88,5 @@
 	body {
 		margin: 0;
 		width: 100%;
-		height: 100%;
 	}
 </style>
