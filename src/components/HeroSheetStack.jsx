@@ -392,15 +392,22 @@ export default function HeroSheetStack() {
         .cpx-conn3d-dot { position: absolute; left: -3px; top: -3.5px; width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
         .cpx-conn3d-dot-end { left: auto; right: -3px; }
 
-        .cpx-hero-copy { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; padding: 0 24px; }
-        .cpx-h1 { font-size: clamp(34px, 5vw, 64px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.08; margin: 0; text-shadow: 0 2px 30px rgba(0,0,0,.5); }
+        .cpx-hero-copy {
+          position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; padding: 0 24px;
+          background: radial-gradient(ellipse min(560px, 60vw) 200px at center, rgba(0,0,0,.6) 0%, rgba(0,0,0,.32) 55%, rgba(0,0,0,0) 80%);
+        }
+        .cpx-h1 { font-size: clamp(34px, 5vw, 64px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.08; margin: 0; color: #F5F6F7; text-shadow: 0 2px 30px rgba(0,0,0,.5); }
         .cpx-final-copy { position: absolute; left: 0; right: 0; bottom: 6vh; z-index: 10; text-align: center; pointer-events: none; padding: 0 24px; }
-        .cpx-h2 { font-size: clamp(26px, 3.4vw, 44px); font-weight: 500; letter-spacing: -0.02em; margin: 0 0 12px; }
+        .cpx-h2 { font-size: clamp(26px, 3.4vw, 44px); font-weight: 500; letter-spacing: -0.02em; margin: 0 0 12px; color: #F5F6F7; }
         .cpx-sub { font-size: 15.5px; line-height: 1.6; color: rgba(245,246,247,.6); max-width: 580px; margin: 0 auto; }
-        .cpx-scrollhint { position: absolute; right: 36px; bottom: 28px; z-index: 15; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: rgba(245,246,247,.6); display: flex; align-items: center; gap: 10px; }
+        .cpx-scrollhint {
+          position: absolute; right: 0; bottom: 0; z-index: 15; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: .1em; color: #F5F6F7; display: flex; align-items: center; gap: 10px;
+          padding: 40px 36px 28px 120px;
+          background: radial-gradient(ellipse 260px 160px at bottom right, rgba(0,0,0,.7) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,0) 80%);
+        }
         .cpx-scrollhint .box { border: 1px solid rgba(255,255,255,.3); border-radius: 8px; padding: 6px 9px; animation: cpxBob 1.6s ease-in-out infinite; }
         @keyframes cpxBob { 50% { transform: translateY(4px); } }
-        @media (max-width: 760px) { .cpx-nav { padding: 16px 20px; } .cpx-nav-links { display: none; } .cpx-scrollhint { right: 20px; } }
+        @media (max-width: 760px) { .cpx-nav { padding: 16px 20px; } .cpx-nav-links { display: none; } .cpx-scrollhint { padding-left: 60px; } }
       `}</style>
 
       <div className="cpx-viewport">
