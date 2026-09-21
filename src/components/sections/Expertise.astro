@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import serverreihe from '../../assets/images/serverreihe.jpg';
+
 const columns = [
 	{
 		title: 'Cloud-Plattformen',
@@ -53,6 +56,7 @@ const glowVar: Record<string, string> = { cyan: '#5B8DEF', violet: '#9DBBF5', gr
 	></div>
 
 	<div class="relative mx-auto max-w-6xl px-6">
+		<div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
 		<div class="max-w-xl" data-reveal>
 			<p class="font-mono text-[11px] tracking-[0.14em] text-signal-violet uppercase">Expertise</p>
 			<h2 class="mt-3 text-3xl font-medium md:text-4xl">Zwei Ebenen, ein Team</h2>
@@ -60,6 +64,16 @@ const glowVar: Record<string, string> = { cyan: '#5B8DEF', violet: '#9DBBF5', gr
 				Cloud-Infrastruktur und AI Engineering laufen bei uns nicht in getrennten Teams. Wer die Agenten baut,
 				kennt auch das Netzwerk, in dem sie laufen.
 			</p>
+		</div>
+		<div class="overflow-hidden rounded-xl border border-border/60" data-reveal>
+			<Image
+				src={serverreihe}
+				alt="Serverreihe in einem Rechenzentrum mit blau leuchtenden Statusanzeigen"
+				widths={[640, 960, 1280]}
+				sizes="(min-width: 1024px) 560px, 100vw"
+				class="aspect-[16/10] h-auto w-full object-cover"
+			/>
+		</div>
 		</div>
 
 		<div class="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2" data-reveal-group>
