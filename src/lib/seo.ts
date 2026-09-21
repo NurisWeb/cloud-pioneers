@@ -47,7 +47,7 @@ export const PAGES = {
 		title: 'Cloud Pioneers — Agentische Automatisierung für Unternehmen',
 		description:
 			'Cloud Pioneers orchestriert spezialisierte KI-Agenten für Ihre Kernprozesse — sicher gehostet in der EU, geprüft durch einen eigenen Validator-Agenten.',
-		ogTitle: 'Ein Orchestrator. Fünf Agenten. Null Handarbeit.',
+		ogTitle: 'Ein Orchestrator. Spezialisierte Agenten. Geprüfte Ergebnisse.',
 	},
 	impressum: {
 		slug: 'impressum',

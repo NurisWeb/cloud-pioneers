@@ -3,7 +3,7 @@ import { useState } from 'react';
 const INTENTS = [
 	{ id: 'automate', label: 'Prozesse automatisieren', signal: '#7DE3F6' },
 	{ id: 'testing', label: 'Testfälle aus Anforderungen', signal: '#7DE3F6' },
-	{ id: 'staffing', label: 'Personal-Routine ablösen', signal: '#6FE7A0' },
+	{ id: 'staffing', label: 'Routineaufgaben entlasten', signal: '#6FE7A0' },
 	{ id: 'consulting', label: 'Erstmal nur beraten lassen', signal: '#B9A6FF' },
 ];
 

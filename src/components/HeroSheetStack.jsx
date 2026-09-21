@@ -467,11 +467,11 @@ export default function HeroSheetStack() {
           </div>
 
           <div className="cpx-hero-copy" style={{ opacity: heroTextOut, transform: `translateY(${(1 - heroTextOut) * -20}px)` }}>
-            <h1 className="cpx-h1">Ihre Prozesse laufen.<br />Ohne Sie.</h1>
+            <h1 className="cpx-h1">Kernprozesse automatisieren.<br />Mit voller Kontrolle.</h1>
           </div>
 
           <div className="cpx-final-copy" style={{ opacity: finalTextIn, transform: `translateY(${(1 - finalTextIn) * 24}px)` }}>
-            <h2 className="cpx-h2">Ein Orchestrator. Fünf Agenten. Null Handarbeit.</h2>
+            <h2 className="cpx-h2">Ein Orchestrator. Spezialisierte Agenten. Geprüfte Ergebnisse.</h2>
             <p className="cpx-sub">
               Ihr Input geht an einen Orchestrator-Agenten, der Spezialisten dirigiert: RAG-Retrieval,
               Embedding, Dokumenten-Analyse, Deduplizierung — und ein Validator prüft jedes Ergebnis,

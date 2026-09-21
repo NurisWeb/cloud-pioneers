@@ -1,7 +1,7 @@
 ---
 import PipelineDiagram from './PipelineDiagram.astro';
 
-const stack = ['Rollenanalyse', 'Agent übernimmt Routine', 'Mensch prüft Grenzfälle', 'Monitoring & Rollback'];
+const stack = ['Prozessanalyse', 'Agent übernimmt Routine', 'Mensch prüft Grenzfälle', 'Monitoring & Rollback'];
 ---
 
 <section class="relative overflow-hidden border-t border-border/60 bg-card/30 py-24 md:py-32">
@@ -22,16 +22,16 @@ const stack = ['Rollenanalyse', 'Agent übernimmt Routine', 'Mensch prüft Grenz
 			</div>
 
 			<div class="order-1 lg:order-2" data-reveal>
-				<p class="font-mono text-[11px] tracking-[0.14em] text-signal-green uppercase">Aktuelles Projekt</p>
-				<h2 class="mt-3 text-3xl font-medium md:text-4xl">Personal mit KI gewissenhaft ablösen</h2>
+				<p class="font-mono text-[11px] tracking-[0.14em] text-signal-green uppercase">Projektbeispiel</p>
+				<h2 class="mt-3 text-3xl font-medium md:text-4xl">Routinearbeit kontrolliert an KI übergeben</h2>
 				<p class="mt-4 text-muted-foreground">
-					Ein Kunde hatte ein Team, das im Kern Ticket-Triage und Datenabgleich machte — Routine, die
-					qualifizierte Leute band. Wir haben nicht "Personal ersetzt", um Personal zu ersetzen. Wir haben
-					die Routine an Agenten übergeben, in Stufen, mit Monitoring und einem Rollback-Schalter für jede
-					einzelne Stufe.
+					Bei einem Kunden band Ticket-Triage und Datenabgleich einen großen Teil der Kapazität
+					qualifizierter Fachkräfte. Wir haben diese Routine schrittweise an Agenten übergeben — jede Stufe
+					mit Monitoring und eigenem Rollback-Schalter. Das Team konzentriert sich seitdem auf Aufgaben, die
+					fachliches Urteilsvermögen erfordern.
 				</p>
 				<p class="mt-3 text-muted-foreground">
-					Gewissenhaft heißt hier konkret: Governance-Checkpoints vor jedem Rollout, vollständiges Logging
+					Kontrolliert heißt hier konkret: Governance-Checkpoints vor jedem Rollout, vollständiges Logging
 					jeder Agenten-Entscheidung, und ein Validator, der Grenzfälle an Menschen zurückgibt statt sie zu
 					raten.
 				</p>
