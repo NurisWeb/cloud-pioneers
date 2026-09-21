@@ -2,6 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import { PAGES } from '@/lib/seo';
 import HeroSheetStack from '../components/HeroSheetStack.jsx';
+import { getImage } from 'astro:assets';
+import heroPhoto from '../assets/images/hero-rechenzentrum.jpg';
 import TrustBar from '../components/sections/TrustBar.astro';
 import Team from '../components/sections/Team.astro';
 import CtaBanner from '../components/sections/CtaBanner.astro';
@@ -12,10 +14,12 @@ import ProjectStaffing from '../components/sections/ProjectStaffing.astro';
 import Expertise from '../components/sections/Expertise.astro';
 import Security from '../components/sections/Security.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
+// Hero-Hintergrund: lokal und als WebP optimiert
+const heroImage = await getImage({ src: heroPhoto, width: 2000, format: 'webp', quality: 78 });
 ---
 
 <Layout seo={PAGES.home}>
-	<HeroSheetStack client:load />
+	<HeroSheetStack client:load image={heroImage.src} />
 	<TrustBar />
 	<Team />
 	<HowItWorks />

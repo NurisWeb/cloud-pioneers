@@ -30,18 +30,6 @@ function lerp(p, [from, to], [outA, outB]) {
   return outA + (outB - outA) * t;
 }
 
-const STOCK_URL =
-  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1600&q=80&auto=format&fit=crop";
-const FALLBACK =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'>
-    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-      <stop offset='0' stop-color='#2b2350'/><stop offset='.55' stop-color='#3c2f66'/>
-      <stop offset='1' stop-color='#16324a'/></linearGradient></defs>
-    <rect width='1600' height='900' fill='url(#g)'/>
-    <text x='800' y='120' fill='rgba(255,255,255,.3)' font-family='monospace' font-size='26' text-anchor='middle'>PLACEHOLDER — eigenes Bild/Video hier</text>
-  </svg>`);
-
 /* Ziel-Zustand bei voll abgehobenem Stapel: Z-Höhe + diagonaler Fächer-Versatz */
 const SHEETS = {
   infra:  { z: 80,  x: -36, y: 20 },
@@ -158,7 +146,7 @@ function AgentLayer() {
       <GrowingBars x={952} y={220} color="#C6D8F7" />
       <BreathingGraph x={700} y={455} />
       <BreathingGraph x={460} y={140} color="#5B8DEF" />
-      <text x="1055" y="345" className="cpx-t" opacity=".5">score 0.98</text>
+      <text x="1055" y="345" className="cpx-t" opacity=".5">validated</text>
       <text x="120" y="120" className="cpx-t" opacity=".4">agents: 5 active</text>
     </svg>
   );
@@ -185,7 +173,7 @@ function DataLayer() {
         <text x="480" y="238">chunks 128</text>
         <text x="900" y="238">emb dim 1536</text>
         <text x="80" y="403">latency p95 monitored</text>
-        <text x="900" y="403">dedup −37%</text>
+        <text x="900" y="403">dedup active</text>
       </g>
       <g fill="rgba(255,255,255,.45)" fontFamily="'IBM Plex Mono', monospace" fontSize="13">
         <text x="1105" y="90">0111</text><text x="620" y="60">001</text>
@@ -284,12 +272,12 @@ function Connector3D({ ax, ay, az, bx, by, bz, opacity, color }) {
   );
 }
 
-export default function HeroSheetStack() {
+/* image: optimierte Bild-URL aus index.astro (lokal, keine externen Requests) */
+export default function HeroSheetStack({ image }) {
   const trackRef = useRef(null);
   const wrapRef = useRef(null);
   const [p, setP] = useState(0);
   const [wrapSize, setWrapSize] = useState({ w: 1200, h: 675 });
-  const [imgSrc, setImgSrc] = useState(STOCK_URL);
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
@@ -329,7 +317,7 @@ export default function HeroSheetStack() {
 
   const scale = lerp(prog, [0.10, 0.28], [1, 0.58]);
   const radius = lerp(prog, [0.10, 0.28], [0, 22]);
-  const dim = lerp(prog, [0.10, 0.28], [0, 0.6]);
+  const dim = lerp(prog, [0.10, 0.28], [0.35, 0.6]);
   const heroTextOut = lerp(prog, [0.08, 0.20], [1, 0]);
   // Kippung: schon stark, BEVOR die Blätter erscheinen — dann weiter zunehmend
   const rotY = lerp(prog, [0.10, 0.28], [0, -12]) + lerp(prog, [0.42, 0.78], [0, -12]) + lerp(prog, [0.80, 1], [0, -3]);
@@ -362,8 +350,8 @@ export default function HeroSheetStack() {
   return (
     <div ref={trackRef} className="cpx-track">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-        .cpx-track { height: 500vh; background: #060A12; font-family: 'Space Grotesk', system-ui, sans-serif; }
+        .cpx-track { height: 500vh; background: #060A12; font-family: 'Space Grotesk Variable', 'Space Grotesk', system-ui, sans-serif; }
+        @media (max-width: 760px) { .cpx-track { height: 380vh; } }
         .cpx-viewport { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #F5F6F7; }
         .cpx-nav-scrim { position: absolute; top: 0; left: 0; right: 0; z-index: 15; height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,.85) 0%, rgba(0,0,0,.55) 35%, rgba(0,0,0,.15) 70%, rgba(0,0,0,0) 100%); pointer-events: none; }
 
@@ -387,9 +375,15 @@ export default function HeroSheetStack() {
 
         .cpx-hero-copy {
           position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; padding: 0 24px;
-          background: radial-gradient(ellipse min(560px, 60vw) 200px at center, rgba(0,0,0,.6) 0%, rgba(0,0,0,.32) 55%, rgba(0,0,0,0) 80%);
+          background: radial-gradient(ellipse min(760px, 80vw) 320px at center, rgba(3,6,14,.78) 0%, rgba(3,6,14,.45) 55%, rgba(3,6,14,0) 82%);
         }
         .cpx-h1 { font-size: clamp(34px, 5vw, 64px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.08; margin: 0; color: #F5F6F7; text-shadow: 0 2px 30px rgba(0,0,0,.5); }
+        .cpx-lead { margin: 20px auto 0; max-width: 620px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.6; color: rgba(245,246,247,.78); text-shadow: 0 1px 16px rgba(0,0,0,.6); }
+        .cpx-actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+        .cpx-btn { font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 15px; font-weight: 500; height: 44px; padding: 0 22px; display: inline-flex; align-items: center; border-radius: 10px; text-decoration: none; color: #F5F6F7; border: 1px solid rgba(255,255,255,.28); background: rgba(6,10,18,.35); transition: background-color .2s, border-color .2s; }
+        .cpx-btn:hover { border-color: rgba(255,255,255,.5); background: rgba(6,10,18,.55); }
+        .cpx-btn-primary { background: #3E72D0; border-color: #3E72D0; }
+        .cpx-btn-primary:hover { background: #3367BA; border-color: #3367BA; }
         .cpx-final-copy { position: absolute; left: 0; right: 0; bottom: 6vh; z-index: 10; text-align: center; pointer-events: none; padding: 0 24px; }
         .cpx-h2 { font-size: clamp(26px, 3.4vw, 44px); font-weight: 500; letter-spacing: -0.02em; margin: 0 0 12px; color: #F5F6F7; }
         .cpx-sub { font-size: 15.5px; line-height: 1.6; color: rgba(245,246,247,.6); max-width: 580px; margin: 0 auto; }
@@ -412,7 +406,7 @@ export default function HeroSheetStack() {
 
             {/* LAYER 0: Bild (Basis, z = 0) */}
             <div className="cpx-layer cpx-photo-clip" style={{ borderRadius: `${radius}px` }}>
-              <img className="cpx-photo" src={imgSrc} alt="Platzhalter" onError={() => setImgSrc(FALLBACK)} />
+              <img className="cpx-photo" src={image} alt="" aria-hidden="true" fetchPriority="high" />
               <div className="cpx-photo-shade" style={{ opacity: dim }} />
             </div>
 
@@ -456,6 +450,14 @@ export default function HeroSheetStack() {
 
           <div className="cpx-hero-copy" style={{ opacity: heroTextOut, transform: `translateY(${(1 - heroTextOut) * -20}px)` }}>
             <h1 className="cpx-h1">Kernprozesse automatisieren.<br />Mit voller Kontrolle.</h1>
+            <p className="cpx-lead">
+              Cloud Pioneers konzipiert, entwickelt und betreibt KI-Automatisierung und Cloud-Plattformen
+              für Unternehmen – sicher, nachvollziehbar und in der EU gehostet.
+            </p>
+            <div className="cpx-actions" style={{ pointerEvents: heroTextOut > 0.5 ? "auto" : "none" }}>
+              <a href="#kontakt" className="cpx-btn cpx-btn-primary">Gespräch vereinbaren</a>
+              <a href="#ablauf" className="cpx-btn">So arbeiten wir</a>
+            </div>
           </div>
 
           <div className="cpx-final-copy" style={{ opacity: finalTextIn, transform: `translateY(${(1 - finalTextIn) * 24}px)` }}>
