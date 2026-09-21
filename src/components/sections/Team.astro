@@ -1,39 +1,39 @@
 ---
-// TODO: Fotos ergänzen. Namen-Reihenfolge/Rollenzuordnung bei Bedarf anpassen.
+// TODO: Fotos ergänzen, Kurzprofile vom Team bestätigen lassen.
 const team = [
 	{
 		name: 'Ömer Türker',
-		role: 'Gründer & Cloud Architect',
-		bio: 'Baut die Infrastruktur, auf der alles andere steht — AWS und Azure, seit über zehn Jahren, für Unternehmen, die sich Ausfälle nicht leisten können.',
-		tags: ['AWS', 'Azure', 'IaC'],
+		role: 'Geschäftsführer & Tech Lead',
+		bio: 'Verantwortet die technische Gesamtarchitektur und jedes Projekt vom Kickoff bis zum Go-live — und ist erster Ansprechpartner für Entscheider.',
+		tags: ['Architektur', 'Delivery', 'Cloud'],
 		signal: 'cyan',
 	},
 	{
-		name: 'Marcel Cönen',
-		role: 'Lead AI Engineer',
-		bio: 'Orchestriert Agenten, nicht Prompts. Von RAG-Pipelines bis Multi-Agent-Systemen mit echtem Audit-Trail.',
-		tags: ['Agentic AI', 'RAG', 'Embeddings'],
-		signal: 'violet',
-	},
-	{
-		name: 'Gökay Sahin',
-		role: 'Platform & Security Engineer',
-		bio: 'Rollen, Netzwerke, Secrets. Wenn ein Auditor fragt, steht die Antwort schon im Log.',
-		tags: ['IAM', 'Observability', 'Compliance'],
+		name: 'Marcel Könen',
+		role: 'Security & Infrastructure Expert',
+		bio: 'Härtet Netzwerke, Identitäten und Plattformen. Sorgt dafür, dass Sicherheitsanforderungen von Beginn an Teil der Architektur sind.',
+		tags: ['Security', 'IAM', 'Infrastruktur'],
 		signal: 'green',
 	},
 	{
-		name: 'Michel Leotta',
-		role: 'Data & Test Engineering Lead',
-		bio: 'Zerlegt riesige Anforderungspools in Signale — aus Signalen werden Testfälle, automatisiert und nachvollziehbar.',
-		tags: ['Requirements Mining', 'Testautomatisierung'],
+		name: 'Michelle Leuter',
+		role: 'HR & Product Manager',
+		bio: 'Übersetzt fachliche Anforderungen in klare Produktziele und verantwortet Teamaufbau und Recruiting.',
+		tags: ['Produktmanagement', 'Anforderungen', 'HR'],
+		signal: 'violet',
+	},
+	{
+		name: 'Robin Christ',
+		role: 'System Administrator & AI Developer',
+		bio: 'Betreibt und überwacht die Systeme, auf denen unsere Lösungen laufen, und entwickelt KI-Komponenten für den produktiven Einsatz.',
+		tags: ['Betrieb', 'Monitoring', 'AI'],
 		signal: 'cyan',
 	},
 	{
-		name: 'Tobias Bremer',
-		role: 'Delivery Lead',
-		bio: 'Übersetzt zwischen Vorstand und Terminal. Verantwortet jedes Projekt vom Kickoff bis Go-Live.',
-		tags: ['Enterprise Delivery', 'Stakeholder'],
+		name: 'Gökay Şahin',
+		role: 'AI Architect & Full-Stack Engineer',
+		bio: 'Konzipiert KI-Architekturen und Multi-Agent-Systeme und setzt sie als produktionsreife Anwendungen um — vom Backend bis zur Oberfläche.',
+		tags: ['AI Architecture', 'Agentic AI', 'Full-Stack'],
 		signal: 'violet',
 	},
 ];
@@ -52,10 +52,10 @@ const glowVar: Record<string, string> = { cyan: '#7DE3F6', violet: '#B9A6FF', gr
 	<div class="relative mx-auto max-w-6xl px-6">
 		<div class="max-w-xl" data-reveal>
 			<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Über uns</p>
-			<h2 class="mt-3 text-3xl font-medium md:text-4xl">Fünf Leute, ein Betrieb</h2>
+			<h2 class="mt-3 text-3xl font-medium md:text-4xl">Das Team hinter Cloud Pioneers</h2>
 			<p class="mt-4 text-muted-foreground">
-				Kein anonymes Consulting-Grid. Wir sind fünf Personen, die für Konzerne bauen — und die Verantwortung
-				dafür persönlich tragen.
+				Feste Ansprechpartner statt wechselnder Berater: Unser Kernteam verantwortet Architektur, Umsetzung
+				und Betrieb — vom ersten Gespräch bis zum laufenden System.
 			</p>
 		</div>
 
