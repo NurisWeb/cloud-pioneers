@@ -9,7 +9,7 @@ interface Props {
 	glow?: 'cyan' | 'violet' | 'green';
 }
 
-const { eyebrow, headline, buttonLabel, href = '#kontakt', glow = 'cyan' } = Astro.props;
+const { eyebrow, headline, buttonLabel, href = '/kontakt', glow = 'cyan' } = Astro.props;
 
 const glowColor = { cyan: '#5B8DEF', violet: '#9DBBF5', green: '#C6D8F7' }[glow];
 ---

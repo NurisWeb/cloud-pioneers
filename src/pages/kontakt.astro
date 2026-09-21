@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES, SITE } from '@/lib/seo';
+import PageIntro from '@/components/PageIntro.astro';
+import ContactSurvey from '../components/ContactSurvey.jsx';
+
+const steps = [
+	{ n: '01', title: 'Anliegen schildern', text: 'Kurz beschreiben, worum es geht – ein paar Sätze reichen.' },
+	{ n: '02', title: 'Erstgespräch', text: 'Wir klären Ziel, Rahmen und ob wir der richtige Partner sind.' },
+	{ n: '03', title: 'Konkreter Vorschlag', text: 'Sie erhalten einen Vorschlag zu Vorgehen, Team und Aufwand.' },
+];
+---
+
+<Layout seo={PAGES.kontakt}>
+	<main>
+		<PageIntro
+			eyebrow="Kontakt"
+			title="Sprechen wir über Ihr Vorhaben"
+			lead="Schildern Sie uns kurz, woran Sie arbeiten. Wir melden uns persönlich – ohne Vertriebsschleife."
+		/>
+
+		<section class="border-t border-border/60 py-20 md:py-28">
+			<div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 lg:grid-cols-[1fr_360px]">
+				<div data-reveal>
+					<ContactSurvey client:visible />
+				</div>
+
+				<aside class="space-y-8" data-reveal>
+					<div class="rounded-xl border border-border/60 bg-card/40 p-7">
+						<p class="text-sm text-muted-foreground">Direkter Kontakt</p>
+						<a href={`mailto:${SITE.email}`} class="mt-2 block font-heading text-lg font-medium hover:underline">{SITE.email}</a>
+						<p class="mt-5 text-sm text-muted-foreground">Ansprechpartner</p>
+						<p class="mt-1 font-medium">Ömer Türker</p>
+						<p class="text-sm text-muted-foreground">Geschäftsführer & Tech Lead</p>
+					</div>
+
+					<div>
+						<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">So geht es weiter</p>
+						<ol class="mt-5 space-y-5">
+							{steps.map((s) => (
+								<li class="flex gap-4">
+									<span class="font-mono text-xs text-muted-foreground">{s.n}</span>
+									<div>
+										<p class="font-medium">{s.title}</p>
+										<p class="mt-1 text-sm text-muted-foreground">{s.text}</p>
+									</div>
+								</li>
+							))}
+						</ol>
+					</div>
+				</aside>
+			</div>
+		</section>
+	</main>
+</Layout>

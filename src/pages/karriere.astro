@@ -1,0 +1,78 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES, SITE } from '@/lib/seo';
+import PageIntro from '@/components/PageIntro.astro';
+import LinkButton from '@/components/ui/LinkButton.astro';
+
+// TODO: Offene Stellen, Arbeitsmodell (Remote/Standort) und Benefits ergänzen, sobald festgelegt.
+const reasons = [
+	{
+		title: 'Echte Produktionssysteme',
+		text: 'Du arbeitest an Plattformen und KI-Systemen, die bei Unternehmen im täglichen Einsatz sind – nicht an Demos.',
+	},
+	{
+		title: 'Kurze Wege',
+		text: 'Ein kleines Kernteam, direkte Abstimmung mit der Geschäftsführung und Entscheidungen ohne lange Schleifen.',
+	},
+	{
+		title: 'Breites Technologiefeld',
+		text: 'AWS und Azure, Multi-Agent-Systeme, Wissensgraphen, Security – du lernst Infrastruktur und KI gemeinsam kennen.',
+	},
+];
+
+const fields = ['Cloud & Infrastructure Engineering', 'AI Engineering', 'Security Engineering', 'Full-Stack Development'];
+
+const mailto = `mailto:${SITE.email}?subject=${encodeURIComponent('Initiativbewerbung')}`;
+---
+
+<Layout seo={PAGES.karriere}>
+	<main>
+		<PageIntro
+			eyebrow="Karriere"
+			title="Baue Systeme, die in Unternehmen wirklich laufen"
+			lead="Wir suchen Menschen, die Verantwortung für das übernehmen wollen, was sie bauen – von der Architektur bis zum Betrieb."
+		/>
+
+		<section class="border-t border-border/60 py-20 md:py-28">
+			<div class="mx-auto max-w-6xl px-6">
+				<div class="max-w-xl" data-reveal>
+					<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Warum Cloud Pioneers</p>
+					<h2 class="mt-3 text-3xl font-medium md:text-4xl">Was dich bei uns erwartet</h2>
+				</div>
+				<div class="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3" data-reveal-group>
+					{reasons.map((r) => (
+						<div class="glow-card rounded-xl border border-border/60 bg-card/40 p-7">
+							<h3 class="font-heading text-lg font-medium">{r.title}</h3>
+							<p class="mt-3 text-sm leading-relaxed text-muted-foreground">{r.text}</p>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="border-t border-border/60 bg-card/30 py-20 md:py-28">
+			<div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 lg:grid-cols-2">
+				<div data-reveal>
+					<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Bewerbung</p>
+					<h2 class="mt-3 text-3xl font-medium md:text-4xl">Initiativ bewerben</h2>
+					<p class="mt-4 text-muted-foreground">
+						Aktuell schreiben wir keine festen Stellen aus. Wenn du in einem dieser Bereiche arbeitest und dich
+						angesprochen fühlst, schick uns ein paar Zeilen über dich und deinen Lebenslauf.
+					</p>
+					<ul class="mt-6 flex flex-wrap gap-2">
+						{fields.map((f) => (
+							<li class="rounded-full border border-border/60 px-3 py-1.5 font-mono text-[11px] tracking-wide text-muted-foreground uppercase">{f}</li>
+						))}
+					</ul>
+				</div>
+				<div class="rounded-xl border border-border/60 bg-background p-8" data-reveal>
+					<p class="text-sm text-muted-foreground">Ansprechpartnerin</p>
+					<p class="mt-1 font-heading text-xl font-medium">Michelle Leuter</p>
+					<p class="text-sm text-muted-foreground">HR & Product Manager</p>
+					<LinkButton href={mailto} size="lg" class="mt-8">Initiativbewerbung senden</LinkButton>
+					<p class="mt-4 text-sm text-muted-foreground">oder direkt an <a href={`mailto:${SITE.email}`} class="text-foreground underline-offset-4 hover:underline">{SITE.email}</a></p>
+				</div>
+			</div>
+		</section>
+	</main>
+</Layout>

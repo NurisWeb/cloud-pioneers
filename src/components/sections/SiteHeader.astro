@@ -4,14 +4,10 @@
  * nach dem ersten Scrollen mit dunklem Hintergrund (data-scrolled).
  */
 import LinkButton from '@/components/ui/LinkButton.astro';
+import { NAV as links, CONTACT_CTA } from '@/data/navigation';
 
-const links = [
-	{ href: '/#ueber-uns', label: 'Über uns' },
-	{ href: '/#ablauf', label: 'Ablauf' },
-	{ href: '/#expertise', label: 'Expertise' },
-	{ href: '/#sicherheit', label: 'Sicherheit' },
-	{ href: '/#kontakt', label: 'Kontakt' },
-];
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => !href.includes('#') && current === href;
 ---
 
 <header
@@ -24,11 +20,19 @@ const links = [
 		</a>
 
 		<nav aria-label="Hauptnavigation" class="hidden items-center gap-8 text-sm text-muted-foreground lg:flex">
-			{links.map((l) => <a href={l.href} class="transition-colors hover:text-foreground">{l.label}</a>)}
+			{links.map((l) => (
+				<a
+					href={l.href}
+					aria-current={isActive(l.href) ? 'page' : undefined}
+					class:list={['transition-colors hover:text-foreground', isActive(l.href) && 'text-foreground']}
+				>
+					{l.label}
+				</a>
+			))}
 		</nav>
 
 		<div class="flex items-center gap-3">
-			<div class="hidden sm:block"><LinkButton href="/#kontakt">Gespräch vereinbaren</LinkButton></div>
+			<div class="hidden sm:block"><LinkButton href={CONTACT_CTA.href}>{CONTACT_CTA.label}</LinkButton></div>
 
 			<!-- Mobil: Menü ohne JavaScript -->
 			<details class="group lg:hidden">
@@ -47,7 +51,7 @@ const links = [
 							<li><a href={l.href} class="block py-3 text-base text-foreground">{l.label}</a></li>
 						))}
 					</ul>
-					<LinkButton href="/#kontakt" size="lg" class="mt-4 w-full">Gespräch vereinbaren</LinkButton>
+					<LinkButton href={CONTACT_CTA.href} size="lg" class="mt-4 w-full">{CONTACT_CTA.label}</LinkButton>
 				</nav>
 			</details>
 		</div>

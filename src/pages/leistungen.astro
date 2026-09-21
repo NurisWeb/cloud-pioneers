@@ -1,0 +1,109 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES } from '@/lib/seo';
+import PageIntro from '@/components/PageIntro.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import { Image } from 'astro:assets';
+import serverreihe from '../assets/images/serverreihe.jpg';
+import glasfaser from '../assets/images/glasfaser.jpg';
+import rechenzentrum from '../assets/images/hero-rechenzentrum.jpg';
+
+// TODO: Leistungsumfang und Beispiele vom Team bestätigen lassen.
+const services = [
+	{
+		id: 'cloud',
+		eyebrow: 'Cloud & Infrastruktur',
+		title: 'Plattformen, die unter Last stabil bleiben',
+		text: 'Wir planen und bauen Cloud-Umgebungen auf AWS und Azure – reproduzierbar, überwacht und so dokumentiert, dass Ihr Betrieb und Ihre Revision sie nachvollziehen können.',
+		topics: [
+			'Cloud-Architektur und Landing Zones',
+			'Migration und Modernisierung bestehender Anwendungen',
+			'Infrastructure as Code und automatisierte Deployments',
+			'Container-Plattformen (ECS, AKS) und Messaging',
+			'Monitoring, Logging und Kostentransparenz',
+		],
+		image: serverreihe,
+		alt: 'Serverreihe in einem Rechenzentrum',
+	},
+	{
+		id: 'ai',
+		eyebrow: 'AI Engineering & Automatisierung',
+		title: 'KI-Systeme, die im Unternehmen produktiv laufen',
+		text: 'Wir entwickeln Multi-Agent-Systeme und Wissensanwendungen, die an Ihre bestehenden Systeme angebunden sind – mit Validierung, Eskalationspfaden und vollständigem Protokoll jedes Schritts.',
+		topics: [
+			'Multi-Agent-Orchestrierung für wiederkehrende Prozesse',
+			'Wissenssysteme über Unternehmensdokumente (RAG, Knowledge Graphs)',
+			'Testfallgenerierung aus Anforderungen',
+			'Anbindung an bestehende Systeme über Tool-Use und APIs',
+			'Evaluierung, Validierung und Human-in-the-Loop',
+		],
+		image: rechenzentrum,
+		alt: 'Rechenzentrumsgang mit blau leuchtenden Serverracks',
+	},
+	{
+		id: 'security',
+		eyebrow: 'Security & Betrieb',
+		title: 'Sicherheit als Teil der Architektur',
+		text: 'Sicherheitsanforderungen setzen wir von Beginn an um, nicht nachträglich. Und nach dem Go-live betreiben und überwachen wir die Systeme weiter, wenn Sie das wünschen.',
+		topics: [
+			'Identitäts- und Zugriffskonzepte (IAM, rollenbasiert)',
+			'Netzwerk-Hardening und Verschlüsselung',
+			'Audit-Logs und nachvollziehbare Entscheidungen',
+			'Datenschutzkonforme Architektur nach DSGVO-Grundsätzen',
+			'Betrieb, Monitoring und Incident-Handling',
+		],
+		image: glasfaser,
+		alt: 'Leuchtende Glasfaserleitungen',
+	},
+];
+---
+
+<Layout seo={PAGES.leistungen}>
+	<main>
+		<PageIntro
+			eyebrow="Leistungen"
+			title="Cloud, AI Engineering und Security aus einer Hand"
+			lead="Wir begleiten Vorhaben von der Architektur bis zum laufenden Betrieb. Ein Team, das Infrastruktur, KI und Sicherheit gemeinsam denkt – statt drei Dienstleister, die sich abstimmen müssen."
+		>
+			<nav aria-label="Leistungsbereiche" class="mt-8 flex flex-wrap gap-2">
+				{services.map((s) => (
+					<a href={`#${s.id}`} class="rounded-full border border-border/60 px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground">
+						{s.eyebrow}
+					</a>
+				))}
+			</nav>
+		</PageIntro>
+
+		{services.map((s, i) => (
+			<section id={s.id} class:list={['border-t border-border/60 py-20 md:py-28', i % 2 === 1 && 'bg-card/30']}>
+				<div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
+					<div class:list={[i % 2 === 1 && 'lg:order-2']} data-reveal>
+						<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">0{i + 1} · {s.eyebrow}</p>
+						<h2 class="mt-3 text-3xl font-medium md:text-4xl">{s.title}</h2>
+						<p class="mt-4 text-muted-foreground">{s.text}</p>
+						<ul class="mt-6 space-y-2.5 text-sm text-muted-foreground">
+							{s.topics.map((t) => (
+								<li class="flex items-baseline gap-2"><span class="text-signal-cyan">—</span>{t}</li>
+							))}
+						</ul>
+					</div>
+					<div class="overflow-hidden rounded-xl border border-border/60" data-reveal>
+						<Image
+							src={s.image}
+							alt={s.alt}
+							widths={[640, 960, 1280]}
+							sizes="(min-width: 1024px) 560px, 100vw"
+							class="aspect-[4/3] h-auto w-full object-cover"
+						/>
+					</div>
+				</div>
+			</section>
+		))}
+
+		<CtaBanner
+			eyebrow="Nächster Schritt"
+			headline="Sie planen ein Vorhaben in einem dieser Bereiche? Lassen Sie uns darüber sprechen."
+			buttonLabel="Gespräch vereinbaren"
+		/>
+	</main>
+</Layout>

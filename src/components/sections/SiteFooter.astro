@@ -1,4 +1,6 @@
 ---
+import { NAV as links } from '@/data/navigation';
+
 const year = new Date().getFullYear();
 ---
 
@@ -7,12 +9,8 @@ const year = new Date().getFullYear();
 		<a href="/" aria-label="Cloud Pioneers – Startseite">
 			<img src="/logo-light.svg" alt="Cloud Pioneers" width="120" height="28" class="h-7 w-auto" loading="lazy" />
 		</a>
-		<nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-			<a href="/#ueber-uns" class="hover:text-foreground">Über uns</a>
-			<a href="/#ablauf" class="hover:text-foreground">Ablauf</a>
-			<a href="/#expertise" class="hover:text-foreground">Expertise</a>
-			<a href="/#sicherheit" class="hover:text-foreground">Sicherheit</a>
-			<a href="/#kontakt" class="hover:text-foreground">Kontakt</a>
+		<nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+			{links.map((l) => <a href={l.href} class="hover:text-foreground">{l.label}</a>)}
 			<a href="/impressum" class="hover:text-foreground">Impressum</a>
 			<a href="/datenschutz" class="hover:text-foreground">Datenschutz</a>
 		</nav>

@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PAGES } from '@/lib/seo';
+import PageIntro from '@/components/PageIntro.astro';
+import Team from '@/components/sections/Team.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+
+const values = [
+	{
+		title: 'Feste Verantwortung',
+		text: 'Jedes Projekt hat einen festen Ansprechpartner aus dem Kernteam – vom ersten Gespräch bis zum laufenden System.',
+	},
+	{
+		title: 'Nachvollziehbarkeit',
+		text: 'Architekturentscheidungen, Agentenschritte und Änderungen sind dokumentiert. Ihre Revision muss nichts rekonstruieren.',
+	},
+	{
+		title: 'Sicherheit von Anfang an',
+		text: 'Zugriffskonzepte, Verschlüsselung und Datenschutz sind Teil des Entwurfs, nicht der Abnahme.',
+	},
+	{
+		title: 'Betrieb statt Prototyp',
+		text: 'Wir bauen Systeme für den produktiven Einsatz – mit Monitoring, Rollback und klaren Übergaben an Ihr Team.',
+	},
+];
+---
+
+<Layout seo={PAGES.unternehmen}>
+	<main>
+		<PageIntro
+			eyebrow="Unternehmen"
+			title="Ein Engineering-Team für Cloud, KI und Sicherheit"
+			lead="Cloud Pioneers arbeitet für Unternehmen, die Technologie zuverlässig betreiben müssen. Wir verbinden Cloud-Infrastruktur, AI Engineering und Security in einem Team – mit kurzen Wegen und klarer Verantwortung."
+		/>
+
+		<section class="border-t border-border/60 py-20 md:py-28">
+			<div class="mx-auto max-w-6xl px-6">
+				<div class="max-w-xl" data-reveal>
+					<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Wie wir arbeiten</p>
+					<h2 class="mt-3 text-3xl font-medium md:text-4xl">Worauf Sie sich verlassen können</h2>
+				</div>
+				<div class="mt-14 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4" data-reveal-group>
+					{values.map((v) => (
+						<div>
+							<span class="block h-px w-8 bg-signal-cyan"></span>
+							<h3 class="mt-4 font-heading text-base font-medium">{v.title}</h3>
+							<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{v.text}</p>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<Team />
+
+		<CtaBanner
+			eyebrow="Kennenlernen"
+			headline="Sie möchten wissen, ob wir zu Ihrem Vorhaben passen? Sprechen Sie uns an."
+			buttonLabel="Gespräch vereinbaren"
+		/>
+	</main>
+</Layout>

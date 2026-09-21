@@ -49,6 +49,37 @@ export const PAGES = {
 			'Cloud Pioneers orchestriert spezialisierte KI-Agenten für Ihre Kernprozesse — sicher gehostet in der EU, geprüft durch einen eigenen Validator-Agenten.',
 		ogTitle: 'Ein Orchestrator. Spezialisierte Agenten. Geprüfte Ergebnisse.',
 	},
+	leistungen: {
+		slug: 'leistungen',
+		path: '/leistungen',
+		title: 'Leistungen — Cloud, AI Engineering und Security | Cloud Pioneers',
+		description:
+			'Cloud-Plattformen auf AWS und Azure, KI-Automatisierung mit Multi-Agent-Systemen sowie Security und Betrieb – geplant, umgesetzt und betreut von einem festen Team.',
+		ogTitle: 'Cloud, AI Engineering und Security aus einer Hand',
+	},
+	unternehmen: {
+		slug: 'unternehmen',
+		path: '/unternehmen',
+		title: 'Unternehmen und Team — Cloud Pioneers',
+		description:
+			'Wer hinter Cloud Pioneers steht: ein festes Kernteam aus Cloud-, AI- und Security-Engineering mit klarer Verantwortung für jedes Projekt.',
+		ogTitle: 'Das Team hinter Cloud Pioneers',
+	},
+	karriere: {
+		slug: 'karriere',
+		path: '/karriere',
+		title: 'Karriere — Cloud Pioneers',
+		description:
+			'Arbeiten an Cloud-Plattformen und KI-Systemen, die in Unternehmen produktiv laufen. Initiativbewerbungen für Cloud, AI und Security Engineering.',
+		ogTitle: 'Karriere bei Cloud Pioneers',
+	},
+	kontakt: {
+		slug: 'kontakt',
+		path: '/kontakt',
+		title: 'Kontakt — Cloud Pioneers',
+		description: 'Schildern Sie uns Ihr Vorhaben. Wir melden uns persönlich und klären im Erstgespräch, ob und wie wir unterstützen können.',
+		ogTitle: 'Sprechen wir über Ihr Vorhaben',
+	},
 	impressum: {
 		slug: 'impressum',
 		path: '/impressum',

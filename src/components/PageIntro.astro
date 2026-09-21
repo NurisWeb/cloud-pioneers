@@ -1,0 +1,27 @@
+---
+/**
+ * Kopfbereich der Unterseiten im Stil der Startseite: Rubrik, H1, Einleitung.
+ * Oben zusätzlicher Abstand für den fixierten Header.
+ */
+interface Props {
+	eyebrow: string;
+	title: string;
+	lead?: string;
+}
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<section class="relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-24">
+	<div
+		class="pointer-events-none absolute -top-40 left-1/2 h-[460px] w-[900px] -translate-x-1/2 rounded-full bg-signal-cyan/10 blur-[140px]"
+		aria-hidden="true"
+	></div>
+	<div class="relative mx-auto max-w-6xl px-6">
+		<div class="max-w-3xl" data-reveal>
+			<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">{eyebrow}</p>
+			<h1 class="mt-4 text-4xl font-medium leading-[1.1] md:text-5xl">{title}</h1>
+			{lead && <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{lead}</p>}
+			<slot />
+		</div>
+	</div>
+</section>
