@@ -1,5 +1,5 @@
 ---
-import { Button } from '@/components/ui/button';
+import LinkButton from '@/components/ui/LinkButton.astro';
 
 interface Props {
 	eyebrow?: string;
@@ -11,7 +11,7 @@ interface Props {
 
 const { eyebrow, headline, buttonLabel, href = '#kontakt', glow = 'cyan' } = Astro.props;
 
-const glowColor = { cyan: '#7DE3F6', violet: '#B9A6FF', green: '#6FE7A0' }[glow];
+const glowColor = { cyan: '#5B8DEF', violet: '#9DBBF5', green: '#C6D8F7' }[glow];
 ---
 
 <section class="relative overflow-hidden border-y border-border/60 bg-card/30">
@@ -25,8 +25,6 @@ const glowColor = { cyan: '#7DE3F6', violet: '#B9A6FF', green: '#6FE7A0' }[glow]
 			{eyebrow && <p class="font-mono text-[11px] tracking-[0.14em] uppercase" style={{ color: glowColor }}>{eyebrow}</p>}
 			<h3 class="mt-2 font-heading text-2xl font-medium md:text-3xl">{headline}</h3>
 		</div>
-		<Button size="lg" asChild class="shrink-0">
-			<a href={href}>{buttonLabel}</a>
-		</Button>
+		<LinkButton href={href} size="lg">{buttonLabel}</LinkButton>
 	</div>
 </section>

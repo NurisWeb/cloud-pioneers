@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import SiteHeader from '@/components/sections/SiteHeader.astro';
+import SiteFooter from '@/components/sections/SiteFooter.astro';
 import {
 	SITE,
 	absoluteUrl,
@@ -64,7 +66,9 @@ const jsonLd = [organizationJsonLd(), websiteJsonLd(), webPageJsonLd(seo), ...ex
 		<slot name="head" />
 	</head>
 	<body>
+		<SiteHeader />
 		<slot />
+		<SiteFooter />
 	</body>
 
 	<script>

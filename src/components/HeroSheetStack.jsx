@@ -59,7 +59,7 @@ const CONNECTIONS_2_3 = [
 
 /* ---------- SVG-Bausteine (wie V4) ---------- */
 
-function Agent({ x, y, w = 118, h = 54, label, color = "#B9A6FF", delay = 0 }) {
+function Agent({ x, y, w = 118, h = 54, label, color = "#9DBBF5", delay = 0 }) {
   return (
     <g>
       <rect x={x} y={y} width={w} height={h} rx="11" fill="rgba(10,10,18,.35)" stroke={color} strokeWidth="1.1" />
@@ -72,10 +72,10 @@ function Agent({ x, y, w = 118, h = 54, label, color = "#B9A6FF", delay = 0 }) {
   );
 }
 
-function EdgeLine({ d, dur = 2.2, delay = 0, color = "#7DE3F6", back = false }) {
+function EdgeLine({ d, dur = 2.2, delay = 0, color = "#5B8DEF", back = false }) {
   return (
     <g>
-      <path d={d} fill="none" stroke={back ? "rgba(185,166,255,.35)" : "rgba(255,255,255,.35)"}
+      <path d={d} fill="none" stroke={back ? "rgba(157,187,245,.35)" : "rgba(255,255,255,.35)"}
         strokeWidth="1" strokeDasharray="3 6" />
       <circle r="3" fill={color} style={{ filter: `drop-shadow(0 0 5px ${color})` }}>
         <animateMotion dur={`${dur}s`} begin={`${delay}s`} repeatCount="indefinite" path={d} />
@@ -84,7 +84,7 @@ function EdgeLine({ d, dur = 2.2, delay = 0, color = "#7DE3F6", back = false }) 
   );
 }
 
-function GrowingBars({ x, y, color = "#7DE3F6" }) {
+function GrowingBars({ x, y, color = "#5B8DEF" }) {
   const bars = [
     { dx: 0, v: "6;22;10;26;6", yv: "22;6;18;2;22", dur: 3.6 },
     { dx: 10, v: "14;4;24;8;14", yv: "14;24;4;20;14", dur: 4.2 },
@@ -104,7 +104,7 @@ function GrowingBars({ x, y, color = "#7DE3F6" }) {
   );
 }
 
-function BreathingGraph({ x, y, color = "#B9A6FF" }) {
+function BreathingGraph({ x, y, color = "#9DBBF5" }) {
   return (
     <g transform={`translate(${x},${y})`}>
       <g>
@@ -114,7 +114,7 @@ function BreathingGraph({ x, y, color = "#B9A6FF" }) {
         </g>
         <circle r="3.5" fill={color} />
         <circle cx="26" cy="-18" r="2.6" fill={color} opacity=".8" />
-        <circle cx="30" cy="10" r="2.6" fill="#7DE3F6" opacity=".8" />
+        <circle cx="30" cy="10" r="2.6" fill="#5B8DEF" opacity=".8" />
         <circle cx="-8" cy="26" r="2.6" fill={color} opacity=".8" />
       </g>
     </g>
@@ -125,17 +125,17 @@ function AgentLayer() {
   return (
     <svg viewBox="0 0 1200 675" className="cpx-wf" preserveAspectRatio="none" aria-hidden="true">
       <g>
-        <circle cx="80" cy="330" r="9" fill="none" stroke="#7DE3F6" strokeWidth="1.3" />
-        <circle cx="80" cy="330" r="3" fill="#7DE3F6">
+        <circle cx="80" cy="330" r="9" fill="none" stroke="#5B8DEF" strokeWidth="1.3" />
+        <circle cx="80" cy="330" r="3" fill="#5B8DEF">
           <animate attributeName="r" values="2.5;4;2.5" dur="1.8s" repeatCount="indefinite" />
         </circle>
         <text x="80" y="362" textAnchor="middle" className="cpx-t">USER INPUT</text>
       </g>
       <g>
-        <rect x="215" y="290" width="150" height="80" rx="14" fill="rgba(20,14,40,.5)" stroke="#B9A6FF" strokeWidth="1.4" />
-        <text x="290" y="323" textAnchor="middle" className="cpx-t" fill="#B9A6FF">ORCHESTRATOR</text>
+        <rect x="215" y="290" width="150" height="80" rx="14" fill="rgba(10,18,36,.5)" stroke="#9DBBF5" strokeWidth="1.4" />
+        <text x="290" y="323" textAnchor="middle" className="cpx-t" fill="#9DBBF5">ORCHESTRATOR</text>
         <text x="290" y="341" textAnchor="middle" className="cpx-t" opacity=".55">AGENT</text>
-        <circle cx="290" cy="357" r="2.5" fill="#B9A6FF">
+        <circle cx="290" cy="357" r="2.5" fill="#9DBBF5">
           <animate attributeName="opacity" values="1;0.2;1" dur="1.4s" repeatCount="indefinite" />
         </circle>
       </g>
@@ -143,21 +143,21 @@ function AgentLayer() {
       <Agent x={585} y={228} label="DOC READER" delay={0.7} />
       <Agent x={560} y={360} label="EMBEDDER" delay={1.1} />
       <Agent x={585} y={492} label="SIBLING RESOLVER" w={150} delay={1.5} />
-      <Agent x={880} y={300} label="VALIDATOR" color="#6FE7A0" delay={0.4} />
+      <Agent x={880} y={300} label="VALIDATOR" color="#C6D8F7" delay={0.4} />
       <EdgeLine d="M 92 330 C 150 330 160 330 213 330" dur={1.9} />
       <EdgeLine d="M 365 312 C 450 260 480 180 558 130" dur={2.1} delay={0.3} />
       <EdgeLine d="M 365 322 C 460 300 500 270 583 258" dur={2.0} delay={0.8} />
       <EdgeLine d="M 365 340 C 450 360 480 380 558 388" dur={2.2} delay={1.2} />
       <EdgeLine d="M 365 352 C 460 420 500 480 583 515" dur={2.4} delay={1.6} />
-      <EdgeLine d="M 680 128 C 790 170 820 250 878 300" dur={2.0} delay={0.5} color="#B9A6FF" />
-      <EdgeLine d="M 705 258 C 780 270 810 290 878 315" dur={1.8} delay={0.9} color="#B9A6FF" />
-      <EdgeLine d="M 680 388 C 790 380 820 350 878 335" dur={2.1} delay={1.3} color="#B9A6FF" />
-      <EdgeLine d="M 735 518 C 820 500 850 420 890 356" dur={2.3} delay={1.7} color="#B9A6FF" />
-      <EdgeLine d="M 895 358 C 780 560 420 560 300 372" dur={3.2} delay={0.2} color="#6FE7A0" back />
+      <EdgeLine d="M 680 128 C 790 170 820 250 878 300" dur={2.0} delay={0.5} color="#9DBBF5" />
+      <EdgeLine d="M 705 258 C 780 270 810 290 878 315" dur={1.8} delay={0.9} color="#9DBBF5" />
+      <EdgeLine d="M 680 388 C 790 380 820 350 878 335" dur={2.1} delay={1.3} color="#9DBBF5" />
+      <EdgeLine d="M 735 518 C 820 500 850 420 890 356" dur={2.3} delay={1.7} color="#9DBBF5" />
+      <EdgeLine d="M 895 358 C 780 560 420 560 300 372" dur={3.2} delay={0.2} color="#C6D8F7" back />
       <GrowingBars x={250} y={220} />
-      <GrowingBars x={952} y={220} color="#6FE7A0" />
+      <GrowingBars x={952} y={220} color="#C6D8F7" />
       <BreathingGraph x={700} y={455} />
-      <BreathingGraph x={460} y={140} color="#7DE3F6" />
+      <BreathingGraph x={460} y={140} color="#5B8DEF" />
       <text x="1055" y="345" className="cpx-t" opacity=".5">score 0.98</text>
       <text x="120" y="120" className="cpx-t" opacity=".4">agents: 5 active</text>
     </svg>
@@ -217,7 +217,7 @@ function InfraLayer() {
             <g key={i}>
               <rect x={x} y={y} width="72" height="56" rx="9" fill="none" stroke="rgba(255,255,255,.65)" strokeWidth="1" />
               <rect x={x + 10} y={y + 10} width="20" height="14" rx="3" fill="rgba(255,255,255,.15)" />
-              <circle cx={x + 60} cy={y + 12} r="2.5" fill="#7DE3F6">
+              <circle cx={x + 60} cy={y + 12} r="2.5" fill="#5B8DEF">
                 <animate attributeName="opacity" values="0.15;1;0.15" dur="3.6s" begin={`${i * 0.6}s`} repeatCount="indefinite" />
               </circle>
             </g>
@@ -228,7 +228,7 @@ function InfraLayer() {
       <g>
         <rect x="140" y="430" width="340" height="46" rx="10" fill="none" stroke="rgba(255,255,255,.6)" strokeWidth="1" />
         {[0, 1, 2].map((i) => (
-          <rect key={i} y="443" width="26" height="20" rx="4" fill="rgba(125,227,246,.55)">
+          <rect key={i} y="443" width="26" height="20" rx="4" fill="rgba(91,141,239,.55)">
             <animate attributeName="x" values="150;444" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
             <animate attributeName="opacity" values="0;1;1;0" dur="4.5s" begin={`${i * 1.5}s`} repeatCount="indefinite" />
           </rect>
@@ -238,8 +238,8 @@ function InfraLayer() {
       <g fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="1.1">
         <path d="M 700 180 a 36 11 0 0 1 72 0 v 60 a 36 11 0 0 1 -72 0 z" />
         <ellipse cx="736" cy="180" rx="36" ry="11" />
-        <path d="M 880 180 a 36 11 0 0 1 72 0 v 60 a 36 11 0 0 1 -72 0 z" stroke="#B9A6FF" />
-        <ellipse cx="916" cy="180" rx="36" ry="11" stroke="#B9A6FF" />
+        <path d="M 880 180 a 36 11 0 0 1 72 0 v 60 a 36 11 0 0 1 -72 0 z" stroke="#9DBBF5" />
+        <ellipse cx="916" cy="180" rx="36" ry="11" stroke="#9DBBF5" />
         <path d="M 700 400 c 24 -18 56 -6 52 20 c 20 -6 36 16 22 32 c 16 6 10 32 -12 32 h -70 c -24 0 -30 -28 -10 -36 c -18 -12 -8 -40 18 -48 z" opacity=".7" />
       </g>
       <g className="cpx-t" opacity=".45">
@@ -251,7 +251,7 @@ function InfraLayer() {
       <text x="575" y="284" textAnchor="middle" fill="#FCD34D" fontSize="24" fontStyle="italic" fontFamily="serif">λ</text>
       <EdgeLine d="M 520 205 C 530 230 535 240 545 262" dur={2.4} />
       <EdgeLine d="M 605 270 C 650 250 660 230 698 215" dur={2.2} delay={0.7} />
-      <EdgeLine d="M 605 285 C 720 330 800 260 880 225" dur={2.8} delay={1.2} color="#B9A6FF" />
+      <EdgeLine d="M 605 285 C 720 330 800 260 880 225" dur={2.8} delay={1.2} color="#9DBBF5" />
     </svg>
   );
 }
@@ -363,16 +363,9 @@ export default function HeroSheetStack() {
     <div ref={trackRef} className="cpx-track">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-        .cpx-track { height: 500vh; background: #060608; font-family: 'Space Grotesk', system-ui, sans-serif; }
+        .cpx-track { height: 500vh; background: #060A12; font-family: 'Space Grotesk', system-ui, sans-serif; }
         .cpx-viewport { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #F5F6F7; }
-        .cpx-nav-scrim { position: absolute; top: 0; left: 0; right: 0; z-index: 15; height: 260px; background: linear-gradient(to bottom, rgba(0,0,0,.85) 0%, rgba(0,0,0,.55) 35%, rgba(0,0,0,.15) 70%, rgba(0,0,0,0) 100%); pointer-events: none; }
-        .cpx-nav { position: absolute; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; }
-        .cpx-logo { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-        .cpx-logo-mark { width: 18px; height: 18px; border: 1.4px solid #7DE3F6; border-radius: 5px; position: relative; }
-        .cpx-logo-mark::after { content:''; position:absolute; inset:4px; background:#7DE3F6; border-radius:2px; }
-        .cpx-nav-links { display: flex; gap: 26px; font-size: 14px; color: rgba(245,246,247,.55); }
-        .cpx-btn { font-family: inherit; font-size: 13.5px; padding: 9px 18px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,.25); background: transparent; color: #F5F6F7; }
-        .cpx-btn-primary { background: #F5F6F7; color: #0a0a0c; border-color: #F5F6F7; font-weight: 500; }
+        .cpx-nav-scrim { position: absolute; top: 0; left: 0; right: 0; z-index: 15; height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,.85) 0%, rgba(0,0,0,.55) 35%, rgba(0,0,0,.15) 70%, rgba(0,0,0,0) 100%); pointer-events: none; }
 
         .cpx-stage { position: relative; width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; perspective: 1000px; perspective-origin: 58% 40%; }
         .cpx-card-wrap { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; will-change: transform; }
@@ -386,7 +379,7 @@ export default function HeroSheetStack() {
         /* Blätter: transparent getönt — KEIN backdrop-filter (erzwingt Flattening!) */
         .cpx-layer-infra  { border: 1px solid rgba(255,255,255,.55); border-radius: 26px; background: rgba(16,16,26,.30); }
         .cpx-layer-data   { border: 1px solid rgba(255,255,255,.40); border-radius: 24px; background: rgba(18,18,30,.26); }
-        .cpx-layer-agents { border: 1px solid rgba(185,166,255,.55); border-radius: 22px; background: linear-gradient(135deg, rgba(140,110,220,.18), rgba(80,140,200,.09)); }
+        .cpx-layer-agents { border: 1px solid rgba(157,187,245,.55); border-radius: 22px; background: linear-gradient(135deg, rgba(62,114,208,.18), rgba(80,140,200,.09)); }
 
         .cpx-conn3d { position: absolute; left: 0; top: 0; height: 0; border-top: 1.5px dashed; transform-origin: left center; pointer-events: none; }
         .cpx-conn3d-dot { position: absolute; left: -3px; top: -3.5px; width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
@@ -407,16 +400,11 @@ export default function HeroSheetStack() {
         }
         .cpx-scrollhint .box { border: 1px solid rgba(255,255,255,.3); border-radius: 8px; padding: 6px 9px; animation: cpxBob 1.6s ease-in-out infinite; }
         @keyframes cpxBob { 50% { transform: translateY(4px); } }
-        @media (max-width: 760px) { .cpx-nav { padding: 16px 20px; } .cpx-nav-links { display: none; } .cpx-scrollhint { padding-left: 60px; } }
+        @media (max-width: 760px) { .cpx-scrollhint { padding-left: 60px; } }
       `}</style>
 
       <div className="cpx-viewport">
         <div className="cpx-nav-scrim" aria-hidden="true" />
-        <nav className="cpx-nav" style={{ opacity: Math.max(heroTextOut, finalTextIn) }}>
-          <div className="cpx-logo"><span className="cpx-logo-mark" />Cloud Pioneers</div>
-          <div className="cpx-nav-links"><span>Lösungen</span><span>Plattform</span><span>Referenzen</span></div>
-          <a href="#kontakt" className="cpx-btn cpx-btn-primary">Gespräch vereinbaren</a>
-        </nav>
 
         <div className="cpx-stage">
           <div ref={wrapRef} className="cpx-card-wrap"
@@ -456,13 +444,13 @@ export default function HeroSheetStack() {
             {CONNECTIONS_1_2.map((c, i) => {
               const a = pt(c, sInfra), b = pt(c, sData);
               return <Connector3D key={`c12-${i}`} ax={a.x} ay={a.y} az={a.z}
-                bx={b.x} by={b.y} bz={b.z} opacity={connOpacity} color="rgba(125,227,246,.85)" />;
+                bx={b.x} by={b.y} bz={b.z} opacity={connOpacity} color="rgba(91,141,239,.85)" />;
             })}
             {/* Verbindungen: Layer 2 → 3 (violett) */}
             {CONNECTIONS_2_3.map((c, i) => {
               const a = pt(c, sData), b = pt(c, sAgents);
               return <Connector3D key={`c23-${i}`} ax={a.x} ay={a.y} az={a.z}
-                bx={b.x} by={b.y} bz={b.z} opacity={connOpacity} color="rgba(185,166,255,.85)" />;
+                bx={b.x} by={b.y} bz={b.z} opacity={connOpacity} color="rgba(157,187,245,.85)" />;
             })}
           </div>
 

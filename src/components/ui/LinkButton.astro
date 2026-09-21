@@ -1,0 +1,23 @@
+---
+/**
+ * Link im Button-Stil. Ersetzt <Button asChild><a/></Button>: Radix-Slot funktioniert
+ * bei statisch gerenderten React-Komponenten in Astro nicht, der Button blieb ungestylt.
+ */
+interface Props {
+	href: string;
+	size?: 'sm' | 'lg';
+	class?: string;
+}
+const { href, size = 'sm', class: className } = Astro.props;
+---
+
+<a
+	href={href}
+	class:list={[
+		'inline-flex shrink-0 items-center justify-center rounded-lg bg-primary font-medium whitespace-nowrap text-primary-foreground transition-colors hover:bg-primary/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+		size === 'sm' ? 'h-9 px-4 text-sm' : 'h-11 px-6 text-[15px]',
+		className,
+	]}
+>
+	<slot />
+</a>

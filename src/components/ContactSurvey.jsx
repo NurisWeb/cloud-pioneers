@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 const INTENTS = [
-	{ id: 'automate', label: 'Prozesse automatisieren', signal: '#7DE3F6' },
-	{ id: 'testing', label: 'Testfälle aus Anforderungen', signal: '#7DE3F6' },
-	{ id: 'staffing', label: 'Routineaufgaben entlasten', signal: '#6FE7A0' },
-	{ id: 'consulting', label: 'Erstmal nur beraten lassen', signal: '#B9A6FF' },
+	{ id: 'automate', label: 'Prozesse automatisieren', signal: '#5B8DEF' },
+	{ id: 'testing', label: 'Testfälle aus Anforderungen', signal: '#5B8DEF' },
+	{ id: 'staffing', label: 'Routineaufgaben entlasten', signal: '#C6D8F7' },
+	{ id: 'consulting', label: 'Erstmal nur beraten lassen', signal: '#9DBBF5' },
 ];
 
 const URGENCY = [
@@ -28,8 +28,8 @@ function ChipGroup({ options, value, onChange }) {
 						aria-pressed={active}
 						className="rounded-full border px-4 py-2.5 text-sm transition-all duration-200"
 						style={{
-							borderColor: active ? (opt.signal ?? '#7DE3F6') : 'rgba(255,255,255,0.12)',
-							backgroundColor: active ? `${opt.signal ?? '#7DE3F6'}1A` : 'transparent',
+							borderColor: active ? (opt.signal ?? '#5B8DEF') : 'rgba(255,255,255,0.12)',
+							backgroundColor: active ? `${opt.signal ?? '#5B8DEF'}1A` : 'transparent',
 							color: active ? '#F5F6F7' : 'rgba(245,246,247,0.7)',
 							transform: active ? 'translateY(-1px)' : 'none',
 						}}
@@ -103,7 +103,7 @@ export default function ContactSurvey() {
 						className="h-1.5 rounded-full transition-all duration-300"
 						style={{
 							width: i === stepIndex ? '28px' : '14px',
-							backgroundColor: i <= stepIndex ? '#7DE3F6' : 'rgba(255,255,255,0.15)',
+							backgroundColor: i <= stepIndex ? '#5B8DEF' : 'rgba(255,255,255,0.15)',
 						}}
 					/>
 				))}

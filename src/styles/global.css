@@ -58,41 +58,41 @@
 }
 
 :root {
-    --background: #060608;
+    --background: #060A12;
     --foreground: #F5F6F7;
-    --card: #0E0E13;
+    --card: #0C1220;
     --card-foreground: #F5F6F7;
-    --popover: #0E0E13;
+    --popover: #0C1220;
     --popover-foreground: #F5F6F7;
-    --primary: #F5F6F7;
-    --primary-foreground: #0A0A0C;
-    --secondary: #14141B;
+    --primary: #3E72D0;
+    --primary-foreground: #FFFFFF;
+    --secondary: #131B2C;
     --secondary-foreground: #F5F6F7;
-    --muted: #14141B;
+    --muted: #131B2C;
     --muted-foreground: rgba(245, 246, 247, 0.6);
-    --accent: #14141B;
+    --accent: #131B2C;
     --accent-foreground: #F5F6F7;
     --destructive: oklch(0.704 0.191 22.216);
     --border: rgba(255, 255, 255, 0.12);
     --input: rgba(255, 255, 255, 0.15);
-    --ring: #7DE3F6;
-    --signal-cyan: #7DE3F6;
-    --signal-violet: #B9A6FF;
-    --signal-green: #6FE7A0;
-    --chart-1: #7DE3F6;
-    --chart-2: #B9A6FF;
-    --chart-3: #6FE7A0;
+    --ring: #5B8DEF;
+    --signal-cyan: #5B8DEF;
+    --signal-violet: #9DBBF5;
+    --signal-green: #C6D8F7;
+    --chart-1: #5B8DEF;
+    --chart-2: #9DBBF5;
+    --chart-3: #C6D8F7;
     --chart-4: rgba(245, 246, 247, 0.4);
     --chart-5: rgba(245, 246, 247, 0.22);
     --radius: 0.75rem;
-    --sidebar: #0E0E13;
+    --sidebar: #0C1220;
     --sidebar-foreground: #F5F6F7;
     --sidebar-primary: #F5F6F7;
-    --sidebar-primary-foreground: #0A0A0C;
-    --sidebar-accent: #14141B;
+    --sidebar-primary-foreground: #0A0E18;
+    --sidebar-accent: #131B2C;
     --sidebar-accent-foreground: #F5F6F7;
     --sidebar-border: rgba(255, 255, 255, 0.12);
-    --sidebar-ring: #7DE3F6;
+    --sidebar-ring: #5B8DEF;
 }
 
 @layer base {
@@ -104,6 +104,8 @@
     }
   html {
     @apply font-sans;
+    /* Platz für den fixierten Header bei Anker-Sprüngen */
+    scroll-padding-top: 5rem;
     }
   h1, h2, h3, h4 {
     @apply font-heading tracking-tight;

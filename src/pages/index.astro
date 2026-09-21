@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import { PAGES } from '@/lib/seo';
 import HeroSheetStack from '../components/HeroSheetStack.jsx';
-import SiteHeader from '../components/sections/SiteHeader.astro';
 import TrustBar from '../components/sections/TrustBar.astro';
 import Team from '../components/sections/Team.astro';
 import CtaBanner from '../components/sections/CtaBanner.astro';
@@ -13,12 +12,10 @@ import ProjectStaffing from '../components/sections/ProjectStaffing.astro';
 import Expertise from '../components/sections/Expertise.astro';
 import Security from '../components/sections/Security.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
-import SiteFooter from '../components/sections/SiteFooter.astro';
 ---
 
 <Layout seo={PAGES.home}>
 	<HeroSheetStack client:load />
-	<SiteHeader />
 	<TrustBar />
 	<Team />
 	<HowItWorks />
@@ -34,5 +31,4 @@ import SiteFooter from '../components/sections/SiteFooter.astro';
 	/>
 	<Security />
 	<ContactSection />
-	<SiteFooter />
 </Layout>

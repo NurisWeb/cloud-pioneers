@@ -1,24 +1,66 @@
 ---
-import { Button } from '@/components/ui/button';
+/**
+ * Einziger Header der Seite: fest oben, über der Hero transparent,
+ * nach dem ersten Scrollen mit dunklem Hintergrund (data-scrolled).
+ */
+import LinkButton from '@/components/ui/LinkButton.astro';
+
+const links = [
+	{ href: '/#ueber-uns', label: 'Über uns' },
+	{ href: '/#ablauf', label: 'Ablauf' },
+	{ href: '/#expertise', label: 'Expertise' },
+	{ href: '/#sicherheit', label: 'Sicherheit' },
+	{ href: '/#kontakt', label: 'Kontakt' },
+];
 ---
 
-<header class="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-	<div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-		<a href="/" class="flex items-center gap-2 font-heading text-[15px] font-medium">
-			<span class="relative flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border border-signal-cyan">
-				<span class="h-2 w-2 rounded-[2px] bg-signal-cyan"></span>
-			</span>
-			Cloud Pioneers
+<header
+	id="site-header"
+	class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color] duration-300 data-[scrolled]:border-border/60 data-[scrolled]:bg-background/85 data-[scrolled]:backdrop-blur-md"
+>
+	<div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-6">
+		<a href="/" class="shrink-0" aria-label="Cloud Pioneers – Startseite">
+			<img src="/logo-light.svg" alt="Cloud Pioneers" width="137" height="32" class="h-7 w-auto md:h-8" />
 		</a>
-		<nav class="hidden items-center gap-8 text-sm text-muted-foreground lg:flex">
-			<a href="#ueber-uns" class="transition-colors hover:text-foreground">Über uns</a>
-			<a href="#ablauf" class="transition-colors hover:text-foreground">Ablauf</a>
-			<a href="#expertise" class="transition-colors hover:text-foreground">Expertise</a>
-			<a href="#sicherheit" class="transition-colors hover:text-foreground">Sicherheit</a>
-			<a href="#kontakt" class="transition-colors hover:text-foreground">Kontakt</a>
+
+		<nav aria-label="Hauptnavigation" class="hidden items-center gap-8 text-sm text-muted-foreground lg:flex">
+			{links.map((l) => <a href={l.href} class="transition-colors hover:text-foreground">{l.label}</a>)}
 		</nav>
-		<Button size="sm" asChild>
-			<a href="#kontakt">Gespräch vereinbaren</a>
-		</Button>
+
+		<div class="flex items-center gap-3">
+			<div class="hidden sm:block"><LinkButton href="/#kontakt">Gespräch vereinbaren</LinkButton></div>
+
+			<!-- Mobil: Menü ohne JavaScript -->
+			<details class="group lg:hidden">
+				<summary
+					class="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-lg border border-border text-foreground [&::-webkit-details-marker]:hidden"
+					aria-label="Menü"
+				>
+					<svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+						<path class="group-open:hidden" d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+						<path class="hidden group-open:block" d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					</svg>
+				</summary>
+				<nav aria-label="Mobile Navigation" class="absolute inset-x-0 top-16 border-b border-border/60 bg-background px-6 pt-2 pb-6">
+					<ul class="divide-y divide-border/60">
+						{links.map((l) => (
+							<li><a href={l.href} class="block py-3 text-base text-foreground">{l.label}</a></li>
+						))}
+					</ul>
+					<LinkButton href="/#kontakt" size="lg" class="mt-4 w-full">Gespräch vereinbaren</LinkButton>
+				</nav>
+			</details>
+		</div>
 	</div>
 </header>
+
+<script>
+	const header = document.getElementById('site-header');
+	const update = () => header?.toggleAttribute('data-scrolled', window.scrollY > 24);
+	update();
+	window.addEventListener('scroll', update, { passive: true });
+	// Mobilmenü nach Klick auf einen Link schließen
+	header?.querySelectorAll('details a').forEach((a) =>
+		a.addEventListener('click', () => header.querySelector('details')?.removeAttribute('open'))
+	);
+</script>
