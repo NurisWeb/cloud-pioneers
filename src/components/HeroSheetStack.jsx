@@ -184,7 +184,7 @@ function DataLayer() {
         <text x="80" y="238">tokens/s 1.4k</text>
         <text x="480" y="238">chunks 128</text>
         <text x="900" y="238">emb dim 1536</text>
-        <text x="80" y="403">latency p95 212ms</text>
+        <text x="80" y="403">latency p95 monitored</text>
         <text x="900" y="403">dedup −37%</text>
       </g>
       <g fill="rgba(255,255,255,.45)" fontFamily="'IBM Plex Mono', monospace" fontSize="13">
@@ -415,7 +415,7 @@ export default function HeroSheetStack() {
         <nav className="cpx-nav" style={{ opacity: Math.max(heroTextOut, finalTextIn) }}>
           <div className="cpx-logo"><span className="cpx-logo-mark" />Cloud Pioneers</div>
           <div className="cpx-nav-links"><span>Lösungen</span><span>Plattform</span><span>Referenzen</span></div>
-          <button className="cpx-btn cpx-btn-primary">Demo buchen</button>
+          <a href="#kontakt" className="cpx-btn cpx-btn-primary">Gespräch vereinbaren</a>
         </nav>
 
         <div className="cpx-stage">
