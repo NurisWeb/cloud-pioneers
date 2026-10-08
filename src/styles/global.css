@@ -189,3 +189,75 @@
     navigation: none;
   }
 }
+
+/* ==========================================================================
+   Editorial-Bausteine (gleiche Sprache wie die Insights):
+   Haarlinien statt Schatten, Mono-Rubriken, 12-Spalten-Raster, 2px-Ecken.
+   Bewegung: transform/opacity, scroll-gekoppelt per CSS, nur ohne reduzierte Bewegung.
+   ========================================================================== */
+:root {
+	--line: #1c2535;
+	--rule: #2c3850;
+	--signal-ink: #82a8f3;
+	--ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+	--cp-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.cp-wrap { max-width: 72rem; margin-inline: auto; padding-inline: 1.5rem; }
+.cp-sec { position: relative; padding-block: clamp(72px, 10vw, 128px); }
+.cp-sec--alt { background: color-mix(in srgb, var(--card) 45%, var(--background)); border-block: 1px solid var(--line); }
+
+/* Abschnittskopf */
+.cp-head { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; padding-top: 18px; margin-bottom: clamp(36px, 5vw, 56px); }
+.cp-head::before,
+.cp-head::after { content: ''; position: absolute; left: 0; top: 0; }
+.cp-head::before { right: 0; height: 1px; background: var(--rule); }
+.cp-head::after { width: 56px; height: 2px; top: -0.5px; background: var(--primary); transform-origin: 0 50%; }
+.cp-head__label { grid-column: 1 / -1; margin: 0; display: flex; gap: 10px; font-family: var(--cp-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--signal-ink); }
+.cp-head__label span { color: var(--muted-foreground); }
+.cp-head__main { grid-column: 1 / -1; margin-top: 12px; }
+.cp-head h2 { margin: 0; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.1; font-weight: 500; max-width: 22ch; }
+.cp-head__lead { margin: 16px 0 0; max-width: 60ch; font-size: 17px; line-height: 1.6; color: var(--muted-foreground); }
+@media (min-width: 900px) {
+	.cp-head__label { grid-column: 1 / span 3; padding-top: 12px; }
+	.cp-head__main { grid-column: 4 / span 9; margin-top: 0; }
+}
+
+/* Haarlinien-Raster mit Zellen */
+.cp-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.cp-cell { position: relative; background: var(--background); padding: 22px 22px 26px; transition: background-color 0.35s; }
+.cp-cell::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--primary); transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.6s var(--ease-out-expo); }
+.cp-cell:hover { background: var(--card); }
+.cp-cell:hover::before { transform: scaleX(1); }
+.cp-cell__no { display: block; font-family: var(--cp-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--muted-foreground); }
+.cp-cell h3 { margin: 14px 0 0; font-size: 18px; line-height: 1.3; font-weight: 500; }
+.cp-cell p { margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted-foreground); }
+.cp-sec--alt .cp-cell { background: color-mix(in srgb, var(--card) 45%, var(--background)); }
+.cp-sec--alt .cp-cell:hover { background: var(--card); }
+
+/* Listen mit Gedankenstrich (Mono-Variante für technische Fakten) */
+.cp-dash { margin: 16px 0 0; padding: 0; list-style: none; }
+.cp-dash li { display: grid; grid-template-columns: 18px 1fr; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14.5px; line-height: 1.5; color: var(--muted-foreground); }
+.cp-dash li::before { content: '—'; color: var(--signal-ink); }
+.cp-dash--mono li { font-family: var(--cp-mono); font-size: 13px; }
+
+/* Mono-Kennzeichnung (z. B. Kopf einer Spalte) */
+.cp-tag { display: inline-flex; align-items: center; gap: 8px; font-family: var(--cp-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--foreground); }
+.cp-tag::before { content: ''; width: 6px; height: 6px; background: var(--primary); }
+
+/* Bild im Rahmen */
+.cp-media { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); }
+.cp-media img { display: block; width: 100%; height: auto; }
+
+@media (prefers-reduced-motion: no-preference) {
+	@supports (animation-timeline: view()) {
+		.cp-head::after { animation: cp-draw linear both; animation-timeline: view(); animation-range: entry 10% cover 30%; }
+		.cp-head h2,
+		.cp-rise { animation: cp-up linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+		.cp-grid > .cp-cell { animation: cp-up linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+		.cp-media img { animation: cp-zoom linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+	}
+}
+@keyframes cp-draw { from { transform: scaleX(0); } }
+@keyframes cp-up { from { opacity: 0; transform: translateY(18px); } }
+@keyframes cp-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }

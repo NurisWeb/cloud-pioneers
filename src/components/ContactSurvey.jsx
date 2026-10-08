@@ -3,8 +3,8 @@ import { useState } from 'react';
 const INTENTS = [
 	{ id: 'automate', label: 'Prozesse automatisieren', signal: '#5B8DEF' },
 	{ id: 'testing', label: 'Testfälle aus Anforderungen', signal: '#5B8DEF' },
-	{ id: 'staffing', label: 'Routineaufgaben entlasten', signal: '#C6D8F7' },
-	{ id: 'consulting', label: 'Erstmal nur beraten lassen', signal: '#9DBBF5' },
+	{ id: 'staffing', label: 'Routineaufgaben entlasten', signal: '#5B8DEF' },
+	{ id: 'consulting', label: 'Erstmal nur beraten lassen', signal: '#5B8DEF' },
 ];
 
 const URGENCY = [
@@ -31,8 +31,7 @@ function ChipGroup({ options, value, onChange }) {
 							borderColor: active ? (opt.signal ?? '#5B8DEF') : 'rgba(255,255,255,0.12)',
 							backgroundColor: active ? `${opt.signal ?? '#5B8DEF'}1A` : 'transparent',
 							color: active ? '#F5F6F7' : 'rgba(245,246,247,0.7)',
-							transform: active ? 'translateY(-1px)' : 'none',
-						}}
+													}}
 					>
 						{opt.label}
 					</button>
@@ -78,9 +77,9 @@ export default function ContactSurvey() {
 
 	if (submitted) {
 		return (
-			<div className="mx-auto max-w-lg rounded-xl border border-border/60 bg-card/40 p-10 text-center" data-reveal>
-				<div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-signal-green/50">
-					<span className="h-2.5 w-2.5 rounded-full bg-signal-green" />
+			<div className="rounded-xl border border-border/60 bg-card/40 p-10 text-center">
+				<div className="mx-auto flex h-11 w-11 items-center justify-center border border-primary">
+					<span className="h-2.5 w-2.5 bg-primary" />
 				</div>
 				<h3 className="mt-4 font-heading text-xl font-medium">Ihr Mail-Programm sollte sich gerade öffnen</h3>
 				<p className="mt-2 text-sm text-muted-foreground">
@@ -95,18 +94,20 @@ export default function ContactSurvey() {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="mx-auto max-w-lg rounded-xl border border-border/60 bg-card/40 p-8 md:p-10">
-			<div className="flex items-center justify-center gap-2">
-				{STEPS.map((s, i) => (
-					<span
-						key={s}
-						className="h-1.5 rounded-full transition-all duration-300"
-						style={{
-							width: i === stepIndex ? '28px' : '14px',
-							backgroundColor: i <= stepIndex ? '#5B8DEF' : 'rgba(255,255,255,0.15)',
-						}}
-					/>
-				))}
+		<form onSubmit={handleSubmit} className="rounded-xl border border-border/60 bg-card/40 p-6 md:p-10">
+			<div className="flex items-center justify-between gap-4">
+				<span className="font-mono text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+					Schritt {stepIndex + 1} / {STEPS.length}
+				</span>
+				<div className="grid flex-1 max-w-[180px] grid-cols-3 gap-1" aria-hidden="true">
+					{STEPS.map((s, i) => (
+						<span
+							key={s}
+							className="h-0.5 transition-colors duration-300"
+							style={{ backgroundColor: i <= stepIndex ? '#3E72D0' : 'rgba(255,255,255,0.12)' }}
+						/>
+					))}
+				</div>
 			</div>
 
 			<div className="mt-8 min-h-[220px]">

@@ -1,53 +1,42 @@
 ---
+import SectionHead from '@/components/SectionHead.astro';
+
 const panels = [
-	{
-		label: 'Infrastruktur',
-		dot: 'bg-signal-cyan',
-		ring: 'border-signal-cyan/40',
-		items: ['VPC in eu-central-1', 'ECS-Tasks, autoskaliert', 'SQS für Ingest-Queues', 'RDS + Vector Store'],
-	},
-	{
-		label: 'Datenfluss',
-		dot: 'bg-white',
-		ring: 'border-white/30',
-		items: ['Chunking & Embedding', '1536-dim Vektorraum', 'Dedup gegen Vector Store', 'Latenz-Monitoring (p95)'],
-	},
-	{
-		label: 'Agenten',
-		dot: 'bg-signal-violet',
-		ring: 'border-signal-violet/40',
-		items: ['1 Orchestrator, 5 Spezialisten', 'Parallele Ausführung', 'Unabhängiger Validator', 'Vollständiges Audit-Log'],
-	},
+	{ label: 'Infrastruktur', items: ['VPC in eu-central-1', 'ECS-Tasks, autoskaliert', 'SQS für Ingest-Queues', 'RDS + Vector Store'] },
+	{ label: 'Datenfluss', items: ['Chunking & Embedding', '1536-dim Vektorraum', 'Dedup gegen Vector Store', 'Latenz-Monitoring (p95)'] },
+	{ label: 'Agenten', items: ['1 Orchestrator, 5 Spezialisten', 'Parallele Ausführung', 'Unabhängiger Validator', 'Vollständiges Audit-Log'] },
 ];
 ---
 
-<section id="architektur" class="border-t border-border/60 bg-card/30 py-24 md:py-32">
-	<div class="mx-auto max-w-6xl px-6">
-		<div class="max-w-xl">
-			<p class="font-mono text-[11px] tracking-[0.14em] text-signal-violet uppercase">Architektur</p>
-			<h2 class="mt-3 text-3xl font-medium md:text-4xl">Unter der Haube</h2>
-			<p class="mt-4 text-muted-foreground">
-				Keine Blackbox. Jede Schicht ist beobachtbar, jede Entscheidung nachvollziehbar.
-			</p>
-		</div>
+<section id="architektur" class="cp-sec cp-sec--alt overflow-hidden">
+	<div class="arch-grid" aria-hidden="true"></div>
+	<div class="cp-wrap relative">
+		<SectionHead no="02" label="Architektur" title="Unter der Haube" lead="Keine Blackbox. Jede Schicht ist beobachtbar, jede Entscheidung nachvollziehbar." />
 
-		<div class="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
-			{panels.map((p) => (
-				<div class="rounded-xl border border-border/60 bg-background p-6">
-					<div class={`inline-flex items-center gap-2 rounded-sm border ${p.ring} px-3 py-1`}>
-						<span class={`h-1.5 w-1.5 rounded-full ${p.dot}`} aria-hidden="true"></span>
-						<span class="font-mono text-[11px] tracking-wide text-foreground/80">{p.label}</span>
+		<div class="cp-grid grid-cols-1 md:grid-cols-3">
+			{panels.map((p, i) => (
+				<div class="cp-cell">
+					<div class="flex items-center justify-between">
+						<span class="cp-tag">{p.label}</span>
+						<span class="cp-cell__no">L{i + 1}</span>
 					</div>
-					<ul class="mt-5 space-y-2.5 font-mono text-[13px] text-muted-foreground">
-						{p.items.map((item) => (
-							<li class="flex items-baseline gap-2">
-								<span class="text-foreground/30">—</span>
-								{item}
-							</li>
-						))}
+					<ul class="cp-dash cp-dash--mono mt-6">
+						{p.items.map((item) => <li>{item}</li>)}
 					</ul>
 				</div>
 			))}
 		</div>
 	</div>
 </section>
+
+<style>
+	/* technisches Raster im Hintergrund, zu den Rändern ausgeblendet */
+	.arch-grid {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background-image: linear-gradient(to right, rgb(245 246 247 / 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgb(245 246 247 / 0.05) 1px, transparent 1px);
+		background-size: 72px 72px;
+		mask-image: radial-gradient(ellipse 60% 70% at 85% 10%, #000 10%, transparent 70%);
+	}
+</style>

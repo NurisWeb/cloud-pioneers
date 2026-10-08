@@ -1,54 +1,49 @@
 ---
+import SectionHead from '@/components/SectionHead.astro';
+
 const steps = [
-	{
-		n: '01',
-		title: 'Eingang',
-		color: 'text-foreground',
-		bar: 'bg-foreground/30',
-		body: 'Eine Anfrage, ein Dokument oder ein Event trifft ein — über API, Postfach oder bestehendes Tool.',
-	},
-	{
-		n: '02',
-		title: 'Orchestrierung',
-		color: 'text-signal-violet',
-		bar: 'bg-signal-violet',
-		body: 'Der Orchestrator-Agent zerlegt die Aufgabe und verteilt sie an die passenden Spezialisten.',
-	},
-	{
-		n: '03',
-		title: 'Parallele Agenten',
-		color: 'text-signal-cyan',
-		bar: 'bg-signal-cyan',
-		body: 'RAG-Retrieval, Embedding, Dokumenten-Analyse und Deduplizierung laufen gleichzeitig, nicht nacheinander.',
-	},
-	{
-		n: '04',
-		title: 'Validierung',
-		color: 'text-signal-green',
-		bar: 'bg-signal-green',
-		body: 'Ein unabhängiger Validator-Agent prüft jedes Ergebnis gegen feste Kriterien, bevor es zurückkommt.',
-	},
+	{ title: 'Eingang', body: 'Eine Anfrage, ein Dokument oder ein Event trifft ein — über API, Postfach oder bestehendes Tool.' },
+	{ title: 'Orchestrierung', body: 'Der Orchestrator-Agent zerlegt die Aufgabe und verteilt sie an die passenden Spezialisten.' },
+	{ title: 'Parallele Agenten', body: 'RAG-Retrieval, Embedding, Dokumenten-Analyse und Deduplizierung laufen gleichzeitig, nicht nacheinander.' },
+	{ title: 'Validierung', body: 'Ein unabhängiger Validator-Agent prüft jedes Ergebnis gegen feste Kriterien, bevor es zurückkommt.' },
 ];
 ---
 
-<section id="ablauf" class="mx-auto max-w-6xl px-6 py-24 md:py-32">
-	<div class="max-w-xl">
-		<p class="font-mono text-[11px] tracking-[0.14em] text-signal-cyan uppercase">Ablauf</p>
-		<h2 class="mt-3 text-3xl font-medium md:text-4xl">Vom Auftrag zum geprüften Ergebnis</h2>
-		<p class="mt-4 text-muted-foreground">
-			Kein Chatbot, der rät. Eine Pipeline aus spezialisierten Agenten, die in fester Reihenfolge
-			zusammenarbeiten — und ein Validator, der am Ende gegenzeichnet.
-		</p>
-	</div>
+<section id="ablauf" class="cp-sec">
+	<div class="cp-wrap">
+		<SectionHead
+			no="01"
+			label="Ablauf"
+			title="Vom Auftrag zum geprüften Ergebnis"
+			lead="Kein Chatbot, der rät. Eine Pipeline aus spezialisierten Agenten, die in fester Reihenfolge zusammenarbeiten — und ein Validator, der am Ende gegenzeichnet."
+		/>
 
-	<ol class="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border/60 bg-border/60 md:grid-cols-4">
-		{steps.map((s) => (
-			<li class="relative bg-background p-6">
-				<span class={`absolute inset-x-0 top-0 h-[2px] ${s.bar}`} aria-hidden="true"></span>
-				<span class="font-mono text-xs text-muted-foreground">{s.n}</span>
-				<h3 class={`mt-3 font-heading text-lg font-medium ${s.color}`}>{s.title}</h3>
-				<p class="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-			</li>
-		))}
-	</ol>
+		<ol class="cp-grid steps grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+			{steps.map((s, i) => (
+				<li class="cp-cell" style={`--i: ${i}`}>
+					<span class="steps__bar" aria-hidden="true"></span>
+					<span class="cp-cell__no">{String(i + 1).padStart(2, '0')} / 04</span>
+					<h3>{s.title}</h3>
+					<p>{s.body}</p>
+				</li>
+			))}
+		</ol>
+	</div>
 </section>
+
+<style>
+	.steps { margin: 0; padding: 0; list-style: none; }
+	/* Fortschritt: jede Stufe füllt ihre Kante nacheinander, gekoppelt an das Scrollen */
+	.steps__bar { position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--rule); }
+	.steps__bar::after { content: ''; position: absolute; inset: 0; background: var(--primary); transform-origin: 0 50%; }
+	@media (prefers-reduced-motion: no-preference) {
+		@supports (animation-timeline: view()) {
+			.steps__bar::after {
+				animation: steps-fill linear both;
+				animation-timeline: view();
+				animation-range: entry calc(30% + var(--i) * 12%) entry calc(52% + var(--i) * 12%);
+			}
+		}
+	}
+	@keyframes steps-fill { from { transform: scaleX(0); } }
+</style>

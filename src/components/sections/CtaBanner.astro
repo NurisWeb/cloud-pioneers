@@ -1,4 +1,5 @@
 ---
+/** Abschlussband mit einem Handlungsaufruf: Haarlinien, Mono-Rubrik, Button rechts. */
 import LinkButton from '@/components/ui/LinkButton.astro';
 
 interface Props {
@@ -6,25 +7,36 @@ interface Props {
 	headline: string;
 	buttonLabel: string;
 	href?: string;
-	glow?: 'cyan' | 'violet' | 'green';
+	/** Früher Akzentfarbe des Lichtscheins; im Corporate-Design einheitlich Blau, bleibt für bestehende Aufrufe erhalten. */
+	glow?: string;
 }
 
-const { eyebrow, headline, buttonLabel, href = '/kontakt', glow = 'cyan' } = Astro.props;
-
-const glowColor = { cyan: '#5B8DEF', violet: '#9DBBF5', green: '#C6D8F7' }[glow];
+const { eyebrow, headline, buttonLabel, href = '/kontakt' } = Astro.props;
 ---
 
-<section class="relative overflow-hidden border-y border-border/60 bg-card/30">
-	<div
-		class="pointer-events-none absolute -top-24 left-1/2 h-64 w-[720px] -translate-x-1/2 rounded-full opacity-20 blur-[90px]"
-		style={{ backgroundColor: glowColor }}
-		aria-hidden="true"
-	></div>
-	<div class="relative mx-auto flex max-w-6xl flex-col items-center gap-5 px-6 py-16 text-center md:flex-row md:justify-between md:text-left" data-reveal>
-		<div>
-			{eyebrow && <p class="font-mono text-[11px] tracking-[0.14em] uppercase" style={{ color: glowColor }}>{eyebrow}</p>}
-			<h3 class="mt-2 font-heading text-2xl font-medium md:text-3xl">{headline}</h3>
+<section class="cta relative overflow-hidden border-y border-[var(--line)]">
+	<div class="cta__grid" aria-hidden="true"></div>
+	<div class="cp-wrap relative grid gap-8 py-14 md:grid-cols-12 md:items-end md:py-20">
+		<div class="cp-rise md:col-span-8">
+			{eyebrow && <p class="font-mono text-[11px] tracking-[0.14em] text-[var(--signal-ink)] uppercase">{eyebrow}</p>}
+			<h3 class="mt-3 max-w-[28ch] font-heading text-2xl leading-tight font-medium md:text-[34px]">{headline}</h3>
 		</div>
-		<LinkButton href={href} size="lg">{buttonLabel}</LinkButton>
+		<div class="cp-rise md:col-span-4 md:justify-self-end">
+			<LinkButton href={href} size="lg" class="group gap-3">
+				{buttonLabel}
+				<svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+			</LinkButton>
+		</div>
 	</div>
 </section>
+
+<style>
+	.cta { background: linear-gradient(110deg, color-mix(in srgb, var(--primary) 14%, var(--background)), var(--background) 60%); }
+	.cta__grid {
+		position: absolute;
+		inset: 0;
+		background-image: linear-gradient(to right, rgb(245 246 247 / 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgb(245 246 247 / 0.05) 1px, transparent 1px);
+		background-size: 56px 56px;
+		mask-image: linear-gradient(100deg, #000, transparent 55%);
+	}
+</style>

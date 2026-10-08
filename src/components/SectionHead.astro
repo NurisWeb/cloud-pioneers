@@ -1,0 +1,23 @@
+---
+/**
+ * Abschnittskopf im Insights-Stil: Haarlinie mit blauem Segment (zeichnet sich beim Scrollen),
+ * links Nummer + Rubrik in Mono, rechts Überschrift und optional Einleitung (12-Spalten-Raster).
+ */
+interface Props {
+	no?: string;
+	label: string;
+	title: string;
+	lead?: string;
+	id?: string;
+}
+const { no, label, title, lead, id } = Astro.props;
+---
+
+<div class="cp-head">
+	<p class="cp-head__label"><span>{no}</span>{label}</p>
+	<div class="cp-head__main">
+		<h2 id={id}>{title}</h2>
+		{lead && <p class="cp-head__lead">{lead}</p>}
+		<slot />
+	</div>
+</div>
