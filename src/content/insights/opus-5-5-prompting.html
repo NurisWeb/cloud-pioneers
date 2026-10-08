@@ -1,0 +1,351 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Dein Chatbot läuft seit Monaten mit dem Satz „Denk gründlich nach, bevor du antwortest“ im System-Prompt. Nach dem Wechsel auf Opus 5.5 starten die Antworten später, und besser werden sie nicht. Der Satz hat früher geholfen. Jetzt steht er im Weg.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Streich Sätze wie „denk gründlich nach“. Wie viel Opus 5.5 nachdenkt, regelst du über die Einstellung Effort, nicht über den Prompt.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Sag einem Agenten ausdrücklich, wann er aufhören darf. Sonst meldet er sich mitten in der Arbeit und wartet.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Nenn konkret, was du nicht willst. „Sei nicht generisch“ wirkt kaum, „keine Pillen-Buttons“ schon.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Ein Agent hält mitten in der Arbeit an</h2>
+    <p>Ein Agent soll vier Punkte abarbeiten. Scroll langsam: Die Grafik folgt deinem Scrollen und zeigt, wo Opus 5.5 aufhört und welcher Absatz im Prompt das verhindert. Rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="sp" id="s1-sp">
+          <span class="t-label">System-Prompt</span>
+          <p>Du stellst API-Endpunkte um. Niemand schaut zu.</p>
+          <p>Führe deine Aufgaben als Liste mit dem Werkzeug update_todos.</p>
+          <p class="sp-new" id="s1-new"><b>+ Stopp-Absatz</b><span class="sp-long">A message with no tool call in it ends your turn … </span>Status notes are welcome, … but put them in the same message as your next tool call.</p>
+        </div>
+        <div class="lane">
+          <div class="lane-head"><span class="t-label">Lauf</span><span class="cnt"><span id="s1-cnt">0 von 4 erledigt</span><i id="s1-bar"></i></span></div>
+          <ul class="todos" id="s1-todos"><li>/orders</li><li>/invoices</li><li>/customers</li><li>Tests</li></ul>
+          <div class="rows" id="s1-rows">
+            <div class="row"><span class="k">Werkzeug</span><span class="m">/orders umgestellt</span></div>
+            <div class="row"><span class="k">Werkzeug</span><span class="m">/invoices umgestellt</span></div>
+            <div class="row r3">
+              <div class="v va"><span class="k">Nur Text</span><span class="m" id="s1-msg"></span></div>
+              <div class="v vb"><span class="k">Text + Werkzeug</span><span class="m">„Zwei von vier fertig.“ /customers umgestellt</span></div>
+            </div>
+            <div class="row"><span class="k">Werkzeug</span><span class="m">Tests angepasst</span></div>
+            <div class="row end"><span class="k">Ende</span><span class="m">Fertig: alle vier Punkte erledigt</span></div>
+            <div class="halt" id="s1-halt"><span class="stamp" id="s1-stamp">Lauf endet</span><p class="halt-t" id="s1-ht">Zug endet. Niemand sagt „mach weiter“. Zwei Punkte bleiben offen.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Der Agent arbeitet.</b> Zwei Werkzeug-Aufrufe, zwei Endpunkte umgestellt. Auf seiner Liste stehen vier Punkte.</p></div>
+        <div class="cap" data-at="0.21"><span class="n">02</span><p><b>Ein Zwischenstand beendet den Lauf.</b> Die Nachricht kündigt den nächsten Schritt nur an. Ohne Werkzeug-Aufruf endet der Zug, und weil niemand zuschaut, geht es nie weiter.</p></div>
+        <div class="cap" data-at="0.41"><span class="n">03</span><p><b>Zurückspulen, ein Absatz kommt dazu.</b> Anthropics Stopp-Absatz nennt genau diesen Fall: Statusmeldungen gern, aber zusammen mit dem nächsten Schritt.</p></div>
+        <div class="cap" data-at="0.62"><span class="n">04</span><p><b>Derselbe Lauf, noch einmal.</b> Der Zwischenstand steht jetzt neben dem nächsten Aufruf. Der Zug endet dort nicht mehr.</p></div>
+        <div class="cap" data-at="0.86"><span class="n">05</span><p><b>4 von 4.</b> Der Agent hört erst auf, wenn alle vier Punkte erledigt sind.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="anders">
+  <div class="sec-head grid-12"><span class="t-label">01 Das Modell</span><h2>Was an Opus 5.5 anders ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Gute Prompts passen zum Verhalten des Modells. Anthropic beschreibt sechs Eigenschaften von Opus 5.5, die beim Prompten zählen. Jede hat eine direkte Folge für das, was du schreibst.</p>
+    </div>
+    <div class="wide">
+      <div class="tiles facts">
+        <div class="tile"><span class="tile-in"><b>Denkt immer mit</b><span class="d">Nachdenken lässt sich nicht mehr abschalten. Wie viel es denkt, steuert die Einstellung Effort, und deren Standard ist jetzt <code>medium</code>.</span><span class="to">Denk-Anweisungen kannst du streichen.</span></span></div>
+        <div class="tile"><span class="tile-in"><b>Meldet sich unterwegs</b><span class="d">Bei langen Aufgaben schreibt es Zwischenstände. Manche davon beenden seinen Zug, obwohl noch Arbeit offen ist.</span><span class="to">Sag ihm, wann Aufhören erlaubt ist.</span></span></div>
+        <div class="tile"><span class="tile-in"><b>Legt schnell los</b><span class="d">Bei locker beschriebenen Aufgaben fängt es sofort an, statt sich erst umzusehen.</span><span class="to">Sag ihm, wo es vorher nachschauen soll.</span></span></div>
+        <div class="tile"><span class="tile-in"><b>Achtet auf die Uhr</b><span class="d">Angaben zur verstrichenen Zeit nimmt es ernst. Ein Team aus mehreren Agenten arbeitet dann paralleler.</span><span class="to">Gib Agenten-Teams ein Zeitbudget mit.</span></span></div>
+        <div class="tile"><span class="tile-in"><b>Liest Bilder genauer</b><span class="d">Werte aus dichten Diagrammen, Pfeile in Flussdiagrammen, Uhrzeiten in Kalender-Screenshots: deutlich präziser als Opus 5.</span><span class="to">Alte Hilfsanweisungen für Bilder neu prüfen.</span></span></div>
+        <div class="tile"><span class="tile-in"><b>Hat Lieblings-Looks</b><span class="d">Ohne Vorgaben greift es bei Webseiten zu wenigen Standard-Stilen. „Vermeide KI-Look“ tauscht nur einen gegen den nächsten.</span><span class="to">Unerwünschte Muster einzeln benennen.</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="streichen">
+  <div class="sec-head grid-12"><span class="t-label">02 Streichen</span><h2>Diese Sätze kannst du streichen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Drei Arten von Sätzen stehen in vielen älteren Prompts. Auf Opus 5.5 bringen sie nichts mehr oder schaden sogar. Links der alte Satz, rechts was du stattdessen tust.</p>
+      <div class="swap">
+        <h3>„Denk gründlich nach“</h3>
+        <div class="swap-pair">
+          <div class="out"><span class="t-label">Raus</span><q>Think carefully before answering.</q></div>
+          <div class="in"><span class="t-label">Stattdessen</span><q>Nichts. Wenn es schneller gehen soll: Effort senken.</q></div>
+        </div>
+        <p>Das Modell entscheidet selbst, wie viel es nachdenkt. In Anthropics Test mit einer Chat-App starteten die Antworten ohne diesen Satz früher, ohne erkennbaren Qualitätsverlust.</p>
+      </div>
+    </div>
+
+    
+    <div class="wide fig" id="f-eff">
+      <div class="fig-head"><h3>Medium ist das neue High</h3>
+        <div class="switch" role="group" aria-label="Stufen ordnen"><button type="button" data-v="name" aria-pressed="true">Nach Namen</button><button type="button" data-v="perf" aria-pressed="false">Nach Leistung</button></div>
+      </div>
+      <div class="eff">
+        <div class="eff-row" data-m="5"><span class="eff-m">Opus 5</span>
+          <div class="eff-cells" role="group" aria-label="Bisher gesetzte Stufe auf Opus 5">
+            <button type="button" class="cell" data-l="low" aria-pressed="false">low</button>
+            <button type="button" class="cell" data-l="medium" aria-pressed="false">medium</button>
+            <button type="button" class="cell" data-l="high" aria-pressed="false">high</button>
+          </div>
+        </div>
+        <div class="eff-row" data-m="55"><span class="eff-m">Opus 5.5</span>
+          <div class="eff-cells">
+            <span class="cell" data-l="low">low<small class="nv">nicht verglichen</small></span>
+            <span class="cell std" data-l="medium">medium<small>Standard</small><small class="cmp">≈ high auf Opus 5</small></span>
+            <span class="cell" data-l="high">high<small class="nv">nicht verglichen</small></span>
+          </div>
+        </div>
+        <div class="eff-axis"><span aria-hidden="true"></span><div><span>weniger Nachdenken, schneller</span><span>mehr Nachdenken</span></div></div>
+      </div>
+      <p class="eff-out" id="eff-out" aria-live="polite">Klick auf die Stufe, die du bisher auf Opus 5 setzt.</p>
+      <p class="fig-cap">Laut Anthropic leistet Opus 5.5 auf <code>medium</code> etwa so viel wie Opus 5 auf <code>high</code>, und <code>medium</code> ist der Standard. Für die anderen Stufen nennt die Quelle keinen Vergleich, und für Antwortzeiten keine Zahlen: Die Achse ist deshalb nur relativ.</p>
+    </div>
+
+    <div class="prose">
+      <div class="swap">
+        <h3>„Schreib deine Überlegungen auf“</h3>
+        <div class="swap-pair">
+          <div class="out"><span class="t-label">Raus</span><q>Think step by step and write out your reasoning in the response.</q></div>
+          <div class="in"><span class="t-label">Stattdessen</span><q>Explain your recommendation in two sentences.</q></div>
+        </div>
+        <p>Opus 5.5 denkt in eigenen Blöcken, die der Nutzer nicht sieht. Wer es drängt, dieses Denken im Antworttext nachzuschreiben, riskiert eine Ablehnung. Eine kurze Begründung der Antwort darfst du weiter verlangen.</p>
+      </div>
+      <div class="swap">
+        <h3>„Vermeide einen generischen KI-Look“</h3>
+        <div class="swap-pair">
+          <div class="out"><span class="t-label">Raus</span><q>Avoid a generic AI look.</q></div>
+          <div class="in"><span class="t-label">Stattdessen</span><q>Die unerwünschten Muster einzeln verbieten.</q></div>
+        </div>
+        <p>„Vermeide KI-Look“ tauscht nur einen Standard-Stil gegen den nächsten. Einzeln benannte Muster lässt Opus 5.5 weg. Die Liste unten ist Anthropics Beispiel. Im Prompt steht sie als ein Satz.</p>
+      </div>
+    </div>
+
+    
+    <div class="wide fig" id="f-bans">
+      <div class="fig-head"><h3>Aus einem Wunsch werden fünf Verbote</h3><span class="t-label">Beispiel von Anthropic</span></div>
+      <div class="bans">
+        <div>
+          <p class="wish" id="ban-wish"><span class="wish-t" id="ban-wt">Avoid a generic AI look.</span><span class="x" id="ban-x" aria-hidden="true"></span></p>
+          <ol class="ban-list" id="ban-list" aria-label="Stattdessen konkret verbieten"></ol>
+          <p class="ban-sent">Der Satz für deinen Prompt, aus den gewählten Verboten:<code id="ban-sent"></code></p>
+        </div>
+        <div>
+          <div class="mini-tag"><span class="t-label">Beispielseite</span><span class="t-label state" id="mini-state">vorher</span></div>
+          <div class="mini" id="mini" aria-label="Beispielseite, die sich mit den Verboten ändert">
+            <div class="mini-nav"><span class="mini-lab"><span class="mini-num">01 / </span>Leistungen</span><span class="mini-badge">Neu · Beta</span></div>
+            <p class="mini-h">Wir bauen <em>bessere</em> Software.</p>
+            <p class="mini-p">Platzhaltertext einer typischen Startseite, wie sie ohne Vorgaben oft entsteht.</p>
+            <span class="mini-btn">Projekt anfragen</span>
+          </div>
+        </div>
+      </div>
+      <p class="fig-cap">Jedes Verbot ändert genau eine Stelle der Beispielseite. Klick die Verbote selbst an. Die Beispielseite zeigt im Zustand „vorher“ absichtlich Rundungen und einen Verlauf.</p>
+    </div>
+
+    <div class="prose">
+      <p>Schau dir das erste Ergebnis an, schreib die Muster auf, die du nicht willst, und erweitere die Liste nach jeder Runde. Kleine Pointe am Rande: Dieser Blog hat Papier-Hintergrund und Mono-Labels. Wir haben das bewusst so gewählt, und genau darum geht es: Was du willst, musst du sagen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="stopp">
+  <div class="sec-head grid-12"><span class="t-label">03 Agenten</span><h2>Sag, wann Aufhören erlaubt ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die größte Änderung betrifft Agenten, also Claude-Anwendungen, die selbstständig mehrere Schritte mit Werkzeugen erledigen. Opus 5.5 hält dich unterwegs auf dem Laufenden. Das ist gut, solange jemand zuschaut. Läuft der Agent allein, kann ein Zwischenstand aber zum Ende werden: Das Modell schreibt „Als Nächstes mache ich X“, beendet seinen Zug, und niemand sagt „mach weiter“.</p>
+      <p>Anthropic nennt vier Arten, wie ein Agent zu früh aufhört, und zwei, bei denen Aufhören richtig ist. Den ersten Fall hast du oben in der Scroll-Geschichte gesehen. Sortier selbst, bevor du die Auflösung liest: Zieh jede Nachricht auf einen Stapel oder nimm die Knöpfe.</p>
+    </div>
+
+    
+    <div class="wide fig" id="f-sort">
+      <div class="fig-head"><h3>Weiterarbeiten oder Stopp?</h3><button type="button" class="btn sm" id="sort-reset">Alle zurück auf den Stapel</button></div>
+      <div class="sort-head"><span class="t-label" id="pool-lbl">Stapel: 6 Nachrichten</span><span class="hint">Oberste Karte am Kopf greifen und ziehen</span></div>
+      <div class="pool" id="pool"></div>
+      <div class="zones">
+        <div class="zone" data-z="go"><div class="zone-h"><span class="t-label">Weiterarbeiten</span><span class="zn" id="zn-go">0</span></div><div class="zone-in" id="zone-go"></div></div>
+        <div class="zone" data-z="stop"><div class="zone-h"><span class="t-label">Stopp ist richtig</span><span class="zn" id="zn-stop">0</span></div><div class="zone-in" id="zone-stop"></div></div>
+      </div>
+      <div class="sort-out"><span class="big" id="sort-n">0 / 0</span><p id="sort-say" aria-live="polite">Richtig sortiert von sortiert. Noch liegt alles auf dem Stapel.</p></div>
+    </div>
+
+    <div class="prose mt">
+      <p>Genau diese sechs Fälle beschreibt Anthropics <strong>Stopp-Absatz</strong>, ein Text für das Ende des System-Prompts. Er nennt die vier falschen Stopps beim Namen, erlaubt die zwei richtigen und sagt: Statusmeldungen gern, aber im selben Zug wie der nächste Arbeitsschritt. Du findest ihn im Baukasten unten, wenn du „Agent, läuft allein“ wählst. Drei Regeln gehören dazu:</p>
+      <ul>
+        <li><strong>Nur für Agenten ohne Zuschauer.</strong> Wo jemand antworten kann, ist Nachfragen erwünscht.</li>
+        <li><strong>Von Anfang an.</strong> Der Absatz gehört schon in die erste Anfrage, nicht mitten in den Lauf.</li>
+        <li><strong>Bestätigung bleibt.</strong> Riskante oder unumkehrbare Aktionen lässt du weiter bestätigen. Der Absatz sagt das selbst.</li>
+      </ul>
+      <div class="callout"><span class="t-label">Auch der Code zählt</span><p>Ein Prompt macht frühe Stopps seltener, aber nicht unmöglich. Wer Agenten selbst baut, sollte eine Nachricht ohne Werkzeug-Aufruf deshalb als Bericht behandeln: Ist laut Aufgabenliste noch etwas offen und nichts blockiert, schickt der Code eine kurze Erinnerung. Nach zwei bis drei Erinnerungen ohne Fortschritt ist Schluss.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="baukasten">
+  <div class="sec-head grid-12"><span class="t-label">04 Baukasten</span><h2>Dein Prompt-Baukasten</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Welche neuen Sätze du brauchst, hängt davon ab, was du baust. Wähl aus, was auf deine Anwendung zutrifft. Daneben entsteht dein System-Prompt, und zu jedem Satz steht, warum er drin ist. Die Sätze stammen bis auf einen wörtlich aus der Anthropic-Doku, deshalb auf Englisch: in dieser Form hat Anthropic sie getestet.</p>
+    </div>
+
+    
+    <div class="wide fig" id="f-build">
+      <div class="builder">
+        <form aria-label="Was baust du?" onsubmit="return false">
+          <fieldset>
+            <legend class="t-label">Was baust du?</legend>
+            <ul class="opts">
+              <li><label><input type="radio" name="mode" value="chat" checked><span>Chat mit Menschen<small>Jemand stellt Fragen, Claude antwortet.</small></span></label></li>
+              <li><label><input type="radio" name="mode" value="watched"><span>Agent, ein Mensch schaut zu<small>Claude arbeitet mit Werkzeugen, du kannst eingreifen.</small></span></label></li>
+              <li><label><input type="radio" name="mode" value="alone"><span>Agent, läuft allein<small>Claude arbeitet stundenlang ohne Rückfragen.</small></span></label></li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <legend class="t-label">Was trifft noch zu?</legend>
+            <ul class="opts">
+              <li><label><input type="checkbox" name="x" value="apps"><span>Arbeitet über mehrere Apps<small>Mail, Dokumente, Tabellen, CRM.</small></span></label></li>
+              <li><label><input type="checkbox" name="x" value="team"><span>Mehrere Agenten im Team<small>Ein Haupt-Agent verteilt Arbeit an weitere.</small></span></label></li>
+              <li><label><input type="checkbox" name="x" value="paste"><span>Nutzer fügen fremde Texte ein<small>E-Mails, Webseiten, Dokumente.</small></span></label></li>
+              <li><label><input type="checkbox" name="x" value="front"><span>Erzeugt Webseiten oder Oberflächen</span></label></li>
+              <li><label><input type="checkbox" name="x" value="fast"><span>Antwort muss sofort starten<small>Erst Effort senken, dann diesen Satz.</small></span></label></li>
+            </ul>
+          </fieldset>
+        </form>
+        <div>
+          <div class="out-head"><span class="t-label">Ergänzungen</span><button class="btn sm" type="button" id="b-copy">Alles kopieren</button></div>
+          <ol class="mods" id="b-mods" aria-live="polite"><li class="none">Der Baukasten braucht JavaScript. Alle Sätze findest du in der <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5">Anthropic-Doku</a>.</li></ol>
+          <div class="strike"><span class="t-label">Und streichen</span><ul id="b-strike"></ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="api">
+  <div class="sec-head grid-12"><span class="t-label">05 Für Entwickler</span><h2>Was sich an der API ändert</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Wer Claude direkt über die API anspricht, muss neben dem Prompt auch ein paar Einstellungen anfassen. Die wichtigsten in Kürze, alles Weitere steht in Anthropics Migrationsanleitung.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="API-Änderungen auf Opus 5.5">
+        <table>
+          <thead><tr><th scope="col">Thema</th><th scope="col">Auf Opus 5.5</th></tr></thead>
+          <tbody>
+            <tr><td>Nachdenken</td><td>Immer an. <code>thinking: {"type": "disabled"}</code> ergibt einen Fehler.</td></tr>
+            <tr><td>Effort</td><td>Standard ist <code>medium</code>, laut Anthropic so stark wie <code>high</code> auf Opus 5. Explizit setzen und mehrere Stufen testen.</td></tr>
+            <tr><td>Antwortlänge</td><td>Das Nachdenken zählt zu <code>max_tokens</code>. Für lange Agenten-Läufe großzügig setzen, bis 128.000.</td></tr>
+            <tr><td>Zwischenstände</td><td>Kommen als <code>thinking</code>-Blöcke und sind ohne <code>display: "updates"</code> leer.</td></tr>
+            <tr><td>Antwort lesen</td><td>Nach Block-Typ, nie <code>content[0]</code>: Vor dem Text können thinking-Blöcke stehen.</td></tr>
+            <tr><td>Abgelehnt</td><td>Eigene <code>temperature</code>, erzwungene Werkzeugwahl, vorausgefüllte Antworten.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">06 Beim Testen</span><h2>Worauf du beim Testen achtest</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Offen gesagt</span><p>Ich hatte für diesen Beitrag keinen API-Zugang. Die Prompt-Sätze stammen aus der Anthropic-Doku, und alle Aussagen über ihre Wirkung sind Anthropics Messungen, nicht meine. Prüf jede Änderung an deinen eigenen Beispielen, bevor du sie live stellst.</p></div>
+      <p>Die Doku nennt zu fast jedem neuen Satz einen Preis. Diese vier gehören in deine Testläufe.</p>
+      <ul class="pitfalls">
+        <li><h3>Erst Effort, dann der Tempo-Satz</h3><p>Muss die Antwort sofort starten, senkst du zuerst Effort, das wirkt zuverlässiger. Erst wenn es dann noch zu langsam ist, hilft <code>Answer directly without deliberating.</code> Weniger Nachdenken kann die Qualität senken: messen.</p></li>
+        <li><h3>Der Stopp-Absatz kostet Schritte</h3><p>Rechne mit etwas mehr Arbeitsschritten pro Aufgabe. Und auch mit Absatz sind frühe Stopps nur seltener, nicht unmöglich.</p></li>
+        <li><h3>Die Chat-Sätze nehmen Selbstkorrektur</h3><p>Sie verhindern, dass Opus 5.5 frühere Antworten noch einmal durchgeht. Lass sie weg, wenn das Modell eigene Fehler von sich aus finden soll.</p></li>
+        <li><h3>Schutz und Budget sind nur Hinweise</h3><p>Die <code>&lt;pasted_content&gt;</code>-Tags sind fälschbar, also nur eine Schutzschicht unter mehreren. Ein Zeitbudget wie <code>elapsed 340s / 1200s</code> ist ebenfalls nur ein Hinweis, eine harte Grenze brauchst du selbst.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">07 Entscheidung</span><h2>Was kommt in deinen Prompt?</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Der Baukasten oben als Übersicht. Für alle Anwendungen gilt zusätzlich: Aufforderungen streichen, Überlegungen in die Antwort zu schreiben.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Was in den Prompt kommt">
+        <table>
+          <thead><tr><th scope="col">Du baust</th><th scope="col">Ergänzen</th><th scope="col">Streichen</th></tr></thead>
+          <tbody>
+            <tr><td>Chat mit Menschen</td><td>Zwei Sätze, die frühere Antworten als erledigt behandeln</td><td>„Think carefully before answering“ und ähnliche Sätze</td></tr>
+            <tr><td>Agent, ein Mensch schaut zu</td><td>Eine Absichtszeile vorher, eine kurze Zusammenfassung am Ende</td><td>Feste Takte wie „fasse nach jedem dritten Schritt zusammen“: Opus 5.5 meldet sich von selbst</td></tr>
+            <tr><td>Agent, läuft allein</td><td>Stopp-Absatz am Ende des System-Prompts, ab der ersten Anfrage</td><td>Regeln, die das Nachdenken verbieten</td></tr>
+            <tr><td>Webseiten oder Oberflächen</td><td>Unerwünschte Muster einzeln verbieten</td><td>„Avoid a generic AI look“ als einzige Vorgabe</td></tr>
+            <tr><td>Arbeit über mehrere Apps</td><td>Erst breit umsehen, auch in Quellen, nach denen die Aufgabe nicht fragt</td><td>nichts Zusätzliches</td></tr>
+            <tr><td>Fremde Texte im Chat</td><td><code>&lt;pasted_content&gt;</code>-Tags und ein Hinweis im System-Prompt</td><td>nichts Zusätzliches</td></tr>
+            <tr><td>Mehrere Agenten im Team</td><td>Ein Satz zur Zeit, dazu die verstrichene Zeit gegen ein Budget</td><td>nichts Zusätzliches</td></tr>
+            <tr><td>Antwort muss sofort starten</td><td>Erst Effort senken, dann „Answer directly without deliberating.“</td><td>nichts Zusätzliches</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="selbsttest">
+  <div class="sec-head grid-12"><span class="t-label">Umsetzen</span><h2>Selbsttest und Checkliste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="b">
+          <legend>Du hast auf Opus 5 bisher Effort <code>high</code> gesetzt. Was testest du auf Opus 5.5 zuerst?</legend>
+          <label><input type="radio" name="q1" value="a"> <code>high</code>, wie bisher.</label>
+          <label><input type="radio" name="q1" value="b"> <code>medium</code>.</label>
+          <label><input type="radio" name="q1" value="c"> <code>high</code> und dazu „Think carefully before answering.“</label>
+          <p class="why" hidden>Laut Anthropic leistet Opus 5.5 auf <code>medium</code> etwa so viel wie Opus 5 auf <code>high</code>, und <code>medium</code> ist der Standard. Denk-Anweisungen kannst du streichen.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="a">
+          <legend>Ein Agent läuft allein. Wohin gehört der Stopp-Absatz?</legend>
+          <label><input type="radio" name="q2" value="a"> Ans Ende des System-Prompts, schon ab der ersten Anfrage.</label>
+          <label><input type="radio" name="q2" value="b"> In die Nachricht, mit der du den Agenten nach einem Stopp weiterschickst.</label>
+          <label><input type="radio" name="q2" value="c"> In jeden Prompt, auch in Chats mit Menschen.</label>
+          <p class="why" hidden>Der Absatz gehört von Anfang an ans Ende des System-Prompts, nicht mitten in den Lauf. Und nur dort, wo niemand zuschaut: Wo jemand antworten kann, ist Nachfragen erwünscht.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Die Webseiten deiner App sehen alle gleich aus. Was hilft?</legend>
+          <label><input type="radio" name="q3" value="a"> „Avoid a generic AI look.“</label>
+          <label><input type="radio" name="q3" value="b"> „Be creative and original.“</label>
+          <label><input type="radio" name="q3" value="c"> Die Muster, die du siehst, einzeln verbieten und die Liste nach jeder Runde erweitern.</label>
+          <p class="why" hidden>Ein allgemeiner Wunsch tauscht nur einen Standard-Stil gegen den nächsten. Einzeln benannte Muster lässt Opus 5.5 weg.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste für deine Prompts</h3>
+      <ul class="checklist" data-key="opus-5-5-prompting">
+        <li><label><input type="checkbox"> <span><b>Denk-Anweisungen streichen.</b> „Think carefully“ und Ähnliches; Tempo und Tiefe regelt Effort.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>„Schreib deine Überlegungen auf“ streichen.</b> Höchstens eine kurze Begründung verlangen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Stopp-Absatz für Agenten ohne Zuschauer.</b> Ab der ersten Anfrage, ans Ende des System-Prompts.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Bei Zuschauern: Absicht und Zusammenfassung erbitten.</b> Eine Zeile vorher, ein kurzer Bericht am Ende.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Fremdtext markieren.</b> Eingefügte Texte in <code>&lt;pasted_content&gt;</code>-Tags, Hinweis im System-Prompt.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Verbote konkret machen.</b> Muster einzeln nennen und nach jedem Ergebnis ergänzen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>An eigenen Beispielen testen.</b> Jede Änderung einzeln, mit Blick auf Qualität und Antwortzeit.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Stand</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5">Anthropic: Prompting Claude Opus 5.5</a> (Stand 4. Oktober 2026)</li>
+        <li><a href="https://platform.claude.com/docs/en/models/opus-5-5/migration-guide">Anthropic: Migrating to Claude Opus 5.5</a> (Stand 4. Oktober 2026)</li>
+        <li><a href="https://platform.claude.com/docs/en/build-with-claude/effort">Anthropic: Effort</a> (Stand 4. Oktober 2026)</li>
+      </ol>
+    </div>
+  </div>
+</section>

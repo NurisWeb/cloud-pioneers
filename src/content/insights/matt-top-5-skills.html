@@ -1,0 +1,420 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Du tippst: „Baue eine Merkliste für Artikel.“ Der Agent legt los, vierzig Minuten später steht die Liste im <code>localStorage</code>. Du wolltest sie im Konto, damit sie auf dem Handy auch da ist. Die Tests prüfen interne Funktionen und brechen beim ersten Umbau. Und in der nächsten Sitzung macht der Agent denselben Fehler noch einmal.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Die meisten schlechten Ergebnisse sind Abstimmungsfehler. Lass dich erst ausfragen, dann bauen.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Wissen gehört in Dateien, nicht ins Gespräch. Jede Phase startet mit leerem Kontext und liest nur, was sie braucht.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Der Workflow ist ein Kreis: Die Retrospektive verbessert die Umgebung, damit der nächste Lauf weniger Fehler macht.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Der ganze Workflow</span>
+    <h2 id="s1-h">Wo das Wissen wohnt</h2>
+    <p>Links das Kontextfenster des Agenten, rechts die Dateien im Repo. Scroll langsam: Du siehst, wie das Wissen aus dem Gespräch in Dateien umzieht, bevor das Fenster geleert wird. Die Füllstände sind schematisch.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="ks" id="ks">
+          <div class="ks-cmd">
+            <span class="ks-c" data-c="0"><span class="sl">/</span>grill-with-docs</span>
+            <span class="ks-c" data-c="1"><span class="sl">/</span>to-spec</span>
+            <span class="ks-c" data-c="2"><span class="sl">/</span>clear</span>
+            <span class="ks-c" data-c="3"><span class="sl">/</span>to-tickets</span>
+            <span class="ks-c" data-c="4"><span class="sl">/</span>clear</span>
+            <span class="ks-c" data-c="5"><span class="sl">/</span>implement-spec</span>
+            <span class="ks-c" data-c="6"><span class="sl">/</span>retro</span>
+          </div>
+          <div class="ks-left">
+            <div class="ks-lab"><span class="t-label" id="ks-who">Kontextfenster</span><span class="ks-pct"><b id="ks-pct">0</b> % voll</span></div>
+            <div class="kw" id="kw">
+              <i class="zone"><span>dumme Zone</span></i>
+              <div class="kb k-in" data-b="a1" style="bottom:0;height:5%">Auftrag</div>
+              <div class="kb" data-b="a2" style="bottom:5%;height:11%">Runde 1 · 3 Fragen</div>
+              <div class="kb" data-b="a3" style="bottom:16%;height:9%">Runde 2 · 2 Fragen</div>
+              <div class="kb" data-b="a4" style="bottom:25%;height:6%">Runde 3</div>
+              <div class="kb k-dk" data-b="a5" style="bottom:31%;height:13%">Code erkundet</div>
+              <div class="kb k-in" data-b="a6" style="bottom:44%;height:10%">Spec-Entwurf</div>
+              <div class="kb k-dk" data-b="b1" style="bottom:0;height:9%">Spec gelesen</div>
+              <div class="kb k-dk" data-b="b2" style="bottom:9%;height:3%">Glossar</div>
+              <div class="kb k-dk" data-b="b3" style="bottom:12%;height:11%">Code erkundet</div>
+              <div class="kb k-in" data-b="b4" style="bottom:23%;height:12%">Tickets zuschneiden</div>
+              <div class="kb k-dk" data-b="c1" style="bottom:0;height:7%">Sitzung lesen</div>
+              <div class="kb k-in" data-b="c2" style="bottom:7%;height:9%">Reibung suchen</div>
+              <div class="orch" id="orch"><span>Orchestrator</span><span style="color:var(--ink-3)">· hält nur den Ticket-Graphen</span></div>
+            </div>
+            <div class="kws" id="kws">
+              <div class="kw" data-w="1"><span class="wl"><span class="lg">Ticket </span>01</span><i class="zone"><span>dumm</span></i><div class="kb k-tk" style="bottom:0;height:6%">01</div><div class="kb k-dk" style="bottom:6%;height:4%"><span class="lg">Glossar</span><span class="ab">GL</span></div><div class="kb k-in" style="bottom:10%;height:24%">TDD</div></div>
+              <div class="kw" data-w="2"><span class="wl"><span class="lg">Ticket </span>02</span><i class="zone"><span>dumm</span></i><div class="kb k-tk" style="bottom:0;height:6%">02</div><div class="kb k-dk" style="bottom:6%;height:4%"><span class="lg">Glossar</span><span class="ab">GL</span></div><div class="kb k-in" style="bottom:10%;height:30%">TDD</div></div>
+              <div class="kw" data-w="3"><span class="wl"><span class="lg">Ticket </span>03</span><i class="zone"><span>dumm</span></i><div class="kb k-tk" style="bottom:0;height:6%">03</div><div class="kb k-dk" style="bottom:6%;height:4%"><span class="lg">Glossar</span><span class="ab">GL</span></div><div class="kb k-in" style="bottom:10%;height:20%">TDD</div></div>
+            </div>
+          </div>
+          <div class="ks-shelf" id="shelf">
+            <div class="sh" data-f="gl"><span class="nm">GLOSSARY.md</span><span class="st"><b data-n>0</b> Begriffe</span><span class="sub"></span></div>
+            <div class="sh" data-f="sp"><span class="nm">Spec · Issue</span><span class="st" data-s>fehlt</span><span class="sub"></span></div>
+            <div class="sh" data-f="tk"><span class="nm">Tickets</span><span class="st" data-s>fehlen</span><span class="sub"><i data-t>01</i><i data-t>02</i><i data-t>03</i><i data-t>04</i><i data-t>05</i></span></div>
+            <div class="sh" data-f="br"><span class="nm">Integrations-Branch</span><span class="st"><b data-n>0</b> Commits</span><span class="sub"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></span></div>
+            <div class="sh" data-f="pr"><span class="nm">Pull Request</span><span class="st" data-s>fehlt</span><span class="sub"></span></div>
+            <div class="sh" data-f="ag"><span class="nm">AGENTS.md · Lint</span><span class="st" data-s>wie immer</span><span class="sub"></span></div>
+            <div class="loop" id="loop"><span style="color:var(--signal-ink)">↺</span><span>Nächstes Feature: startet in einer besseren Umgebung.</span></div>
+          </div>
+          <span class="fly" data-fly="t1">Merkliste</span><span class="fly" data-fly="t2">Eintrag</span><span class="fly" data-fly="t3">Gast</span>
+          <span class="fly" data-fly="sp">Spec</span><span class="fly" data-fly="r1">Lint-Regel</span>
+        </div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Ausfragen füllt das Fenster.</b> <code>/grill-with-docs</code> stellt Runde um Runde Fragen, und jeder geklärte Begriff wandert sofort ins Glossar.</p></div>
+        <div class="cap" data-at="0.15"><span class="n">02</span><p><b>Die Spec entsteht aus dem Gespräch.</b> <code>/to-spec</code> fragt nicht neu, es fasst zusammen und legt die Spec als Issue ab. Das Fenster steht kurz vor der dummen Zone.</p></div>
+        <div class="cap" data-at="0.27"><span class="n">03</span><p><b>Leeren, ohne etwas zu verlieren.</b> <code>/clear</code> wirft das Gespräch weg. Alles, was zählt, liegt jetzt in Glossar und Spec.</p></div>
+        <div class="cap" data-at="0.36"><span class="n">04</span><p><b>Frisch starten, nur das Nötige laden.</b> <code>/to-tickets</code> liest Spec und Glossar und schneidet fünf Tickets mit blockierenden Kanten.</p></div>
+        <div class="cap" data-at="0.5"><span class="n">05</span><p><b>Wieder leeren.</b> Die Tickets sind gespeichert, das Gespräch darüber braucht niemand mehr.</p></div>
+        <div class="cap" data-at="0.57"><span class="n">06</span><p><b>Viele kleine Fenster statt eines großen.</b> <code>/implement-spec</code> hält nur den Graphen und startet pro Ticket einen Subagenten. Jeder liest Ticket und Glossar, baut mit TDD und bleibt weit unter der Linie.</p></div>
+        <div class="cap" data-at="0.74"><span class="n">07</span><p><b>Ein Branch, ein Pull Request.</b> Commits landen nacheinander im Integrations-Branch, am Ende schreibt der <code>pr</code>-Skill den Text mit Belegen und Merge-Risiko.</p></div>
+        <div class="cap" data-at="0.84"><span class="n">08</span><p><b>Zurückschauen.</b> <code>/retro</code> liest die Sitzung, findet Reibung und schlägt vor, die Umgebung zu ändern: hier eine Lint-Regel.</p></div>
+        <div class="cap" data-at="0.95"><span class="n">09</span><p><b>Der Kreis schließt sich.</b> Das nächste Feature startet mit besserem Glossar, besseren Regeln und weniger Fehlern.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="rail" aria-label="Die fünf Skills">
+  <ol>
+    <li><a href="#k1" data-k="k1"><span class="n">01</span><span class="lbl">grill-with-docs</span></a></li>
+    <li><a href="#k2" data-k="k2"><span class="n">02</span><span class="lbl">to-tickets</span></a></li>
+    <li><a href="#k3" data-k="k3"><span class="n">03</span><span class="lbl">implement-spec</span></a></li>
+    <li><a href="#k4" data-k="k4"><span class="n">04</span><span class="lbl">tdd</span></a></li>
+    <li><a href="#k5" data-k="k5"><span class="n">05</span><span class="lbl">retro</span></a></li>
+  </ol>
+</nav>
+
+<section class="sec" id="k1">
+  <div class="grid-12 chap-row"><p class="chap" aria-hidden="true">01</p><p class="chap-cmd"><span class="sl">/</span>grill-with-docs</p></div>
+  <div class="sec-head grid-12"><span class="t-label">Abstimmen</span><h2>Ein Satz hat Äste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>„Baue eine Merkliste“ klingt nach einer Aufgabe. Tatsächlich stecken darin ein Dutzend Entscheidungen, die nur du treffen kannst. Ein Agent, der sofort baut, trifft sie trotzdem, nur still und nach Gefühl. Genau daher kommt das „gemacht, was ich gesagt habe, nicht, was ich gemeint habe“.</p>
+      <p><code>/grill-with-docs</code> dreht das um. Der Agent zeichnet die Entscheidungen als <b>Baum</b>: Jede Antwort öffnet die Fragen, die an ihr hängen. Er fragt in <b>Runden</b>. Gefragt wird immer nur die <b>Front</b>, also alles, was du jetzt beantworten kannst, ohne eine noch offene Antwort zu erraten. Höchstens vier Fragen pro Runde, jede mit Nummer und Empfehlung.</p>
+    </div>
+    
+    <div class="full fig mt" id="f1">
+      <div class="fig-head"><h3>Der Baum hinter „Baue eine Merkliste“</h3><span class="t-label" id="g-count">Runde 1</span></div>
+      <div class="g-wrap">
+        <div class="g-card">
+          <div class="g-card-head"><span class="g-round" id="g-round">Runde 1</span><span class="g-stats" id="g-stats"></span></div>
+          <div class="g-qs" id="g-qs" aria-live="polite"></div>
+        </div>
+        <div class="g-tree">
+          <svg class="g-wires" id="g-wires" aria-hidden="true"></svg>
+          <div class="g-cols" id="g-cols">
+            <div class="g-col c0"><span class="t-label">Auftrag</span><div class="g-node root done" data-id="root"><span class="q">Baue eine Merkliste für Artikel.</span></div></div>
+            <div class="g-col c1"><span class="t-label">Runde 1</span></div>
+            <div class="g-col c2"><span class="t-label">Runde 2</span></div>
+            <div class="g-col c3"><span class="t-label">Runde 3</span></div>
+          </div>
+        </div>
+        <div class="g-gloss" aria-live="polite"><div class="file"><span class="t-label">GLOSSARY.md</span><span class="t-label" id="g-gl-n">0 Begriffe</span></div><div id="g-gloss"><p class="ln empty">Noch leer. Jeder geklärte Begriff landet hier sofort, nicht erst am Ende.</p></div></div>
+      </div>
+      <p class="fig-cap">Klick selbst auf die Antworten. Wer bei der ersten Frage „Im Konto“ wählt, bekommt andere Folgefragen und eine dritte Runde. Die gestrichelten Knoten mit Balken sind die Front. Die Frage nach dem Login stellt der Agent dir gar nicht: Ein Subagent sieht im Code nach.</p>
+    </div>
+    <div class="prose mt">
+      <p>Drei Regeln aus dem Skill machen den Unterschied. Erstens enthält jede Frage die <b>kleinste Option</b>: nichts tun, Vorhandenes nutzen oder verschieben. Der Agent empfiehlt sie, solange er keinen konkreten Fall nennen kann, an dem sie scheitert. Im Beispiel weichst du trotzdem ab, weil du weißt, dass deine Leser zwischen Handy und Laptop wechseln. Zweitens sind <b>Fakten nie deine Aufgabe</b>. Ob es schon ein Login gibt, steht im Code, also schickt der Agent einen Subagenten los und fragt dich nur nach Entscheidungen. Drittens kommt nur in den Baum, was ändert, <b>was gebaut wird oder was der Nutzer sieht</b>. Wie der Knopf intern heißt, klärt der Implementierer allein.</p>
+      <p>Der Teil „with docs“ ist das Glossar. Sobald ein Begriff geklärt ist, schreibt der Agent ihn in <code>GLOSSARY.md</code>, mit den Wörtern, die man ab jetzt vermeidet. Alle späteren Skills lesen diese Datei. So heißt die Merkliste in der Spec, in den Tickets, in den Tests und im Code gleich, und niemand baut aus Versehen „Favoriten“.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="k2">
+  <div class="grid-12 chap-row"><p class="chap" aria-hidden="true">02</p><p class="chap-cmd"><span class="sl">/</span>to-tickets</p></div>
+  <div class="sec-head grid-12"><span class="t-label">Zuschneiden</span><h2>Senkrecht schneiden, nicht in Schichten</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Zwischen Ausfragen und Tickets liegt ein kurzer Schritt: <code>/to-spec</code> fasst das Gespräch zur Spec zusammen, ohne neu zu fragen, und legt sie im Issue-Tracker ab. Danach leerst du den Kontext. <code>/to-tickets</code> startet frisch, liest Spec und Glossar und zerlegt die Arbeit.</p>
+      <p>Der Skill schneidet <b>Tracer Bullets</b>: Jedes Ticket geht dünn, aber vollständig durch alle Schichten, von der Datenbank bis zum Test. Nach jedem Ticket läuft etwas, das du ausprobieren kannst. Wer stattdessen in Schichten schneidet („erst alle Tabellen, dann alle Endpunkte“), sieht das erste funktionierende Stück erst ganz am Ende. Und jedes Ticket muss in ein frisches Kontextfenster passen.</p>
+    </div>
+    
+    <div class="full fig mt" id="f2">
+      <div class="fig-head"><h3>20 Bausteine, zwei Arten zu schneiden</h3>
+        <div class="switch" role="group" aria-label="Schnitt wählen"><button type="button" data-v="h" aria-pressed="false">In Schichten</button><button type="button" data-v="v" aria-pressed="true">Senkrecht</button></div>
+      </div>
+      <div class="tc-wrap">
+        <div class="tc-side">
+          <div class="tc-meter"><span class="t-label">Lauffähig</span><b id="tc-run">0</b><span>von 5 Funktionen</span></div>
+          <div class="tc-meter"><span class="t-label">Erste Demo nach</span><b id="tc-first">–</b><span id="tc-of">Tickets</span></div>
+          <p class="tc-note" id="tc-note">Ein Kästchen ist ein Stück Arbeit in einer Schicht. Eine Funktion läuft erst, wenn ihre Spalte voll ist.</p>
+        </div>
+        <div class="tc-stage">
+          <div class="tc-rows" aria-hidden="true"><span></span><span>Datenbank</span><span>API</span><span>Oberfläche</span><span>Test</span></div>
+          <div class="tc" id="tc">
+            <div class="tcol" data-t="1"><span class="th"><b>01</b> Merken</span><i></i><i></i><i></i><i></i><span class="tb"></span></div>
+            <div class="tcol" data-t="2"><span class="th"><b>02</b> Liste ansehen</span><i></i><i></i><i></i><i></i><span class="tb"></span></div>
+            <div class="tcol" data-t="3"><span class="th"><b>03</b> Entfernen</span><i></i><i></i><i></i><i></i><span class="tb"></span></div>
+            <div class="tcol" data-t="4"><span class="th"><b>04</b> Gast: Login-Knopf</span><i></i><i></i><i></i><i></i><span class="tb"></span></div>
+            <div class="tcol" data-t="5"><span class="th"><b>05</b> Zurück nach Login</span><i></i><i></i><i></i><i></i><span class="tb"></span></div>
+            <span class="laser" aria-hidden="true"></span>
+          </div>
+          <svg class="tc-edges" id="tc-edges" aria-hidden="true"><defs><marker id="tc-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--ink)"/></marker></defs></svg>
+        </div>
+      </div>
+      <p class="fig-cap">Am Ende ordnen sich die senkrechten Tickets zum Graphen. Jeder Pfeil heißt „blockiert“: 02, 03 und 04 warten nur auf 01, 05 wartet auf 04. Sobald 01 fertig ist, liegen drei Tickets gleichzeitig an der Front.</p>
+    </div>
+    <div class="prose mt">
+      <p>Jedes Ticket nennt seine <b>blockierenden Kanten</b>, und zwar nur die direkten. Wenn 05 auf 04 wartet und 04 auf 01, steht bei 05 nur „blockiert von 04“. Aus der Liste wird so ein Graph, und genau diesen Graphen nutzt der nächste Skill zum Parallelisieren. Bevor irgendetwas veröffentlicht wird, legt dir der Agent den Zuschnitt vor: Passt die Größe, stimmen die Kanten, soll etwas zusammengelegt werden?</p>
+      <div class="code"><div class="code-bar"><span class="t-label">.scratch/merkliste/issues/05-zurueck-nach-login.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k"># 05: Nach dem Login zurück zum Artikel</span>
+
+Status: ready-for-agent
+Blocked by: 04
+
+<span class="f">**What to build:**</span> Ein Gast klickt „Merken“, meldet sich an
+und landet wieder auf demselben Artikel. Der Artikel steht
+dann schon auf seiner Merkliste.
+
+- [ ] Nach dem Login öffnet sich der Artikel, nicht die Startseite
+- [ ] Der Eintrag ist ohne zweiten Klick gespeichert</pre></div>
+      <p>Eine Ausnahme kennt der Skill: Eine breite, mechanische Änderung, etwa eine umbenannte Spalte, die tausend Stellen trifft, lässt sich nicht senkrecht schneiden. Dafür nimmt er „expand, migrate, contract“: erst das Neue neben das Alte stellen, dann die Aufrufer in Paketen umziehen, zuletzt das Alte löschen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="k3">
+  <div class="grid-12 chap-row"><p class="chap" aria-hidden="true">03</p><p class="chap-cmd"><span class="sl">/</span>implement-spec</p></div>
+  <div class="sec-head grid-12"><span class="t-label">Umsetzen</span><h2>Die Front fährt los</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Fünf Tickets kannst du auf drei Arten abarbeiten. Du spielst selbst die Schleife: „Setze Ticket 1 um“, warten, Kontext leeren, „Ticket 2“. Oder ein Skript startet für jedes Ticket einen Agenten, zuverlässig, aber aufwendig einzurichten. Oder du überlässt das Babysitten einem Agenten. Das ist <code>/implement-spec</code>, und für den Einstieg in Arbeit, bei der du nicht danebensitzt, ist es der beste Mittelweg.</p>
+      <p>Der Skill liest Spec und Tickets und baut daraus einen <b>Aufgabengraphen</b>. Er legt einen <b>Integrations-Branch</b> an. Für jedes Ticket an der Front startet er einen Subagenten in einem eigenen Git-Worktree, der mit TDD baut. Fertige Arbeit geht durch einen einzigen <b>Merge-Slot</b>: Es wird immer nur ein Ticket gleichzeitig integriert, und zwar nur, wenn die Prüfungen auf dem kombinierten Code grün sind. Danach rechnet der Orchestrator die Front neu aus.</p>
+    </div>
+    
+    <div class="full fig mt" id="f3">
+      <div class="fig-head"><h3>Fünf Tickets, ein Merge-Slot</h3>
+        <div class="switch" role="group" aria-label="Zahl der Subagenten"><button type="button" data-w="1" aria-pressed="false">1</button><button type="button" data-w="2" aria-pressed="false">2</button><button type="button" data-w="3" aria-pressed="true">3</button><button type="button" data-w="4" aria-pressed="false">4</button></div>
+      </div>
+      <div class="is-wrap">
+        <div class="is-side">
+          <div class="is-clock"><span class="t-label">Takt</span><b id="is-clock">0</b></div>
+          <div class="is-front"><span class="t-label">Front</span><span id="is-front">01</span></div>
+          <div class="is-tot"><span class="t-label">Fertig nach</span><div id="is-tot"></div></div>
+        </div>
+        <div class="is-stage"><div class="is-gantt" id="is-gantt"></div></div>
+      </div>
+      <p class="fig-cap">Oben rechts wählst du die Zahl der Subagenten. Ticket 01 dauert drei Takte, ein Merge einen halben. Mit drei Subagenten stehen 02 und 04 gleichzeitig vor dem Merge-Slot, und 04 muss warten. Ein vierter Subagent bringt nichts mehr: Die Front ist nie breiter als drei.</p>
+    </div>
+    <div class="prose mt">
+      <p>Ist alles integriert, prüft ein frischer Subagent die ganze Spec im laufenden Programm, danach folgt ein Code-Review gegen den Startpunkt. Jeder bestätigte Fund wird behoben oder ausdrücklich von dir entschieden. Erst dann gilt die Arbeit als fertig. Am Ende steht ein einziger Pull Request für die ganze Spec. Den Text schreibt der <code>pr</code>-Skill in drei Teilen.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">PR-Text nach dem pr-Skill</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">## Summary</span>
+merke(artikel)
+  wenn Gast: Login öffnen, danach zurück zum Artikel
+  sonst: Eintrag im Konto speichern
+
+<span class="k">## Evidence</span>
+- Before: „Merken“ fehlt, Test merkliste.e2e rot
+  After:  Test grün, Screenshot Artikel mit gemerktem Eintrag
+
+<span class="k">## Merge danger</span>
+Door: two-way (neue Tabelle, Feature-Flag aus)
+Blast radius: klein</pre></div>
+      <p>„Evidence“ zwingt den Agenten zu Belegen: einem Testlauf, einer Ausgabe, einem Screenshot, statt „läuft vermutlich, ich habe den Code gelesen“. „Merge danger“ sagt dir, wie genau du hinschauen musst. Durch eine Zwei-Wege-Tür kommst du zurück. Eine Einbahn-Tür löscht Daten oder ist teuer zurückzurollen. Mergen tust du selbst: Der Skill lässt den PR bereit liegen und empfiehlt vor dem Leeren des Kontexts noch <code>/retro</code>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="k4">
+  <div class="grid-12 chap-row"><p class="chap" aria-hidden="true">04</p><p class="chap-cmd"><span class="sl">/</span>tdd</p></div>
+  <div class="sec-head grid-12"><span class="t-label">Prüfen</span><h2>Nenne den Bruch, den dein Test fängt</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>In jedem Subagenten von Kapitel 3 läuft <code>/tdd</code>. Die Schleife kennst du: Test schreiben, er ist rot. Code schreiben, er wird grün. Aufräumen. Spannend ist, was der Skill über den Test selbst verlangt. Bevor der Agent einen Test schreibt, muss er den <b>Bruch</b> benennen, den der Test fängt: die Änderung im Produktivcode, die ihn rot macht. Fällt ihm keiner ein, prüft der Test kein Verhalten.</p>
+      <p>Getestet wird nur an <b>Nähten</b>. Eine Naht ist die Stelle, an der die Schnittstelle eines Moduls liegt. Tests benutzen das Modul so wie jeder andere Aufrufer und greifen nie ins Innere. Welche Nähte getestet werden, legst du vorher fest, bei <code>/implement-spec</code> stehen sie schon in Spec und Ticket.</p>
+    </div>
+    
+    <div class="full fig mt" id="f4">
+      <div class="fig-head"><h3>Drei Tests, zwei Änderungen</h3>
+        <div class="switch" role="group" aria-label="Änderung am Modul"><button type="button" data-v="ref" aria-pressed="false">Aufräumen</button><button type="button" data-v="bug" aria-pressed="false">Bug einbauen</button></div>
+      </div>
+      <ol class="td-loop" aria-label="TDD-Schleife"><li data-s="red">Rot</li><li data-s="green">Grün</li><li data-s="ref">Aufräumen</li></ol>
+      <div class="td-wrap">
+        <div class="td-mod">
+          <div class="td-if" aria-label="Schnittstelle"><span class="t-label">Naht · Schnittstelle</span><div class="td-pins"><code data-p="merke">merke(artikel)</code><code data-p="liste">liste()</code><code data-p="entferne">entferne(artikel)</code></div></div>
+          <div class="td-in"><span class="t-label">Inneres · Merkliste</span>
+            <div class="td-parts" id="td-parts"><span data-p="speicher">speicher</span><span data-p="cache">cache</span><span data-p="sort">sortierung</span></div>
+            <pre class="td-code" tabindex="0"><span class="c">// in merke()</span>
+<span id="td-line">if (eintraege.has(id)) return;</span>
+eintraege.add(id);</pre>
+          </div>
+        </div>
+        <div class="td-tests">
+          <div class="td-t" data-t="a"><div class="td-th"><b>A · an der Naht</b><span class="td-st" data-st>–</span></div><code>merke(a); erwarte(liste()).enthält(a)</code><span class="td-br">Bruch: <i>merke speichert nicht</i></span></div>
+          <div class="td-t" data-t="b"><div class="td-th"><b>B · im Inneren</b><span class="td-st" data-st>–</span></div><code>merke(a); erwarte(cache.size).ist(1)</code><span class="td-br">Bruch: <i>anderer Cache</i></span></div>
+          <div class="td-t" data-t="c"><div class="td-th"><b>C · ohne Bruch</b><span class="td-st" data-st>–</span></div><code>erwarte(merke).istDefiniert()</code><span class="td-br">Bruch: <i>keiner benennbar</i></span></div>
+          <div class="table-wrap td-res"><table><thead><tr><th>Test</th><th>Aufräumen</th><th>Bug</th></tr></thead><tbody>
+            <tr data-r="a"><td>A</td><td data-c="ref">?</td><td data-c="bug">?</td></tr>
+            <tr data-r="b"><td>B</td><td data-c="ref">?</td><td data-c="bug">?</td></tr>
+            <tr data-r="c"><td>C</td><td data-c="ref">?</td><td data-c="bug">?</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <p class="fig-cap">Aufräumen ändert nur das Innere, das Verhalten bleibt. Der Bug kippt eine einzige Bedingung in <code>merke()</code>. Ein guter Test wird genau dann rot, wenn sich Verhalten ändert: Nur A schafft beides.</p>
+    </div>
+    <div class="prose mt">
+      <p>Der Skill zählt weitere Muster auf, an denen ein Test nichts taugt. Er mockt interne Mitarbeiter, prüft private Methoden oder schaut über einen Seitenkanal nach, etwa direkt in die Datenbank statt durch die Schnittstelle. Oder er ist tautologisch und rechnet den erwarteten Wert genauso aus wie der Code. Das Erkennungszeichen ist immer dasselbe: Der Test bricht beim Umbauen, obwohl sich am Verhalten nichts geändert hat.</p>
+      <p>Für Code ohne Tests gibt es einen eigenen ersten Schritt. Bevor ein Agent ihn umbaut, hält er das heutige Verhalten mit Charakterisierungstests fest, in einem eigenen Commit. Und bei einem Bug, dessen Ursache noch niemand kennt, schickt <code>/tdd</code> erst zur Diagnose. Der Fehler kommt als roter Test zurück, und erst dann wird repariert.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="k5">
+  <div class="grid-12 chap-row"><p class="chap" aria-hidden="true">05</p><p class="chap-cmd"><span class="sl">/</span>retro</p></div>
+  <div class="sec-head grid-12"><span class="t-label">Zurückschauen</span><h2>Gnadenlos, aber du entscheidest</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Ein Agent beschwert sich selten. Findet er eine Datei nicht, sucht er weiter. Fehlt ein Befehl, probiert er einen anderen. Am Ende ist das Feature fertig, und niemand sieht, wie viel Umweg darin steckte. <code>/retro</code> setzt einen zweiten Agenten auf die Sitzung an. Er liest das echte Protokoll, auch die Teile vor einer Zusammenfassung und die Protokolle der Subagenten, und sucht nach Reibung: Fehler, Ablehnungen, Wiederholungen, Korrekturen.</p>
+      <p>Seine Vorschläge zielen nie auf den Code, sondern auf die <b>Umgebung</b>. Er schaut auf Navigation, automatische Prüfungen, Coding-Standards, die globale AGENTS.md und auf Tool-Ökonomie, also darauf, wie viele Tokens ein Werkzeug verbrennt. Ein Verstoß, den eine Maschine erkennen kann, bekommt eine Prüfung, keinen Satz in einer Regeldatei.</p>
+    </div>
+    
+    <div class="full fig mt" id="f5">
+      <div class="fig-head"><h3>Eine Sitzung, sechs Befunde</h3><span class="t-label">Beispiel-Sitzung</span></div>
+      <div class="rt-wrap">
+        <div class="rt-log" id="rt-log" tabindex="0" aria-label="Sitzungsprotokoll"><span class="rt-scan" aria-hidden="true"></span><ol id="rt-lines"></ol></div>
+        <div class="rt-find"><ul id="rt-find" aria-live="polite"></ul></div>
+        <div class="rt-next">
+          <div class="rt-num"><span class="t-label">Reibung nächste Sitzung</span><b id="rt-fr">7</b></div>
+          <div class="rt-num"><span class="t-label">Regeln, die jede Sitzung liest</span><b id="rt-ru">+0</b></div>
+          <button type="button" class="btn" id="rt-go">Nächste Sitzung simulieren</button>
+        </div>
+      </div>
+      <p class="fig-cap">Jeder Befund lässt sich übernehmen oder verwerfen. Die Zähler rechnen mit: Ein übernommener Befund nimmt seine wiederkehrende Reibung aus der nächsten Sitzung. Der Kommentar mit „Favoriten“ war ein Einzelfall. Wer ihn übernimmt, bekommt keine Reibung weniger, nur eine Regel mehr.</p>
+    </div>
+    <div class="prose mt">
+      <p>Retro findet fast immer etwas, und genau deshalb bleibt ein Mensch im Loop. Die naheliegende Idee, retro nach jeder Sitzung automatisch laufen und die Vorschläge selbst umsetzen zu lassen, geht schief. Der Agent jagt dann Fehlalarmen hinterher und schiebt Repo und Regeln in eine Richtung, in die sie nicht gehören. Besser: retro auf eine Stichprobe von Sitzungen anwenden, vor allem auf die, die schiefgingen oder in denen sich der Agent seltsam verhalten hat.</p>
+      <p>Damit schließt sich der Kreis. Bessere Zeiger in der AGENTS.md, eine Lint-Regel und ein CI-Job machen das nächste Ausfragen, das nächste Ticket und den nächsten TDD-Lauf billiger. Matt Pocock beschreibt, dass Token-Effizienz und Qualität seiner Arbeit durch regelmäßige Retros deutlich gestiegen sind.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ueberblick">
+  <div class="sec-head grid-12"><span class="t-label">Auf einer Seite</span><h2>Der Workflow zum Mitnehmen</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0"><table>
+        <thead><tr><th>Skill</th><th>Wann</th><th>Liest</th><th>Hinterlässt</th><th>Danach</th></tr></thead>
+        <tbody>
+          <tr><td><code>/grill-with-docs</code></td><td>Vor allem Neuen, das mehr als ein Tippfehler ist</td><td>Deine Idee, den Code</td><td>GLOSSARY.md, seltene ADRs</td><td><code>/to-spec</code>, dann <code>/clear</code></td></tr>
+          <tr><td><code>/to-tickets</code></td><td>Die Spec steht</td><td>Spec, Glossar</td><td>Tickets mit blockierenden Kanten</td><td><code>/clear</code></td></tr>
+          <tr><td><code>/implement-spec</code></td><td>Die Tickets stehen</td><td>Spec, Tickets, Glossar</td><td>Integrations-Branch, ein PR</td><td>Review, mergen</td></tr>
+          <tr><td><code>/tdd</code></td><td>In jedem Ticket, ruft der Agent selbst auf</td><td>Ticket, vereinbarte Nähte</td><td>Tests und Code</td><td>nächster Zyklus</td></tr>
+          <tr><td><code>/retro</code></td><td>Nach Sitzungen, die zäh waren</td><td>Sitzungsprotokolle</td><td>Vorschläge für die Umgebung</td><td>Du entscheidest</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="finder">
+  <div class="sec-head grid-12"><span class="t-label">Dein Problem</span><h2>Welcher Skill hilft dir zuerst?</h2></div>
+  <div class="grid-12">
+    <div class="prose"><p>Du musst nicht alle fünf auf einmal einführen. Wähl das Symptom, das dich am meisten nervt.</p></div>
+    
+    <div class="full fig" id="f6">
+      <div class="sf-wrap">
+        <div class="sf-sym" role="group" aria-label="Symptome">
+          <button type="button" data-s="grill" aria-pressed="false">„Er baut etwas anderes, als ich meinte.“</button>
+          <button type="button" data-s="grill" aria-pressed="false">„Dasselbe Ding heißt jedes Mal anders.“</button>
+          <button type="button" data-s="tickets" aria-pressed="false">„Das Feature passt in keine Sitzung.“</button>
+          <button type="button" data-s="tickets" aria-pressed="false">„Erst ganz am Ende läuft irgendwas.“</button>
+          <button type="button" data-s="impl" aria-pressed="false">„Ich sitze daneben und tippe ‚nächstes Ticket‘.“</button>
+          <button type="button" data-s="tdd" aria-pressed="false">„Tests brechen bei jedem Umbau.“</button>
+          <button type="button" data-s="tdd" aria-pressed="false">„Alles grün, trotzdem kaputt.“</button>
+          <button type="button" data-s="retro" aria-pressed="false">„Jede Sitzung derselbe Umweg.“</button>
+        </div>
+        <ol class="sf-cards" id="sf-cards" aria-live="polite">
+          <li data-k="grill"><b>/grill-with-docs</b><span>Lass dich ausfragen, bevor gebaut wird. Begriffe landen im Glossar und gelten ab dann überall.</span></li>
+          <li data-k="tickets"><b>/to-tickets</b><span>Schneide senkrecht, damit nach jedem Ticket etwas läuft und jedes in ein frisches Fenster passt.</span></li>
+          <li data-k="impl"><b>/implement-spec</b><span>Ein Agent spielt die Schleife: Front ausrechnen, Subagenten starten, einzeln integrieren.</span></li>
+          <li data-k="tdd"><b>/tdd</b><span>Tests nur an Nähten, und zu jedem Test der Bruch, den er fängt.</span></li>
+          <li data-k="retro"><b>/retro</b><span>Lass einen zweiten Agenten die Sitzung lesen und die Umgebung verbessern.</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="einrichten">
+  <div class="sec-head grid-12"><span class="t-label">Einrichten</span><h2>In fünf Minuten startklar</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Es gibt zwei Wege, und du nimmst nur einen. Das Plugin für Claude Code ist ein verwaltetes Paket, das mit jedem Release aktualisiert wird. Der Installer von <code>skills.sh</code> kopiert die Skills als normale Dateien ins Projekt, die du anpassen kannst. Die Befehle stammen aus der README von Release 1.3.1.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Claude Code: Plugin aus dem offiziellen Marketplace</span>
+claude plugins install mattpocock-skills
+
+<span class="c"># oder: als eigene Dateien, für jeden Agenten</span>
+npx skills@latest add mattpocock/skills</pre></div>
+      <p>Danach einmal pro Repository <code>/setup-matt-pocock-skills</code> aufrufen. Der Skill fragt nach dem Issue-Tracker (GitHub, Linear oder lokale Dateien), nach den Labels für die Triage und danach, wo Dokumente liegen sollen. <code>/to-spec</code>, <code>/to-tickets</code> und <code>/implement-spec</code> brauchen diese Angaben.</p>
+      <div class="callout tip"><span class="t-label">Du rufst sie auf</span><p>Vier der fünf Skills startet der Agent nie von sich aus, sie sind als Befehle für dich gedacht: <code>/grill-with-docs</code>, <code>/to-tickets</code>, <code>/implement-spec</code> und <code>/retro</code>. Nur <code>/tdd</code> zieht der Agent selbst heran, sobald er test-first arbeitet. Lies jeden Skill einmal ganz, bevor du ihn nutzt. Die meisten sind kürzer als dieser Abschnitt.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="grenzen">
+  <div class="sec-head grid-12"><span class="t-label">Grenzen</span><h2>Wann es sich nicht lohnt</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ul class="pitfalls">
+        <li><h3>Kleine, klare Änderungen</h3><p>Ein Tippfehler, eine Farbe, eine Zeile Konfiguration: Hier gibt es keinen Baum, den man ausfragen müsste. Der ganze Workflow kostet dann mehr Zeit, als er spart.</p></li>
+        <li><h3>Ohne Tracker kein implement-spec</h3><p><code>/implement-spec</code> liest Spec und Tickets über die Tracker-Anleitung aus dem Setup. Fehlt sie, bricht der Skill ab und schickt dich zu <code>/setup-matt-pocock-skills</code>.</p></li>
+        <li><h3>Fragen kosten Aufmerksamkeit</h3><p>Ausfragen funktioniert nur, wenn du die Fragen wirklich beantwortest. Wer bei jeder Runde „nimm die Empfehlung“ tippt, bekommt dasselbe Ergebnis wie ohne Grilling, nur später.</p></li>
+        <li><h3>Retro nicht automatisieren</h3><p>Retro findet fast immer etwas. Ohne dein Urteil wächst die Regeldatei mit jedem Fehlalarm.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="selbsttest">
+  <div class="sec-head grid-12"><span class="t-label">Umsetzen</span><h2>Selbsttest und Checkliste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="b">
+          <legend>Welche Fragen stellt <code>/grill-with-docs</code> dir in einer Runde?</legend>
+          <label><input type="radio" name="q1" value="a"> Alle offenen Fragen auf einmal, damit es schneller geht.</label>
+          <label><input type="radio" name="q1" value="b"> Nur die Front: Fragen, deren Voraussetzungen schon entschieden sind, höchstens vier.</label>
+          <label><input type="radio" name="q1" value="c"> Auch Fakten aus dem Code, damit du sie bestätigst.</label>
+          <p class="why" hidden>Eine Frage, deren Voraussetzung noch offen ist, würde eine Antwort erraten. Fakten schlägt ein Subagent nach.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Du hast drei Subagenten. Wann hilft ein vierter?</legend>
+          <label><input type="radio" name="q2" value="a"> Immer, mehr Agenten sind schneller.</label>
+          <label><input type="radio" name="q2" value="b"> Nie, der Merge-Slot erlaubt nur drei.</label>
+          <label><input type="radio" name="q2" value="c"> Nur wenn die Front irgendwann breiter als drei Tickets ist.</label>
+          <p class="why" hidden>Ein Subagent kann nur ein Ticket an der Front nehmen. Ist die Front nie breiter als drei, wartet der vierte.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="a">
+          <legend>Ein Test bricht, nachdem du nur aufgeräumt hast. Was sagt dir das?</legend>
+          <label><input type="radio" name="q3" value="a"> Der Test greift ins Innere statt an der Naht.</label>
+          <label><input type="radio" name="q3" value="b"> Das Aufräumen hat einen Bug eingebaut.</label>
+          <label><input type="radio" name="q3" value="c"> Der Test ist besonders gründlich.</label>
+          <p class="why" hidden>Aufräumen ändert kein Verhalten. Ein Test, der dabei rot wird, prüft Interna und gibt Fehlalarm.</p>
+        </fieldset>
+      </form>
+      <ul class="checklist" data-key="matt-top-5-skills">
+        <li><label><input type="checkbox"> <span><b>Skills installiert</b>, auf genau einem Weg, und <code>/setup-matt-pocock-skills</code> einmal pro Repo ausgeführt.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Nächstes Feature mit <code>/grill-with-docs</code> begonnen</b> und jede Runde selbst beantwortet.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>GLOSSARY.md liegt im Repo</b> und nennt zu jedem Begriff die Wörter, die man vermeidet.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Nach Spec und Tickets jeweils <code>/clear</code></b>, bevor die nächste Phase startet.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Tickets senkrecht geschnitten</b>, jedes mit seinen direkten Blockern.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Einmal <code>/retro</code> auf eine zähe Sitzung</b> und jeden Befund selbst entschieden.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12"><div class="prose"><ol class="sources">
+    <li>Matt Pocock: <a href="https://github.com/mattpocock/skills">mattpocock/skills</a>, Release 1.3.1, README (Installation) und die Skills <code>grilling</code>, <code>grill-with-docs</code>, <code>domain-modeling</code>, <code>to-spec</code>, <code>to-tickets</code>, <code>implement-spec</code>, <code>tdd</code>, <code>pr</code> und <code>retro</code>, gelesen am 6. Oktober 2026 (MIT-Lizenz)</li>
+    <li>Dex Horthy: <a href="https://github.com/humanlayer/skills/tree/main/plugins/show-me/skills/show-me">show-me</a>, Vorbild für die Summary im <code>pr</code>-Skill</li>
+    <li>Michael Feathers: <i>Working Effectively with Legacy Code</i>, Herkunft des Begriffs „Seam“ (Naht)</li>
+    <li>Eric Evans: <i>Domain-Driven Design</i>, Herkunft des Glossars als gemeinsamer Sprache</li>
+  </ol>
+  <p class="hint">Merkliste, Tickets, Zeitplan und Retro-Sitzung sind ein durchgehendes Beispiel. Füllstände und Takte sind schematisch, keine Messwerte.</p></div></div>
+</section>

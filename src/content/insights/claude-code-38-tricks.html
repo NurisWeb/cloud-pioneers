@@ -1,0 +1,950 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Du hast Claude Code gestartet und bittest es, eine Quiz-App für das Team zu bauen. Nach einer Stunde wird die Session zäh, Claude vergisst frühere Anweisungen und macht Fehler, die schon einmal korrigiert waren. Meist liegt das nicht am Modell, sondern an Kontext, Aufgabenstellung und fehlender Kontrolle. Dieses Arbeitsbuch zeigt 38 Tricks, die genau dort ansetzen.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Kontext ist alles, was Claude gerade im Kopf hat: Das Fenster füllt sich schnell, mit jedem Prozent mehr sinkt die Qualität, und sauber halten ist die wichtigste Disziplin.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Klarheit spart mehr Zeit als jedes Feature: Konkrete Dateien, Grenzen und ein klares „fertig heißt …“ machen die Aufgabe prüfbar.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Ohne Kontrolle seid ihr selbst die Qualitätskontrolle: Gebt Claude Tests, Build oder Screenshot, woran es sich selbst prüfen kann.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Eine Session füllt das Kontextfenster</h2>
+    <p>Der Balken ist das ganze Kontextfenster, 100 %. Alle Zahlen sind Beispielwerte, angelehnt an die Ausgabe von <code>/context</code> in Trick #06, kein Messergebnis. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="ctx-term"><span class="t-label">Terminal</span><span class="tl" id="c0"></span><span class="tl" id="c1"></span><span class="tl" id="c2"></span><span class="tl" id="c3"></span></div>
+        <div class="ctx-meter"><span class="stamp" id="st-sus">verdächtig</span><span class="stamp" id="st-full">über 60 %</span><div id="s1-meter"></div></div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Start.</b> Bevor du etwas schreibst, belegen System-Prompt, MCP-Werkzeuge und CLAUDE.md schon 25 %. Alle Zahlen sind Beispielwerte.</p></div>
+        <div class="cap" data-at="0.16"><span class="n">02</span><p><b><code>/context</code> nach einer Weile.</b> Die Nachrichten belegen 31 %. Auffällig sind die MCP-Werkzeuge mit 18 %: Dort lohnt die Suche nach Servern, die ihr nie nutzt.</p></div>
+        <div class="cap" data-at="0.42"><span class="n">03</span><p><b>Über 60 %.</b> Der Verlauf wächst weiter, die Session wird zäh und Claude vergisst eher frühere Anweisungen. Zeit für <code>/compact</code>.</p></div>
+        <div class="cap" data-at="0.62"><span class="n">04</span><p><b><code>/compact</code> fasst zusammen.</b> Du gibst vor, was bleiben muss, hier die API-Entscheidungen und das Datenbankschema. Nachrichten: 9 %.</p></div>
+        <div class="cap" data-at="0.82"><span class="n">05</span><p><b>Neues Thema: <code>/clear</code>.</b> Der Verlauf ist leer. System-Prompt, MCP-Werkzeuge und CLAUDE.md bleiben geladen.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ablauf">
+  <div class="sec-head grid-12"><span class="t-label">Überblick</span><h2>Der Ablauf im Überblick</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Fast jeder Trick zahlt auf eines der drei Prinzipien ein. Wer sie verstanden hat, braucht die Liste irgendwann nicht mehr. Die Tricks sind nach dem gruppiert, was sie tun, nicht nach Schwierigkeit. Die Angabe Basics, Intermediate oder Pro an jedem Trick zeigt, wo ihr einsteigen könnt.</p>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Ablauf einer Aufgabe" tabindex="0"><table><thead><tr><th scope="col">Schritt</th><th scope="col">Trick</th></tr></thead><tbody>
+<tr><td>Erkunden</td><td>Plan Mode (<a href="#t10">#10</a>)</td></tr>
+<tr><td>Planen</td><td>Fragen (<a href="#t12">#12</a>)</td></tr>
+<tr><td>Bauen</td><td>Sub-Agents (<a href="#t24">#24</a>)</td></tr>
+<tr><td>Prüfen</td><td>Checks (<a href="#t19">#19</a>, <a href="#t20">#20</a>); ist ein Check rot, zurück und fixen</td></tr>
+<tr><td>Merken</td><td>CLAUDE.md (<a href="#t02">#02</a>); die nächste Session startet schlauer</td></tr>
+</tbody></table></div>
+</div>
+
+<div class="wide fig" id="filter">
+  <div class="fig-head"><h3>Alle 38 Tricks auf einen Blick</h3><span class="f-count" aria-live="polite"><b id="f-n">38</b> von 38 Tricks</span></div>
+  <div class="f-ctrl">
+    <div class="f-group" role="group" aria-label="Nach Kategorie filtern"><span class="t-label">Kategorie</span>
+<button type="button" class="btn sm" data-cat="all" aria-pressed="true">Alle</button>
+<button type="button" class="btn sm" data-cat="A" aria-pressed="false">A Gedächtnis</button>
+<button type="button" class="btn sm" data-cat="B" aria-pressed="false">B Kontext</button>
+<button type="button" class="btn sm" data-cat="C" aria-pressed="false">C Prompting</button>
+<button type="button" class="btn sm" data-cat="D" aria-pressed="false">D Qualität</button>
+<button type="button" class="btn sm" data-cat="E" aria-pressed="false">E Agents</button>
+<button type="button" class="btn sm" data-cat="F" aria-pressed="false">F Erweitern</button>
+<button type="button" class="btn sm" data-cat="G" aria-pressed="false">G Automatisierung</button>
+<button type="button" class="btn sm" data-cat="H" aria-pressed="false">H Sicherheit</button>
+    </div>
+    <div class="f-group" role="group" aria-label="Nach Level filtern"><span class="t-label">Level</span>
+<button type="button" class="btn sm" data-lvl="all" aria-pressed="true">Alle</button>
+<button type="button" class="btn sm" data-lvl="Basics" aria-pressed="false">Basics</button>
+<button type="button" class="btn sm" data-lvl="Intermediate" aria-pressed="false">Intermediate</button>
+<button type="button" class="btn sm" data-lvl="Pro" aria-pressed="false">Pro</button>
+    </div>
+  </div>
+  <nav class="tcards" id="f-cards" aria-label="Tricks">
+<a class="tc" href="#t01" data-cat="A" data-lvl="Basics"><span class="n">#01 · A</span><b>Jedes Projekt mit /init starten</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t02" data-cat="A" data-lvl="Intermediate"><span class="n">#02 · A</span><b>CLAUDE.md ständig nachschärfen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t03" data-cat="A" data-lvl="Intermediate"><span class="n">#03 · A</span><b>Von der CLAUDE.md auf andere Dateien verweisen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t04" data-cat="B" data-lvl="Basics"><span class="n">#04 · B</span><b>Eine Statuszeile einrichten</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t05" data-cat="B" data-lvl="Basics"><span class="n">#05 · B</span><b>Kontext klein halten</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t06" data-cat="B" data-lvl="Basics"><span class="n">#06 · B</span><b>Mit /context die Token-Fresser finden</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t07" data-cat="B" data-lvl="Basics"><span class="n">#07 · B</span><b>Bei ca. 60 % compacten, zwischen Aufgaben clearen</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t08" data-cat="B" data-lvl="Pro"><span class="n">#08 · B</span><b>API-Endpunkt statt MCP, wenn es eng wird</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t09" data-cat="B" data-lvl="Basics"><span class="n">#09 · B</span><b>Nebenfragen mit /btw stellen</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t10" data-cat="C" data-lvl="Basics"><span class="n">#10 · C</span><b>Im Plan Mode beginnen</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t11" data-cat="C" data-lvl="Basics"><span class="n">#11 · C</span><b>Claude wie einen Junior-Dev behandeln</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t12" data-cat="C" data-lvl="Basics"><span class="n">#12 · C</span><b>Claude Fragen stellen lassen</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t13" data-cat="C" data-lvl="Intermediate"><span class="n">#13 · C</span><b>Interview führen lassen, dann SPEC.md</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t14" data-cat="C" data-lvl="Intermediate"><span class="n">#14 · C</span><b>Früh abbrechen, neu prompten</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t15" data-cat="C" data-lvl="Basics"><span class="n">#15 · C</span><b>Zweimal korrigiert? Neu anfangen</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t16" data-cat="C" data-lvl="Intermediate"><span class="n">#16 · C</span><b>Ergebnisse hart hinterfragen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t17" data-cat="C" data-lvl="Pro"><span class="n">#17 · C</span><b>ultrathink für harte Probleme</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t18" data-cat="C" data-lvl="Basics"><span class="n">#18 · C</span><b>Per Sprache prompten</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t19" data-cat="D" data-lvl="Basics"><span class="n">#19 · D</span><b>Selbstkontrolle in die To-do-Liste einbauen</b><span class="lv">Basics</span></a>
+<a class="tc" href="#t20" data-cat="D" data-lvl="Intermediate"><span class="n">#20 · D</span><b>Screenshots nutzen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t21" data-cat="D" data-lvl="Intermediate"><span class="n">#21 · D</span><b>Browser-Tools für Funktionstests</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t22" data-cat="D" data-lvl="Intermediate"><span class="n">#22 · D</span><b>Inspirations-Seiten als Vorlage</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t23" data-cat="D" data-lvl="Intermediate"><span class="n">#23 · D</span><b>Writer und Reviewer trennen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t24" data-cat="E" data-lvl="Intermediate"><span class="n">#24 · E</span><b>Sub-Agents für parallele Arbeit</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t25" data-cat="E" data-lvl="Intermediate"><span class="n">#25 · E</span><b>Günstige Modelle für Sub-Agents</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t26" data-cat="E" data-lvl="Pro"><span class="n">#26 · E</span><b>Parallele Sessions mit Git Worktrees</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t27" data-cat="E" data-lvl="Pro"><span class="n">#27 · E</span><b>Agent-Teams</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t28" data-cat="F" data-lvl="Intermediate"><span class="n">#28 · F</span><b>Eigene Skills bauen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t29" data-cat="F" data-lvl="Intermediate"><span class="n">#29 · F</span><b>Hooks für Benachrichtigungen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t30" data-cat="F" data-lvl="Intermediate"><span class="n">#30 · F</span><b>Auto-Formatierung nach jeder Änderung</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t31" data-cat="F" data-lvl="Pro"><span class="n">#31 · F</span><b>Context7 für aktuelle Doku</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t32" data-cat="F" data-lvl="Intermediate"><span class="n">#32 · F</span><b>Plugins: fertige Setups mit einem Befehl</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t33" data-cat="G" data-lvl="Pro"><span class="n">#33 · G</span><b>/loop für wiederkehrende Aufgaben</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t34" data-cat="G" data-lvl="Pro"><span class="n">#34 · G</span><b>Auf einem Server laufen lassen</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t35" data-cat="G" data-lvl="Pro"><span class="n">#35 · G</span><b>Fernsteuerung vom Handy</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t36" data-cat="G" data-lvl="Pro"><span class="n">#36 · G</span><b>Datenanalyse ohne SQL</b><span class="lv">Pro</span></a>
+<a class="tc" href="#t37" data-cat="H" data-lvl="Intermediate"><span class="n">#37 · H</span><b>/rewind zum Zurückspulen</b><span class="lv">Intermediate</span></a>
+<a class="tc" href="#t38" data-cat="H" data-lvl="Pro"><span class="n">#38 · H</span><b>Rechte gezielt freigeben statt alles erlauben</b><span class="lv">Pro</span></a>
+<span class="tc-fill" aria-hidden="true"></span>
+  </nav>
+  <p class="f-empty" id="f-empty" hidden>Keine Tricks in dieser Kombination. Wähle eine andere Kategorie oder ein anderes Level.</p>
+  <p class="fig-cap">Jede Karte springt zum Trick weiter unten. Die Buchstaben A bis H stehen für die acht Abschnitte, das Level zeigt, wo ihr einsteigen könnt.</p>
+</div>
+
+  </div>
+</section>
+
+<section class="sec" id="gedaechtnis">
+  <div class="sec-head grid-12"><span class="t-label">A · 3 Tricks</span><h2>Gedächtnis &amp; Setup</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Damit Claude nicht jede Session bei null anfängt.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Kurz halten: jede Zeile muss einen Fehler verhindern</li><li>Befehle notieren, die Claude nicht erraten kann (Tests, Build)</li><li>Regeln, die vom Standard abweichen</li><li>In Git einchecken, damit alle profitieren</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>Datei-für-Datei-Beschreibungen der Codebasis</li><li>Selbstverständliches wie „schreib sauberen Code“</li><li>Infos, die sich ständig ändern</li><li>Lange Tutorials oder komplette API-Dokus</li></ul></div></div>
+<article class="trick" id="t01" aria-labelledby="t01-h">
+<header class="trick-head"><span class="trick-n">#01</span><h3 id="t01-h">Jedes Projekt mit /init starten</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Basics</span></p></header>
+<p>Bei bestehenden Projekten ist <code>/init</code> der erste Befehl. Claude scannt Ordner, Dateien und Konventionen und schreibt eine <b>CLAUDE.md</b>: Architektur, wichtige Dateien, Regeln. Bei neuen Projekten beschreibt ihr Ziel, Tech-Stack und Regeln und lasst Claude die Datei gemeinsam mit euch anlegen.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Die erzeugte Datei einmal lesen und alles streichen, was Claude auch selbst aus dem Code ablesen kann.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /init</pre></div>
+<div class="code"><div class="code-bar"><span class="t-label">CLAUDE.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"># Quiz-App für das Team
+
+## Befehle
+- npm run dev   → Dev-Server auf :5173
+- npm test      → Vitest, einzelne Tests bevorzugen
+
+## Regeln
+- TypeScript strict, keine any
+- Fragen liegen in src/data/*.json, IDs nie doppelt
+- UI-Texte auf Deutsch, Code-Namen auf Englisch</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/memory">Mehr in der Doku<span class="sr-only"> zu Trick #01</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t02" aria-labelledby="t02-h">
+<header class="trick-head"><span class="trick-n">#02</span><h3 id="t02-h">CLAUDE.md ständig nachschärfen</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Neuer Stolperstein, neue Konvention, neuer Skill: Claude soll es festhalten, damit derselbe Fehler nicht zweimal passiert. Aber die Datei wird in <b>jede</b> Session geladen und kostet immer Kontext. Bewährt hat sich eine Länge von höchstens 150 bis 200 Zeilen.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Test aus der Doku: „Würde Claude ohne diese Zeile Fehler machen?“ Wenn nein, löschen. Wird eine Regel trotzdem ignoriert, nur diese eine mit IMPORTANT markieren.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Das war jetzt das dritte Mal, dass du Fragen-IDs doppelt vergibst. Ergänze in der CLAUDE.md eine Regel dazu, maximal ein Satz.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/memory">Mehr in der Doku<span class="sr-only"> zu Trick #02</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t03" aria-labelledby="t03-h">
+<header class="trick-head"><span class="trick-n">#03</span><h3 id="t03-h">Von der CLAUDE.md auf andere Dateien verweisen</h3><p class="trick-meta"><span class="badge">Konfig</span><span class="badge lv">Intermediate</span></p></header>
+<p>Damit die CLAUDE.md schlank bleibt, enthält sie nur Wegweiser. Styleguide, Business-Kontext oder Projektstatus liegen in eigenen Dateien. Claude muss nicht alles wissen, nur, wo es nachschauen kann.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Mit <code>@pfad</code> wird eine Datei fest mitgeladen. Ein normaler Pfad ist nur ein Hinweis, und Claude liest die Datei erst bei Bedarf. Für Wissen, das nur manchmal gebraucht wird, sind Skills noch besser (Kategorie F).</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">CLAUDE.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">## Wo was liegt
+- Code-Stil (immer laden): @docs/styleguide.md
+- API der Team-Datenbank: docs/api.md
+- Aktueller Projektstatus: docs/status.md
+  → nur lesen, wenn es um Planung geht</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/memory">Mehr in der Doku<span class="sr-only"> zu Trick #03</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Gedächtnis &amp; Setup</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-A">
+    <li><label><input type="checkbox"><span><b>#01</b> Jedes Projekt mit /init starten</span></label></li>
+    <li><label><input type="checkbox"><span><b>#02</b> CLAUDE.md ständig nachschärfen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#03</b> Von der CLAUDE.md auf andere Dateien verweisen</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="kontext">
+  <div class="sec-head grid-12"><span class="t-label">B · 6 Tricks</span><h2>Kontext &amp; Tokens</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Das Kontextfenster ist eure wichtigste Ressource.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Kontext-Füllstand immer sichtbar haben</li><li>/clear zwischen Themen, die nichts miteinander zu tun haben</li><li>Konkrete Dateien mit @ nennen statt „schau mal im Projekt“</li><li>Recherche an Sub-Agents auslagern</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>„Kitchen-Sink-Session“: fünf Themen in einem Chat</li><li>Ganze Ordner oder Logs ungefiltert reinkippen</li><li>MCP-Server installiert lassen, die ihr nie nutzt</li><li>Unscharfe „Untersuch mal …“-Aufträge ohne Grenze</li></ul></div></div>
+<article class="trick" id="t04" aria-labelledby="t04-h">
+<header class="trick-head"><span class="trick-n">#04</span><h3 id="t04-h">Eine Statuszeile einrichten</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Basics</span></p></header>
+<p>Mit <code>/statusline</code> beschreibt ihr in normaler Sprache, was unten im Terminal stehen soll, etwa Modell, Kontext-Füllstand und Git-Branch. Claude schreibt dafür ein kleines Skript. Ein Mini-Dashboard, das nach jeder Nachricht zeigt, wie voll es wird.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Ohne Argument übernimmt Claude Code das Aussehen eures Shell-Prompts als Ausgangspunkt.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /statusline zeig Modell, Kontext als Balken
+  mit Prozent und den aktuellen Git-Branch</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/statusline">Mehr in der Doku<span class="sr-only"> zu Trick #04</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t05" aria-labelledby="t05-h">
+<header class="trick-head"><span class="trick-n">#05</span><h3 id="t05-h">Kontext klein halten</h3><p class="trick-meta"><span class="badge">Denkweise</span><span class="badge lv">Basics</span></p></header>
+<p>Nicht die ganze Codebasis in den Chat werfen. Gebt Claude nur, was die aktuelle Aufgabe braucht, und zerlegt große Probleme in kleine Schritte. <b>Weniger Rauschen heißt bessere Antworten.</b> Simpel, wird aber ständig ignoriert.</p>
+<div class="compare"><div><span class="t-label">Vorher</span><p>Hier ist mein Projekt, mach die App besser.</p></div><div><span class="t-label">Nachher</span><p>Lies @src/components/QuizCard.tsx. Der Weiter-Button reagiert auf dem Handy nicht. Ändere nur diese Datei.</p></div></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/context-window">Mehr in der Doku<span class="sr-only"> zu Trick #05</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t06" aria-labelledby="t06-h">
+<header class="trick-head"><span class="trick-n">#06</span><h3 id="t06-h">Mit /context die Token-Fresser finden</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Basics</span></p></header>
+<p><code>/context</code> zeigt als farbiges Raster, was euer Kontextfenster belegt: Systemprompt, Dateien, MCP-Tools, Verlauf. Fühlt sich eine Session zäh an, findet ihr hier die Ursache.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Typische Fresser: viele MCP-Server, eine aufgeblähte CLAUDE.md, lange Build- oder Log-Ausgaben.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /context
+
+<span class="c"># zeigt z. B.:</span>
+<span class="c"># System prompt      3 %</span>
+<span class="c"># MCP tools         18 %   ← verdächtig</span>
+<span class="c"># Memory (CLAUDE.md) 4 %</span>
+<span class="c"># Messages          31 %</span></pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/context-window">Mehr in der Doku<span class="sr-only"> zu Trick #06</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t07" aria-labelledby="t07-h">
+<header class="trick-head"><span class="trick-n">#07</span><h3 id="t07-h">Bei ca. 60 % compacten, zwischen Aufgaben clearen</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Basics</span></p></header>
+<p>Ab etwa 60 % fasst <code>/compact</code> den Verlauf zusammen, und ihr könnt vorgeben, was erhalten bleiben muss. Bei einem ganz neuen Thema ist <code>/clear</code> besser: frischer Chat, aber CLAUDE.md und Dateien bleiben.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Dauerhaft festlegen, was jedes Compacten überlebt: in die CLAUDE.md schreiben „Beim Compacten immer die Liste geänderter Dateien und die Testbefehle behalten.“</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /compact behalte alle Entscheidungen zur
+  API-Anbindung und das Datenbankschema
+
+<span class="c"># neues, unabhängiges Thema:</span>
+&gt; /clear</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/context-window">Mehr in der Doku<span class="sr-only"> zu Trick #07</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t08" aria-labelledby="t08-h">
+<header class="trick-head"><span class="trick-n">#08</span><h3 id="t08-h">API-Endpunkt statt MCP, wenn es eng wird</h3><p class="trick-meta"><span class="badge">Denkweise</span><span class="badge lv">Pro</span></p></header>
+<p>MCP-Server laden ihre Tool-Beschreibungen ins Kontextfenster. Braucht ihr von Notion nur eine einzige Datenbank, ist ein direkt hinterlegter API-Aufruf viel sparsamer. Faustregel: MCP für flexible Nutzung, direkter Aufruf für einen klar begrenzten Zweck.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Laut Doku sind CLI-Tools wie <code>gh</code>, <code>gcloud</code> oder <code>aws</code> die kontextsparsamste Art, externe Dienste anzubinden.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Für dieses Projekt brauchst du nur die Notion-Datenbank „Aufgaben“. Nutze dafür curl gegen die Notion-API statt des MCP-Servers. Endpunkt und Felder stehen in docs/notion.md.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/mcp">Mehr in der Doku<span class="sr-only"> zu Trick #08</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t09" aria-labelledby="t09-h">
+<header class="trick-head"><span class="trick-n">#09</span><h3 id="t09-h">Nebenfragen mit /btw stellen</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Basics</span></p></header>
+<p>Kurz etwas nachschlagen, ohne dass es im Verlauf landet? <code>/btw</code> beantwortet eine Nebenfrage, deren Antwort <b>nicht</b> in den Kontext wandert. Perfekt für „Wie war nochmal …?“ mitten in einer langen Session.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /btw was macht useEffect mit leerem Array?</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/interactive-mode">Mehr in der Doku<span class="sr-only"> zu Trick #09</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Kontext &amp; Tokens</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-B">
+    <li><label><input type="checkbox"><span><b>#04</b> Eine Statuszeile einrichten</span></label></li>
+    <li><label><input type="checkbox"><span><b>#05</b> Kontext klein halten</span></label></li>
+    <li><label><input type="checkbox"><span><b>#06</b> Mit /context die Token-Fresser finden</span></label></li>
+    <li><label><input type="checkbox"><span><b>#07</b> Bei ca. 60 % compacten, zwischen Aufgaben clearen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#08</b> API-Endpunkt statt MCP, wenn es eng wird</span></label></li>
+    <li><label><input type="checkbox"><span><b>#09</b> Nebenfragen mit /btw stellen</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="prompting">
+  <div class="sec-head grid-12"><span class="t-label">C · 9 Tricks</span><h2>Prompting &amp; Planung</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Erst verstehen, dann bauen.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Bei unklaren oder großen Aufgaben im Plan Mode starten</li><li>Konkret werden: welche Datei, welcher Fall, was heißt „fertig“</li><li>Auf vorhandene Muster im Code verweisen</li><li>Früh stoppen, wenn es in die falsche Richtung geht</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>Plan Mode für Tippfehler und Einzeiler</li><li>Fünfmal dieselbe Korrektur nachschieben</li><li>Das erste „okay“-Ergebnis einfach übernehmen</li><li>ultrathink für jede Kleinigkeit</li></ul></div></div>
+<h3>Vorher / Nachher: bessere Prompts (nach der offiziellen Doku)</h3>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Vorher / Nachher: bessere Prompts (nach der offiziellen Doku)" tabindex="0"><table><thead><tr><th scope="col">Strategie</th><th scope="col">Vorher</th><th scope="col">Nachher</th></tr></thead><tbody><tr><td>Aufgabe eingrenzen</td><td>„Schreib Tests für quiz.ts“</td><td>„Schreib einen Test für quiz.ts für den Fall, dass ein Nutzer ausgeloggt ist. Keine Mocks.“</td></tr><tr><td>Prüfkriterien mitgeben</td><td>„Bau eine E-Mail-Prüfung“</td><td>„Schreib validateEmail. Testfälle: max@firma.de → true, invalid → false, max@.de → false. Führe die Tests danach aus.“</td></tr><tr><td>Symptom beschreiben</td><td>„Fix den Login-Bug“</td><td>„Login schlägt nach Session-Timeout fehl. Schau in src/auth/ beim Token-Refresh. Schreib erst einen Test, der den Fehler zeigt, dann fixen.“</td></tr><tr><td>Ursache statt Symptom</td><td>„Der Build ist kaputt“</td><td>„Der Build scheitert mit [Fehler]. Behebe die Ursache und unterdrücke den Fehler nicht. Prüfe, dass der Build danach durchläuft.“</td></tr></tbody></table></div>
+</div>
+<div class="prose">
+<article class="trick" id="t10" aria-labelledby="t10-h">
+<header class="trick-head"><span class="trick-n">#10</span><h3 id="t10-h">Im Plan Mode beginnen</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Basics</span></p></header>
+<p><kbd>Shift</kbd>+<kbd>Tab</kbd> wechselt in den Plan Mode. Claude darf lesen und recherchieren, aber nichts ändern. Es skizziert Schritte, stellt Rückfragen und legt den Ansatz fest, bevor Code entsteht. Passt der Plan, raus aus dem Modus und ausführen lassen.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Nicht für alles: Wenn ihr den Diff in einem Satz beschreiben könnt (Tippfehler, Variable umbenennen), direkt machen lassen. Mit <kbd>Ctrl</kbd>+<kbd>G</kbd> öffnet ihr den Plan im Editor und könnt ihn selbst anpassen.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Ablauf</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Shift+Tab bis: ⏸ plan mode on</span>
+&gt; Lies src/auth und erklär mir, wie der Login
+  funktioniert.
+&gt; Ich will Google-Login ergänzen. Welche Dateien
+  ändern sich? Erstelle einen Plan.
+<span class="c"># Plan prüfen, dann Shift+Tab und:</span>
+&gt; Setz den Plan um, schreib Tests für den
+  Callback und behebe alle Fehler.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/permission-modes">Mehr in der Doku<span class="sr-only"> zu Trick #10</span> <span aria-hidden="true">→</span></a></p>
+</article>
+</div>
+
+<div class="wide fig" id="plan">
+  <div class="term pm">
+    <div class="code-bar"><span class="t-label">Terminal · Claude Code</span></div>
+    <div class="screen" id="pm-screen" tabindex="0" role="log" aria-label="Verlauf im Terminal" aria-live="polite"></div>
+    <div class="pm-mode"><span id="pm-mode">plan mode off</span><span class="hint">shift+tab wechselt den Modus</span></div>
+  </div>
+  <div class="ctrl pm-keys" role="group" aria-label="Im Terminal ausprobieren">
+    <button type="button" class="btn" id="pm-tab" aria-pressed="false"><kbd>Shift</kbd>+<kbd>Tab</kbd></button>
+    <button type="button" class="btn" data-act="read">Read src/auth</button>
+    <button type="button" class="btn" data-act="edit">Edit src/auth/login.ts</button>
+  </div>
+  <p class="fig-cap">Im Plan Mode darf Claude lesen und recherchieren, aber nichts ändern. Ein Schreibversuch wird gesperrt, stattdessen entsteht ein Plan. Nach einem weiteren <kbd>Shift</kbd>+<kbd>Tab</kbd> geht dieselbe Änderung durch. Die Knöpfe kannst du selbst drücken.</p>
+</div>
+
+<div class="prose">
+<article class="trick" id="t11" aria-labelledby="t11-h">
+<header class="trick-head"><span class="trick-n">#11</span><h3 id="t11-h">Claude wie einen Junior-Dev behandeln</h3><p class="trick-meta"><span class="badge">Denkweise</span><span class="badge lv">Basics</span></p></header>
+<p>Statt Befehlen lieber Probleme stellen. Wenn Claude den Ansatz selbst durchdenkt, könnt ihr nach den Gründen fragen, und das Ergebnis wird besser. Fragt es so, wie ihr eine erfahrene Entwicklerin fragen würdet.</p>
+<div class="compare"><div><span class="t-label">Vorher</span><p>Schreib eine Funktion, die Punkte zählt.</p></div><div><span class="t-label">Nachher</span><p>Wie sollten wir die Punktevergabe lösen, wenn manche Fragen mehrere richtige Antworten haben? Schlag zwei Ansätze vor und begründe, welchen du nehmen würdest.</p></div></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #11</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t12" aria-labelledby="t12-h">
+<header class="trick-head"><span class="trick-n">#12</span><h3 id="t12-h">Claude Fragen stellen lassen</h3><p class="trick-meta"><span class="badge">Prompt</span><span class="badge lv">Basics</span></p></header>
+<p>Im Plan Mode fragt Claude oft von selbst nach. Ihr könnt es aber ausdrücklich anweisen, so lange zu fragen, bis Ziel und Aufgabe klar sind. Das ersetzt drei, vier Revisionsrunden.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Stell mir so lange Fragen, bis du zu 95 % sicher bist, was ich brauche und was du tun musst. Erst dann planen.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #12</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t13" aria-labelledby="t13-h">
+<header class="trick-head"><span class="trick-n">#13</span><h3 id="t13-h">Interview führen lassen, dann SPEC.md</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Für größere Features empfiehlt die Doku: Claude interviewt euch ausführlich und schreibt eine Spezifikation. Danach eine <b>neue Session</b> starten, die mit sauberem Kontext nur noch umsetzt.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Gute Specs nennen die betroffenen Dateien, sagen, was nicht dazugehört, und enden mit einem Test, der beweist, dass alles funktioniert.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Ich will [kurze Beschreibung] bauen. Interviewe mich ausführlich mit dem AskUserQuestion-Tool. Frag nach technischer Umsetzung, UI/UX, Randfällen und Abwägungen. Keine offensichtlichen Fragen, geh an die schwierigen Stellen. Wenn alles geklärt ist, schreib eine vollständige SPEC.md.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #13</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t14" aria-labelledby="t14-h">
+<header class="trick-head"><span class="trick-n">#14</span><h3 id="t14-h">Früh abbrechen, neu prompten</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Läuft Claude in die falsche Richtung, nicht bis zum Ende warten. <kbd>Esc</kbd> stoppt sofort, der Kontext bleibt erhalten. Dann korrigieren. Jeder Token in die falsche Richtung ist verschwendeter Kontext.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Ablauf</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Claude installiert gerade eine neue Library …</span>
+<span class="c"># Esc drücken, dann:</span>
+&gt; Stopp. Keine neue Library. Nutze das
+  vorhandene date-fns für die Datumsformate.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #14</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t15" aria-labelledby="t15-h">
+<header class="trick-head"><span class="trick-n">#15</span><h3 id="t15-h">Zweimal korrigiert? Neu anfangen</h3><p class="trick-meta"><span class="badge">Denkweise</span><span class="badge lv">Basics</span></p></header>
+<p>Hat Claude denselben Fehler nach zwei Korrekturen immer noch drin, ist der Kontext voller gescheiterter Versuche. <code>/clear</code> und mit einem besseren Startprompt neu beginnen, der das Gelernte enthält. <b>Eine saubere Session schlägt fast immer eine lange voller Korrekturen.</b></p>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #15</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t16" aria-labelledby="t16-h">
+<header class="trick-head"><span class="trick-n">#16</span><h3 id="t16-h">Ergebnisse hart hinterfragen</h3><p class="trick-meta"><span class="badge">Prompt</span><span class="badge lv">Intermediate</span></p></header>
+<p>Wenn etwas nur „okay“ ist: zurückweisen. Mit höherer Messlatte wird der zweite Versuch oft deutlich besser, weil Claude jetzt weiß, was nicht gewollt ist. Danach die Lehre in Skill oder CLAUDE.md festhalten lassen.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Prompts</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Verwirf das. Bau eine elegantere Version, die mit halb so viel Code auskommt.
+
+Das reicht nicht. Versuch einen komplett anderen Ansatz und erklär, warum er besser ist.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #16</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t17" aria-labelledby="t17-h">
+<header class="trick-head"><span class="trick-n">#17</span><h3 id="t17-h">ultrathink für harte Probleme</h3><p class="trick-meta"><span class="badge">Prompt</span><span class="badge lv">Pro</span></p></header>
+<p>Steht <code>ultrathink</code> im Prompt, bekommt Claude ein deutlich größeres Nachdenk-Budget vor der Antwort (in der Praxis werden oft ca. 32.000 Tokens genannt). Sinnvoll bei Architektur-Entscheidungen, kniffligem Debugging, großen Refactorings oder wenn zwei Versuche gescheitert sind.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>In neueren Versionen lässt sich die Denktiefe auch dauerhaft mit <code>/effort</code> einstellen. Für Kleinkram ist beides Verschwendung.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; ultrathink: Wie teilen wir die Datenbank auf,
+  damit das Bewertungssystem auch mit 50 Standorten
+  funktioniert? Wäge drei Varianten ab.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #17</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t18" aria-labelledby="t18-h">
+<header class="trick-head"><span class="trick-n">#18</span><h3 id="t18-h">Per Sprache prompten</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Basics</span></p></header>
+<p>Claude Code hat einen eigenen <code>/voice</code>-Befehl. Alternativ funktioniert jede Diktier-App. Gesprochene Prompts werden meist länger und genauer als getippte, weil man beim Reden automatisch mehr Kontext liefert.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>macOS und Windows haben Diktieren eingebaut (zweimal Fn bzw. Win+H).</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /voice</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #18</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Prompting &amp; Planung</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-C">
+    <li><label><input type="checkbox"><span><b>#10</b> Im Plan Mode beginnen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#11</b> Claude wie einen Junior-Dev behandeln</span></label></li>
+    <li><label><input type="checkbox"><span><b>#12</b> Claude Fragen stellen lassen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#13</b> Interview führen lassen, dann SPEC.md</span></label></li>
+    <li><label><input type="checkbox"><span><b>#14</b> Früh abbrechen, neu prompten</span></label></li>
+    <li><label><input type="checkbox"><span><b>#15</b> Zweimal korrigiert? Neu anfangen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#16</b> Ergebnisse hart hinterfragen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#17</b> ultrathink für harte Probleme</span></label></li>
+    <li><label><input type="checkbox"><span><b>#18</b> Per Sprache prompten</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="qualitaet">
+  <div class="sec-head grid-12"><span class="t-label">D · 5 Tricks</span><h2>Qualität &amp; Verifikation</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Gebt Claude etwas, woran es sich selbst prüfen kann.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Tests, Build oder Screenshot als Prüfsignal mitgeben</li><li>Belege verlangen: Testausgabe, Befehl, Screenshot</li><li>Prüfschritte direkt in die To-do-Liste einbauen</li><li>Einen frischen Reviewer drüberschauen lassen</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>„Sieht fertig aus“ als Abnahme akzeptieren</li><li>Fehler unterdrücken statt die Ursache beheben</li><li>Jeden Reviewer-Kommentar umsetzen (Over-Engineering)</li><li>Fremde Websites 1:1 nachbauen</li></ul></div></div>
+<article class="trick" id="t19" aria-labelledby="t19-h">
+<header class="trick-head"><span class="trick-n">#19</span><h3 id="t19-h">Selbstkontrolle in die To-do-Liste einbauen</h3><p class="trick-meta"><span class="badge">Prompt</span><span class="badge lv">Basics</span></p></header>
+<p>Claude erstellt beim Bauen eine To-do-Liste. Baut Prüfschritte direkt ein: Nach „Website bauen“ folgt „Screenshot machen und Layout prüfen“, danach „im Browser auf Fehler testen“. So prüft Claude selbst, bevor ihr das Ergebnis seht.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Lasst euch Belege zeigen statt Behauptungen: die Testausgabe, den ausgeführten Befehl oder den Screenshot. Belege prüfen geht schneller als selbst nachtesten.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Füge nach jedem Bau-Schritt einen Prüf-Schritt in deine To-do-Liste ein. Geh erst zum nächsten To-do, wenn du zu 95 % sicher bist, dass das aktuelle passt. Zeig mir am Ende die Testausgabe.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #19</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t20" aria-labelledby="t20-h">
+<header class="trick-head"><span class="trick-n">#20</span><h3 id="t20-h">Screenshots nutzen</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Claude kann sehen. Füttert Fehlermeldungen, Designvorlagen oder das eigene Ergebnis als Bild. Besonders stark ist eine Schleife: bauen, Screenshot, Fehler finden, verbessern. Bewährt: <b>drei Durchgänge</b> laufen lassen, bevor ihr V1 überhaupt anseht.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">[Screenshot einfügen] Setz dieses Design um. Mach danach einen Screenshot vom Ergebnis, vergleiche ihn mit dem Original, liste die Unterschiede auf und behebe sie. Wiederhole das dreimal.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #20</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t21" aria-labelledby="t21-h">
+<header class="trick-head"><span class="trick-n">#21</span><h3 id="t21-h">Browser-Tools für Funktionstests</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Mit Chrome DevTools oder Claude in Chrome kann Claude eine App öffnen, Buttons klicken und Formulare ausfüllen. Wie die Screenshot-Schleife, nur für Funktion statt Optik. Praktisch auch dort, wo es keine API gibt.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Neuere Versionen haben dafür den Skill <code>/verify</code>: Er baut die App, startet sie und beobachtet das Ergebnis.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Öffne die App im Browser, leg ein Quiz mit drei Fragen an, beantworte alle und prüfe, ob die Punktzahl stimmt. Lies danach die Konsole auf Fehler aus.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #21</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t22" aria-labelledby="t22-h">
+<header class="trick-head"><span class="trick-n">#22</span><h3 id="t22-h">Inspirations-Seiten als Vorlage</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Screenshots von Seiten, die euch gefallen, an Claude geben: „Orientier dich an diesem Stil.“ So entstehen Designs ohne generischen KI-Look. Als Vorlage nutzen und eine eigene Note reinbringen.</p>
+<div class="callout warning"><span class="t-label">Achtung</span><p>Fremde Texte, Bilder und Logos sind urheberrechtlich geschützt. Layout-Ideen ja, Inhalte nein.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">[2 Screenshots einfügen] Übernimm von diesen Seiten nur das Raster, die Abstände und die Art der Typografie. Farben, Texte und Bilder entwickelst du neu für unser Thema „Gartenprojekt“.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #22</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t23" aria-labelledby="t23-h">
+<header class="trick-head"><span class="trick-n">#23</span><h3 id="t23-h">Writer und Reviewer trennen</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Intermediate</span></p></header>
+<p>Wer Code geschrieben hat, sieht die eigenen Fehler schlecht, auch Claude. Ein Reviewer in frischem Kontext sieht nur den Diff und die Kriterien. Dafür gibt es den eingebauten Skill <code>/code-review</code> oder einen eigenen Sub-Agent-Auftrag.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Reviewer finden immer etwas. Gebt vor, nur Lücken zu melden, die Korrektheit oder Anforderungen betreffen, sonst endet es in Over-Engineering.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Nutze einen Sub-Agent, um den Diff gegen PLAN.md zu prüfen. Ist jede Anforderung umgesetzt, haben die Randfälle Tests, wurde nichts außerhalb der Aufgabe geändert? Melde Lücken, keine Stilfragen.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/best-practices">Mehr in der Doku<span class="sr-only"> zu Trick #23</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Qualität &amp; Verifikation</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-D">
+    <li><label><input type="checkbox"><span><b>#19</b> Selbstkontrolle in die To-do-Liste einbauen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#20</b> Screenshots nutzen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#21</b> Browser-Tools für Funktionstests</span></label></li>
+    <li><label><input type="checkbox"><span><b>#22</b> Inspirations-Seiten als Vorlage</span></label></li>
+    <li><label><input type="checkbox"><span><b>#23</b> Writer und Reviewer trennen</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="agents">
+  <div class="sec-head grid-12"><span class="t-label">E · 4 Tricks</span><h2>Agents &amp; Parallelität</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Vom Einzelkämpfer zum Team.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Recherche und Exploration an Sub-Agents geben</li><li>Günstige Modelle für einfache Massenarbeit</li><li>Pro Feature ein eigener Worktree</li><li>Am Ende immer zusammenführen und testen</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>Zwei Sessions im selben Ordner an denselben Dateien</li><li>Das teuerste Modell hunderte Seiten lesen lassen</li><li>Agent-Teams für kleine Aufgaben (teuer, langsam)</li></ul></div></div>
+<h3>Was passt wann?</h3>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Was passt wann?" tabindex="0"><table><thead><tr><th scope="col">Ansatz</th><th scope="col">Kontext</th><th scope="col">Reden miteinander?</th><th scope="col">Einsatz</th></tr></thead><tbody><tr><td>Sub-Agents</td><td>je ein eigenes Fenster</td><td>nein, nur Bericht an Haupt-Agent</td><td>Recherche, Tests, Reviews</td></tr><tr><td>Worktrees</td><td>getrennte Sessions + Branches</td><td>nein, ihr steuert</td><td>mehrere Features parallel</td></tr><tr><td>Agent-Teams</td><td>eigene Sessions + geteilte Aufgabenliste</td><td>ja, sie verteilen Arbeit selbst</td><td>große Projekte (experimentell)</td></tr></tbody></table></div>
+</div>
+<div class="prose">
+<article class="trick" id="t24" aria-labelledby="t24-h">
+<header class="trick-head"><span class="trick-n">#24</span><h3 id="t24-h">Sub-Agents für parallele Arbeit</h3><p class="trick-meta"><span class="badge">Prompt</span><span class="badge lv">Intermediate</span></p></header>
+<p>Bei komplexen Aufgaben im Prompt ausdrücklich Sub-Agents verlangen. Jeder bekommt ein eigenes Kontextfenster, arbeitet parallel und meldet nur das Ergebnis zurück. <b>Die Haupt-Session bleibt sauber.</b> Wie ein Team statt eines einzelnen Entwicklers.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Nutze Sub-Agents, um zu untersuchen, wie unser Login den Token-Refresh behandelt und ob es schon OAuth-Hilfsfunktionen gibt, die ich wiederverwenden kann. Fass danach kurz zusammen.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/sub-agents">Mehr in der Doku<span class="sr-only"> zu Trick #24</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t25" aria-labelledby="t25-h">
+<header class="trick-head"><span class="trick-n">#25</span><h3 id="t25-h">Günstige Modelle für Sub-Agents</h3><p class="trick-meta"><span class="badge">Konfig</span><span class="badge lv">Intermediate</span></p></header>
+<p>Für einfache oder datenlastige Teilaufgaben (hunderte Artikel lesen, Logs durchsuchen) reicht ein kleines, schnelles Modell wie Haiku. Die Haupt-Session bekommt nur die Zusammenfassung. Spart viel Geld ohne Qualitätsverlust an der wichtigen Stelle.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Mit <code>tools:</code> beschränkt ihr, was der Agent darf. Ein Recherche-Agent braucht keine Schreibrechte.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">.claude/agents/researcher.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">---
+name: researcher
+description: Liest viele Quellen und fasst knapp
+  zusammen. Für Recherche-Aufgaben nutzen.
+tools: Read, Grep, Glob, WebFetch
+model: haiku
+---
+Lies die Quellen gründlich. Liefere nur die
+5 wichtigsten Erkenntnisse mit Quellenangabe.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/sub-agents">Mehr in der Doku<span class="sr-only"> zu Trick #25</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t26" aria-labelledby="t26-h">
+<header class="trick-head"><span class="trick-n">#26</span><h3 id="t26-h">Parallele Sessions mit Git Worktrees</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Pro</span></p></header>
+<p>Zwei Sessions im selben Ordner überschreiben sich gegenseitig. Ein Worktree ist eine effiziente Parallelkopie auf eigenem Branch. Pro Feature eine Session, drei bis fünf gleichzeitig sind möglich. Am Ende ganz normal mergen.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Terminal 1</span>
+$ claude --worktree login-seite
+
+<span class="c"># Terminal 2</span>
+$ claude --worktree dark-mode
+
+<span class="c"># später, im Hauptordner</span>
+$ git merge login-seite dark-mode</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/worktrees">Mehr in der Doku<span class="sr-only"> zu Trick #26</span> <span aria-hidden="true">→</span></a></p>
+</article>
+</div>
+
+<div class="wide fig" id="wt">
+  <div class="fig-head"><h3>Zwei Sessions, zwei Zweige, ein Merge</h3></div>
+  <div class="wt-box" id="wt-box"></div>
+  <p class="fig-cap">Jeder Punkt ist ein Commit. Terminal 1 arbeitet im Worktree <code>login-seite</code>, Terminal 2 in <code>dark-mode</code>, beide gleichzeitig und ohne sich in die Quere zu kommen. Am Ende holt <code>git merge login-seite dark-mode</code> beide Zweige in <code>main</code> zurück.</p>
+</div>
+
+<div class="prose">
+<article class="trick" id="t27" aria-labelledby="t27-h">
+<header class="trick-head"><span class="trick-n">#27</span><h3 id="t27-h">Agent-Teams</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Pro</span></p></header>
+<p>Sub-Agents können nicht miteinander reden. In Agent-Teams teilen sich die Agents eine Aufgabenliste, sprechen sich ab und verteilen Arbeit untereinander. Ihr könnt auch direkt mit einzelnen Agents sprechen. Teurer und langsamer, aber bei großen Projekten deutlich stimmiger.</p>
+<div class="callout warning"><span class="t-label">Achtung</span><p>Laut Doku experimentell und standardmäßig deaktiviert. Erst ausprobieren, wenn Sub-Agents nicht mehr reichen.</p></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/agent-teams">Mehr in der Doku<span class="sr-only"> zu Trick #27</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Agents &amp; Parallelität</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-E">
+    <li><label><input type="checkbox"><span><b>#24</b> Sub-Agents für parallele Arbeit</span></label></li>
+    <li><label><input type="checkbox"><span><b>#25</b> Günstige Modelle für Sub-Agents</span></label></li>
+    <li><label><input type="checkbox"><span><b>#26</b> Parallele Sessions mit Git Worktrees</span></label></li>
+    <li><label><input type="checkbox"><span><b>#27</b> Agent-Teams</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="erweitern">
+  <div class="sec-head grid-12"><span class="t-label">F · 5 Tricks</span><h2>Skills, Hooks, MCP &amp; Plugins</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Der Baukasten: Was nehme ich wofür?</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Skill-Beschreibung konkret, mit Wörtern, die ihr sagen würdet</li><li>Skills unter 500 Zeilen, Details in Extra-Dateien</li><li>Hooks für alles, was ausnahmslos passieren muss</li><li>Plugins nur aus vertrauenswürdigen Quellen</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>Selten gebrauchtes Wissen in die CLAUDE.md</li><li>Workflows mit Nebenwirkungen automatisch starten lassen</li><li>Zehn Plugins „auf Vorrat“ installieren (kosten Kontext)</li></ul></div></div>
+<h3>Was wofür?</h3>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Was wofür?" tabindex="0"><table><thead><tr><th scope="col">Baustein</th><th scope="col">Was es ist</th><th scope="col">Nehmt es, wenn …</th></tr></thead><tbody><tr><td>CLAUDE.md</td><td>immer geladenes Projektwissen</td><td>Claude etwas in jeder Session wissen muss</td></tr><tr><td>Skill</td><td>Wissen oder Workflow, bei Bedarf geladen</td><td>ein Ablauf sich wiederholt oder Wissen nur manchmal nötig ist</td></tr><tr><td>Sub-Agent</td><td>Helfer mit eigenem Kontext</td><td>eine Teilaufgabe viel liest und nur ein Ergebnis zählt</td></tr><tr><td>Hook</td><td>Skript bei einem Ereignis, garantiert</td><td>etwas jedes Mal ohne Ausnahme passieren muss</td></tr><tr><td>MCP-Server</td><td>Anbindung externer Tools</td><td>Claude mit Notion, GitHub, Figma oder einer Datenbank arbeiten soll</td></tr><tr><td>Plugin</td><td>Paket aus allem oben</td><td>ihr ein Setup teilen oder fertig installieren wollt</td></tr></tbody></table></div>
+</div>
+<div class="prose">
+<article class="trick" id="t28" aria-labelledby="t28-h">
+<header class="trick-head"><span class="trick-n">#28</span><h3 id="t28-h">Eigene Skills bauen</h3><p class="trick-meta"><span class="badge">Konfig</span><span class="badge lv">Intermediate</span></p></header>
+<p>Ein Skill ist ein Ordner mit einer <code>SKILL.md</code> unter <code>.claude/skills/</code>. Claude lädt ihn automatisch, wenn die Beschreibung passt, oder ihr startet ihn mit <code>/name</code>. Der Ablauf ist jedes Mal gleich, und über Git nutzt das ganze Team dieselben Skills. <b>So automatisiert ihr eure eigenen Arbeitsanweisungen.</b></p>
+<div class="callout tip"><span class="t-label">Tipp</span><p><code>disable-model-invocation: true</code> für Skills mit Nebenwirkungen (Commit, Deploy), damit sie nur auf euren Befehl laufen. <code>$ARGUMENTS</code> enthält, was ihr hinter den Befehl schreibt.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">.claude/skills/erklaer/SKILL.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">---
+name: erklaer
+description: Erklärt geänderten Code verständlich
+  für Kolleginnen und Kollegen. Nutzen bei „erklär mal“,
+  „was hast du gemacht“ oder vor einer Abgabe.
+---
+Erkläre die Änderungen an $ARGUMENTS:
+
+1. Was macht der Code in einem Satz?
+2. Welche Konzepte stecken drin (z. B. State,
+   Props, async)? Je ein Satz pro Konzept.
+3. Eine Stelle, die man leicht falsch versteht.
+4. Eine Verständnisfrage zum Selbsttest.</pre></div>
+<div class="code"><div class="code-bar"><span class="t-label">Aufruf</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /erklaer src/components/QuizCard.tsx</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/skills">Mehr in der Doku<span class="sr-only"> zu Trick #28</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t29" aria-labelledby="t29-h">
+<header class="trick-head"><span class="trick-n">#29</span><h3 id="t29-h">Hooks für Benachrichtigungen</h3><p class="trick-meta"><span class="badge">Konfig</span><span class="badge lv">Intermediate</span></p></header>
+<p>Ein Hook ist ein Befehl, der garantiert bei einem Ereignis läuft. Klassiker: Benachrichtigung, sobald Claude auf euch wartet. So könnt ihr nebenher arbeiten oder mehrere Sessions laufen lassen. Mit <code>/hooks</code> seht ihr, was eingerichtet ist, oder ihr bittet Claude einfach, den Hook zu schreiben.</p>
+<div class="code"><div class="code-bar"><span class="t-label">.claude/settings.json</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">{
+  "hooks": {
+    "Notification": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "osascript -e 'display notification \"Claude wartet auf dich\" with title \"Claude Code\"'"
+      }]
+    }]
+  }
+}</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/hooks-guide">Mehr in der Doku<span class="sr-only"> zu Trick #29</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t30" aria-labelledby="t30-h">
+<header class="trick-head"><span class="trick-n">#30</span><h3 id="t30-h">Auto-Formatierung nach jeder Änderung</h3><p class="trick-meta"><span class="badge">Konfig</span><span class="badge lv">Intermediate</span></p></header>
+<p>Hooks sind nicht nur für Töne da. Dieser hier läuft nach jedem Bearbeiten oder Schreiben einer Datei und formatiert sie mit Prettier. Anders als eine Bitte in der CLAUDE.md passiert das <b>immer</b>, ohne Ausnahme.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Weitere Ideen: Linter nach jeder Änderung, Schreibschutz für einen Ordner, Tests vor dem Beenden. Einfach Claude bitten: „Schreib einen Hook, der …“</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">.claude/settings.json</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+      }]
+    }]
+  }
+}</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/hooks-guide">Mehr in der Doku<span class="sr-only"> zu Trick #30</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t31" aria-labelledby="t31-h">
+<header class="trick-head"><span class="trick-n">#31</span><h3 id="t31-h">Context7 für aktuelle Doku</h3><p class="trick-meta"><span class="badge">MCP</span><span class="badge lv">Pro</span></p></header>
+<p>Claudes Trainingswissen hat ein Ablaufdatum. Deshalb schlägt es manchmal Funktionen vor, die umbenannt oder abgeschafft wurden. Context7 liefert aktuelle, versionsgenaue Doku zu tausenden Bibliotheken (Next.js, React, MongoDB …) und spielt sie in den Kontext, bevor Claude Code schreibt.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Setup laut Context7-README</span>
+$ npx ctx7 setup --claude
+
+<span class="c"># oder manuell als MCP-Server</span>
+$ claude mcp add --transport http context7 \
+    https://mcp.context7.com/mcp
+
+&gt; Nutze Context7 für die aktuelle Next.js-Doku
+  und baue dann die Login-Route.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/mcp">Mehr in der Doku<span class="sr-only"> zu Trick #31</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t32" aria-labelledby="t32-h">
+<header class="trick-head"><span class="trick-n">#32</span><h3 id="t32-h">Plugins: fertige Setups mit einem Befehl</h3><p class="trick-meta"><span class="badge">Plugin</span><span class="badge lv">Intermediate</span></p></header>
+<p>Ein Plugin bündelt Skills, Sub-Agents, Hooks und MCP-Server zu einem Paket. Mit <code>/plugin</code> öffnet ihr den Marktplatz und installiert per Klick. Wer ein eigenes Setup mit dem Team teilen will, packt es selbst als Plugin. Ein Skill im Plugin heißt dann z. B. <code>/team:erklaer</code>.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Jedes aktive Plugin kostet in jeder Session etwas Kontext und läuft mit euren Rechten. Vor dem Installieren prüfen, wer es veröffentlicht, und Ungenutztes deaktivieren.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /plugin
+<span class="c"># Tab „Discover“: Plugins aus euren Marktplätzen</span>
+
+$ claude plugin disable &lt;name&gt;   # pausieren</pre></div>
+<div class="code"><div class="code-bar"><span class="t-label">Aufbau eines Plugins</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">team/
+├─ .claude-plugin/plugin.json   # Name, Version
+├─ skills/erklaer/SKILL.md      # → /team:erklaer
+├─ agents/reviewer.md           # Sub-Agent
+├─ hooks/hooks.json             # Hooks
+└─ .mcp.json                    # MCP-Server</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/plugins/overview">Mehr in der Doku<span class="sr-only"> zu Trick #32</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Skills, Hooks, MCP &amp; Plugins</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-F">
+    <li><label><input type="checkbox"><span><b>#28</b> Eigene Skills bauen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#29</b> Hooks für Benachrichtigungen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#30</b> Auto-Formatierung nach jeder Änderung</span></label></li>
+    <li><label><input type="checkbox"><span><b>#31</b> Context7 für aktuelle Doku</span></label></li>
+    <li><label><input type="checkbox"><span><b>#32</b> Plugins: fertige Setups mit einem Befehl</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="automatisierung">
+  <div class="sec-head grid-12"><span class="t-label">G · 4 Tricks</span><h2>Automatisierung &amp; Remote</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Claude arbeitet weiter, auch wenn ihr nicht am Rechner sitzt.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Loops nur für Dinge, die sich wirklich ändern</li><li>Bei Fernzugriff an Kosten und Rechte denken</li><li>Generierte SQL-Abfragen lesen und verstehen</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>Endlos-Loops, die im Minutentakt Tokens fressen</li><li>Zugangsdaten im Prompt oder in Dateien im Repo</li><li>Unbeaufsichtigt mit vollen Rechten laufen lassen</li></ul></div></div>
+<article class="trick" id="t33" aria-labelledby="t33-h">
+<header class="trick-head"><span class="trick-n">#33</span><h3 id="t33-h">/loop für wiederkehrende Aufgaben</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Pro</span></p></header>
+<p><code>/loop</code> wiederholt einen Prompt, solange die Session offen ist: Deployment prüfen, Logs checken, Pull Request beobachten. Auch einmalige Erinnerungen in normaler Sprache gehen. Loops sind für Stunden bis wenige Tage gedacht. Für Dauerläufer gibt es geplante Aufgaben in der Desktop-App, die aber jedes Mal ohne Gedächtnis starten.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Lasst ihr das Intervall weg, wählt Claude das Tempo selbst.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /loop 5m prüf den Status des Deployments und
+  melde dich nur bei Fehlern
+
+&gt; erinnere mich um 15 Uhr, die Präsentation
+  hochzuladen</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/scheduled-tasks">Mehr in der Doku<span class="sr-only"> zu Trick #33</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t34" aria-labelledby="t34-h">
+<header class="trick-head"><span class="trick-n">#34</span><h3 id="t34-h">Auf einem Server laufen lassen</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Pro</span></p></header>
+<p>Auf einem gemieteten Server (VPS) läuft Claude Code weiter, auch wenn der Laptop zu ist. Per SSH oder Messenger-Anbindung steuert ihr es von überall. Ideal für lange Aufgaben, die man nicht im lokalen Terminal babysitten will.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Für Skripte und CI gibt es den nicht-interaktiven Modus: <code>claude -p "…"</code> führt einen Prompt aus und gibt das Ergebnis zurück.</p></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/commands">Mehr in der Doku<span class="sr-only"> zu Trick #34</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t35" aria-labelledby="t35-h">
+<header class="trick-head"><span class="trick-n">#35</span><h3 id="t35-h">Fernsteuerung vom Handy</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Pro</span></p></header>
+<p>Mit Remote Control steuert ihr eine lokale Session vom Smartphone oder Browser aus. Der Code bleibt auf eurem Rechner, nur die Steuerung läuft übers Handy. Aufgabe starten, Kaffee holen, unterwegs weiter steuern.</p>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /remote-control
+<span class="c"># danach die Session auf claude.ai oder in der</span>
+<span class="c"># Claude-App auf dem Handy öffnen</span></pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/remote-control">Mehr in der Doku<span class="sr-only"> zu Trick #35</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t36" aria-labelledby="t36-h">
+<header class="trick-head"><span class="trick-n">#36</span><h3 id="t36-h">Datenanalyse ohne SQL</h3><p class="trick-meta"><span class="badge">Workflow</span><span class="badge lv">Pro</span></p></header>
+<p>Hängt CLI-Tools wie <code>bq</code> (Google BigQuery) an und stellt Fragen in normaler Sprache. Claude schreibt die Abfrage, führt sie aus und erklärt das Ergebnis. Funktioniert mit jedem CLI-Tool, auch mit welchen, die Claude nicht kennt.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p>Zum Lernen: Lest die generierte SQL-Abfrage mit. So lernt man SQL nebenbei, und Fehler fallen auf.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Prompts</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Was waren unsere zehn größten Umsatzquellen im letzten Quartal? Zeig mir auch die SQL-Abfrage.
+
+Nutze „foo-cli --help“, um das Tool kennenzulernen, und beantworte dann meine Frage damit.</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/commands">Mehr in der Doku<span class="sr-only"> zu Trick #36</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<h3>Ausprobiert in Automatisierung &amp; Remote</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-G">
+    <li><label><input type="checkbox"><span><b>#33</b> /loop für wiederkehrende Aufgaben</span></label></li>
+    <li><label><input type="checkbox"><span><b>#34</b> Auf einem Server laufen lassen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#35</b> Fernsteuerung vom Handy</span></label></li>
+    <li><label><input type="checkbox"><span><b>#36</b> Datenanalyse ohne SQL</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="sicherheit">
+  <div class="sec-head grid-12"><span class="t-label">H · 2 Tricks</span><h2>Sicherheit &amp; Kontrolle</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Schnell arbeiten, ohne leichtsinnig zu werden.</p>
+<div class="compare"><div><span class="t-label">Best Practice</span><ul><li>Sichere Befehle gezielt erlauben</li><li>Löschen, Force-Push und Ähnliches ausdrücklich verbieten</li><li>Regelmäßig mit Git committen</li><li>Plugins und Hooks vor dem Einsatz lesen</li></ul></div><div><span class="t-label">Lieber nicht</span><ul><li>--dangerously-skip-permissions als Dauerlösung</li><li>Checkpoints als Ersatz für Git verstehen</li><li>Firmenregeln umgehen</li></ul></div></div>
+<article class="trick" id="t37" aria-labelledby="t37-h">
+<header class="trick-head"><span class="trick-n">#37</span><h3 id="t37-h">/rewind zum Zurückspulen</h3><p class="trick-meta"><span class="badge">Befehl</span><span class="badge lv">Intermediate</span></p></header>
+<p>Falsche Abzweigung? <code>/rewind</code> oder zweimal <kbd>Esc</kbd> öffnet das Rückspul-Menü. Ihr könnt Gespräch, Code oder beides auf einen früheren Punkt zurücksetzen, ohne neu anzufangen. Das erlaubt auch mutige Experimente: ausprobieren, notfalls zurück.</p>
+<div class="callout warning"><span class="t-label">Achtung</span><p>Checkpoints erfassen nur Änderungen über Claudes Editier-Werkzeuge, nicht über Bash-Befehle. Ersetzt also kein Git.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">&gt; /rewind
+<span class="c"># oder: Esc Esc</span>
+<span class="c"># → Gespräch, Code oder beides wiederherstellen</span></pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/checkpointing">Mehr in der Doku<span class="sr-only"> zu Trick #37</span> <span aria-hidden="true">→</span></a></p>
+</article>
+<article class="trick" id="t38" aria-labelledby="t38-h">
+<header class="trick-head"><span class="trick-n">#38</span><h3 id="t38-h">Rechte gezielt freigeben statt alles erlauben</h3><p class="trick-meta"><span class="badge">Konfig</span><span class="badge lv">Pro</span></p></header>
+<p>Der Schalter <code>--dangerously-skip-permissions</code> macht Claude schnell, heißt aber nicht ohne Grund so. Besser: sichere Befehle ausdrücklich erlauben, zerstörerische ausdrücklich verbieten. <b>Die Deny-Liste hat immer Vorrang.</b> So bekommt ihr fast dasselbe Tempo ohne das Risiko.</p>
+<div class="callout tip"><span class="t-label">Tipp</span><p><code>/permissions</code> öffnet einen Dialog für die Regeln, <code>/sandbox</code> isoliert Datei- und Netzwerkzugriff. Neuere Versionen haben zusätzlich einen Auto-Modus, in dem ein Prüfmodell riskante Aktionen blockiert.</p></div>
+<div class="code"><div class="code-bar"><span class="t-label">.claude/settings.json</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">{
+  "permissions": {
+    "allow": [
+      "Bash(npm run test *)",
+      "Bash(npm run lint)",
+      "Bash(git status)",
+      "Bash(git diff *)"
+    ],
+    "deny": [
+      "Bash(rm *)",
+      "Bash(git push --force *)",
+      "Read(./.env)"
+    ]
+  }
+}</pre></div>
+<p><a class="arrow-link" href="https://code.claude.com/docs/en/permissions">Mehr in der Doku<span class="sr-only"> zu Trick #38</span> <span aria-hidden="true">→</span></a></p>
+</article>
+</div>
+
+<div class="wide fig" id="gate">
+  <div class="fig-head"><h3>Welche Regel greift?</h3></div>
+  <div class="gate">
+    <div class="g-rules" tabindex="0" role="region" aria-label="Regeln aus .claude/settings.json">
+      <div class="g-file t-label">.claude/settings.json</div>
+      <div class="ln">{</div>
+      <div class="ln i1">"permissions": {</div>
+      <div class="ln i2">"allow": [</div>
+      <div class="ln i3 rl" data-kind="allow" data-rule="Bash(npm run test *)"><span class="q">"Bash(npm run test *)",</span><span class="tag"></span></div>
+      <div class="ln i3 rl" data-kind="allow" data-rule="Bash(npm run lint)"><span class="q">"Bash(npm run lint)",</span><span class="tag"></span></div>
+      <div class="ln i3 rl" data-kind="allow" data-rule="Bash(git status)"><span class="q">"Bash(git status)",</span><span class="tag"></span></div>
+      <div class="ln i3 rl" data-kind="allow" data-rule="Bash(git diff *)"><span class="q">"Bash(git diff *)",</span><span class="tag"></span></div>
+      <div class="ln i3 rl extra" data-kind="allow" data-rule="Bash(git push *)"><span class="q">"Bash(git push *)"</span><span class="badge">zusätzlich</span><span class="tag"></span><span class="note">Nicht im Beispiel oben. Angenommen, jemand erlaubt git push allgemein.</span></div>
+      <div class="ln i2">],</div>
+      <div class="ln i2">"deny": [</div>
+      <div class="ln i3 rl" data-kind="deny" data-rule="Bash(rm *)"><span class="q">"Bash(rm *)",</span><span class="tag"></span></div>
+      <div class="ln i3 rl" data-kind="deny" data-rule="Bash(git push --force *)"><span class="q">"Bash(git push --force *)",</span><span class="tag"></span></div>
+      <div class="ln i3 rl" data-kind="deny" data-rule="Read(./.env)"><span class="q">"Read(./.env)"</span><span class="tag"></span></div>
+      <div class="ln i2">]</div>
+      <div class="ln i1">}</div>
+      <div class="ln">}</div>
+    </div>
+    <div class="g-lane">
+      <div class="g-track" aria-hidden="true"><span class="g-cmd" id="g-cmd">npm run test quiz</span><span class="g-gate"><b>Regel-Tor</b></span></div>
+      <div class="g-now" id="g-now" aria-live="polite"><span class="stamp" id="g-stamp" hidden></span><p id="g-say">Befehle fahren auf das Tor zu. Die Regel, die greift, leuchtet links auf.</p></div>
+      <ol class="g-log" id="g-log" aria-label="Geprüfte Befehle"></ol>
+    </div>
+  </div>
+  <form class="g-try" id="g-form" autocomplete="off">
+    <label for="g-in" class="t-label">Eigenen Befehl prüfen</label>
+    <div class="g-row"><input id="g-in" type="text" spellcheck="false" autocapitalize="off" placeholder="z. B. git diff --stat"><button class="btn primary" type="submit" id="g-btn">Prüfen</button></div>
+  </form>
+  <p class="fig-cap">So prüft Claude Code laut Doku: erst deny, dann ask, dann allow, und innerhalb jeder Liste gewinnt die erste passende Regel; zusammengesetzte Befehle werden an <code>&amp;&amp;</code>, <code>||</code>, <code>;</code> und <code>|</code> geteilt und jeder Teil einzeln geprüft, und ein <code> *</code> am Ende trifft auch den Befehl ohne Argumente. Passt keine Regel, fragt Claude nach.</p>
+</div>
+
+<div class="prose">
+<h3>Ausprobiert in Sicherheit &amp; Kontrolle</h3>
+<ul class="checklist" data-key="claude-code-38-tricks-H">
+    <li><label><input type="checkbox"><span><b>#37</b> /rewind zum Zurückspulen</span></label></li>
+    <li><label><input type="checkbox"><span><b>#38</b> Rechte gezielt freigeben statt alles erlauben</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="spickzettel">
+  <div class="sec-head grid-12"><span class="t-label">Zum Merken</span><h2>Spickzettel: die wichtigsten Befehle</h2></div>
+  <div class="grid-12">
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Spickzettel" tabindex="0"><table><thead><tr><th scope="col">Befehl</th><th scope="col">Wirkung</th></tr></thead><tbody>
+<tr><td><code>/init</code></td><td>CLAUDE.md erzeugen</td></tr>
+<tr><td><code>/context</code></td><td>Kontext-Verbrauch anzeigen</td></tr>
+<tr><td><code>/compact …</code></td><td>Verlauf zusammenfassen</td></tr>
+<tr><td><code>/clear</code></td><td>Neuer Chat, Gedächtnis bleibt</td></tr>
+<tr><td><code>/btw …</code></td><td>Nebenfrage ohne Kontext</td></tr>
+<tr><td><code>Shift+Tab</code></td><td>Modus wechseln, z. B. Plan Mode</td></tr>
+<tr><td><code>Esc</code></td><td>Claude sofort stoppen</td></tr>
+<tr><td><code>ultrathink</code></td><td>Maximal nachdenken</td></tr>
+<tr><td><code>/voice</code></td><td>Per Sprache prompten</td></tr>
+<tr><td><code>/code-review</code></td><td>Diff in frischem Kontext prüfen</td></tr>
+<tr><td><code>/verify</code></td><td>App starten und Änderung beobachten</td></tr>
+<tr><td><code>claude --worktree x</code></td><td>Parallele Session auf eigenem Branch</td></tr>
+<tr><td><code>/plugin</code></td><td>Plugins finden und verwalten</td></tr>
+<tr><td><code>/hooks</code></td><td>Eingerichtete Hooks ansehen</td></tr>
+<tr><td><code>/statusline</code></td><td>Statuszeile einrichten</td></tr>
+<tr><td><code>/loop 5m …</code></td><td>Prompt regelmäßig wiederholen</td></tr>
+<tr><td><code>/remote-control</code></td><td>Session vom Handy steuern</td></tr>
+<tr><td><code>/rewind · Esc Esc</code></td><td>Zurückspulen</td></tr>
+<tr><td><code>/permissions</code></td><td>Erlaubt/verboten verwalten</td></tr>
+</tbody></table></div>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="zusammenfassung">
+  <div class="sec-head grid-12"><span class="t-label">Zusammenfassung</span><h2>Auf einen Blick: Skills, Plugins &amp; MCP</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Die drei Bausteine, mit denen ihr Claude Code erweitert, kompakt zusammengefasst. Die Faustregel zuerst:</p>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Faustregel" tabindex="0"><table><thead><tr><th scope="col">Baustein</th><th scope="col">Faustregel</th></tr></thead><tbody>
+<tr><td><code>CLAUDE.md</code></td><td>immer geladen</td></tr>
+<tr><td><code>Skill</code></td><td>bei Bedarf</td></tr>
+<tr><td><code>Hook</code></td><td>garantiert, jedes Mal</td></tr>
+<tr><td><code>MCP</code></td><td>Anschluss an die Außenwelt</td></tr>
+<tr><td><code>Plugin</code></td><td>Paket zum Teilen</td></tr>
+</tbody></table></div>
+</div>
+<div class="prose">
+<h3>Skills</h3>
+<p>Ordner mit einer SKILL.md: Wissen oder ein Workflow, den Claude bei Bedarf lädt oder den ihr mit /name startet.</p>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Skills" tabindex="0"><table><tbody>
+<tr><th scope="row">Wo liegt es</th><td>Projekt: .claude/skills/&lt;name&gt;/SKILL.md (ins Git, fürs Team)<br>Persönlich: ~/.claude/skills/&lt;name&gt;/SKILL.md (alle Projekte)<br>In Plugins: &lt;plugin&gt;/skills/&lt;name&gt;/SKILL.md</td></tr>
+<tr><th scope="row">Wann nutzen</th><td>Abläufe, die sich wiederholen (Review, Erklären, Release)<br>Wissen, das nur manchmal gebraucht wird und nicht in die CLAUDE.md gehört</td></tr>
+<tr><th scope="row">Best Practices</th><td>description konkret, mit Wörtern, die man wirklich sagt<br>Unter 500 Zeilen, Details in Extra-Dateien im Skill-Ordner<br>disable-model-invocation: true bei Nebenwirkungen (Commit, Deploy)<br>Wichtigstes nach oben, $ARGUMENTS für Eingaben</td></tr>
+<tr><th scope="row">Befehle</th><td>/name [argumente]<br>Automatisch, wenn die description passt</td></tr>
+</tbody></table></div>
+</div>
+<div class="prose">
+<h3>Plugins</h3>
+<p>Paket aus Skills, Sub-Agents, Hooks und MCP-Servern, das als eine Einheit installiert, geteilt und aktualisiert wird.</p>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Plugins" tabindex="0"><table><tbody>
+<tr><th scope="row">Wo liegt es</th><td>Manifest: .claude-plugin/plugin.json<br>Bezug über Marktplätze (Katalog-Repos)<br>Scopes: User (alle Projekte), Projekt (Team über .claude/settings.json), Local</td></tr>
+<tr><th scope="row">Wann nutzen</th><td>Ein Setup mit dem ganzen Team teilen<br>Fertige Setups anderer mit einem Befehl übernehmen<br>Versionierte Releases eines Setups</td></tr>
+<tr><th scope="row">Best Practices</th><td>Nur aus vertrauenswürdigen Quellen: läuft mit euren Rechten<br>Jedes aktive Plugin kostet in jeder Session Kontext<br>Ungenutzte Plugins deaktivieren statt liegen lassen<br>Fürs Team im Projekt-Scope installieren</td></tr>
+<tr><th scope="row">Befehle</th><td>/plugin (Discover, Installed, Marketplaces)<br>claude plugin disable &lt;name&gt;<br>Plugin-Skills heißen /plugin-name:skill</td></tr>
+</tbody></table></div>
+</div>
+<div class="prose">
+<h3>MCP</h3>
+<p>Model Context Protocol: Standard, um externe Tools und Daten anzuschließen, z. B. Notion, GitHub, Figma, Datenbanken oder Context7.</p>
+</div>
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="MCP" tabindex="0"><table><tbody>
+<tr><th scope="row">Wo liegt es</th><td>Hinzufügen per claude mcp add<br>In Plugins über .mcp.json<br>Prüfen, was es kostet: /context</td></tr>
+<tr><th scope="row">Wann nutzen</th><td>Claude soll in externen Systemen lesen oder schreiben<br>Aktuelle Doku oder Live-Daten statt Trainingswissen</td></tr>
+<tr><th scope="row">Best Practices</th><td>Nur Server aktiv halten, die ihr wirklich nutzt<br>Tool-Beschreibungen belegen Kontext, mit /context prüfen<br>Für eng begrenzte Zwecke ist ein CLI-Tool (gh, bq) oder ein direkter API-Aufruf oft sparsamer<br>Zugangsdaten nie ins Repo</td></tr>
+<tr><th scope="row">Befehle</th><td>claude mcp add --transport http notion https://mcp.notion.com/mcp<br>claude mcp add --transport http context7 https://mcp.context7.com/mcp</td></tr>
+</tbody></table></div>
+</div>
+<div class="prose">
+<p>Zum Einfügen in Wiki, Notion oder Confluence gibt es die Zusammenfassung als Markdown:</p>
+<div class="code"><div class="code-bar"><span class="t-label">Zusammenfassung.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"># Claude Code erweitern: Skills, Plugins &amp; MCP
+
+**Faustregel:** CLAUDE.md = immer geladen · Skill = bei Bedarf · Hook = garantiert, jedes Mal · MCP = Anschluss an die Außenwelt · Plugin = Paket zum Teilen
+
+## Skills
+
+Ordner mit einer SKILL.md: Wissen oder ein Workflow, den Claude bei Bedarf lädt oder den ihr mit /name startet.
+
+**Wo liegt es**
+- Projekt: .claude/skills/&lt;name&gt;/SKILL.md (ins Git, fürs Team)
+- Persönlich: ~/.claude/skills/&lt;name&gt;/SKILL.md (alle Projekte)
+- In Plugins: &lt;plugin&gt;/skills/&lt;name&gt;/SKILL.md
+
+**Wann nutzen**
+- Abläufe, die sich wiederholen (Review, Erklären, Release)
+- Wissen, das nur manchmal gebraucht wird und nicht in die CLAUDE.md gehört
+
+**Best Practices**
+- description konkret, mit Wörtern, die man wirklich sagt
+- Unter 500 Zeilen, Details in Extra-Dateien im Skill-Ordner
+- disable-model-invocation: true bei Nebenwirkungen (Commit, Deploy)
+- Wichtigstes nach oben, $ARGUMENTS für Eingaben
+
+**Befehle**
+- /name [argumente]
+- Automatisch, wenn die description passt
+
+## Plugins
+
+Paket aus Skills, Sub-Agents, Hooks und MCP-Servern, das als eine Einheit installiert, geteilt und aktualisiert wird.
+
+**Wo liegt es**
+- Manifest: .claude-plugin/plugin.json
+- Bezug über Marktplätze (Katalog-Repos)
+- Scopes: User (alle Projekte), Projekt (Team über .claude/settings.json), Local
+
+**Wann nutzen**
+- Ein Setup mit dem ganzen Team teilen
+- Fertige Setups anderer mit einem Befehl übernehmen
+- Versionierte Releases eines Setups
+
+**Best Practices**
+- Nur aus vertrauenswürdigen Quellen: läuft mit euren Rechten
+- Jedes aktive Plugin kostet in jeder Session Kontext
+- Ungenutzte Plugins deaktivieren statt liegen lassen
+- Fürs Team im Projekt-Scope installieren
+
+**Befehle**
+- /plugin (Discover, Installed, Marketplaces)
+- claude plugin disable &lt;name&gt;
+- Plugin-Skills heißen /plugin-name:skill
+
+## MCP
+
+Model Context Protocol: Standard, um externe Tools und Daten anzuschließen, z. B. Notion, GitHub, Figma, Datenbanken oder Context7.
+
+**Wo liegt es**
+- Hinzufügen per claude mcp add
+- In Plugins über .mcp.json
+- Prüfen, was es kostet: /context
+
+**Wann nutzen**
+- Claude soll in externen Systemen lesen oder schreiben
+- Aktuelle Doku oder Live-Daten statt Trainingswissen
+
+**Best Practices**
+- Nur Server aktiv halten, die ihr wirklich nutzt
+- Tool-Beschreibungen belegen Kontext, mit /context prüfen
+- Für eng begrenzte Zwecke ist ein CLI-Tool (gh, bq) oder ein direkter API-Aufruf oft sparsamer
+- Zugangsdaten nie ins Repo
+
+**Befehle**
+- claude mcp add --transport http notion https://mcp.notion.com/mcp
+- claude mcp add --transport http context7 https://mcp.context7.com/mcp
+
+---
+Quelle: Claude Code Docs (code.claude.com/docs)</pre></div>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="glossar">
+  <div class="sec-head grid-12"><span class="t-label">Begriffe</span><h2>Glossar</h2></div>
+  <div class="grid-12">
+<div class="wide">
+<div class="table-wrap" role="region" aria-label="Glossar" tabindex="0"><table><thead><tr><th scope="col">Begriff</th><th scope="col">Bedeutung</th></tr></thead><tbody>
+<tr><td><b>Token</b></td><td>Die Einheit, in der ein Modell Text verarbeitet, grob ¾ eines Wortes. Kosten und Kontextgröße werden in Tokens gemessen.</td></tr>
+<tr><td><b>Kontextfenster</b></td><td>Alles, was Claude in einem Moment berücksichtigt: Systemprompt, CLAUDE.md, Verlauf, gelesene Dateien, Tool-Beschreibungen.</td></tr>
+<tr><td><b>Context Rot</b></td><td>Je voller und unordentlicher das Kontextfenster, desto eher „vergisst“ Claude frühere Anweisungen und macht mehr Fehler.</td></tr>
+<tr><td><b>CLAUDE.md</b></td><td>Markdown-Datei, die bei jeder Session automatisch geladen wird. Das Langzeitgedächtnis eines Projekts.</td></tr>
+<tr><td><b>Skill</b></td><td>Ordner mit einer SKILL.md: Wissen oder ein Workflow, den Claude bei Bedarf lädt oder den ihr per /name startet.</td></tr>
+<tr><td><b>Sub-Agent</b></td><td>Helfer mit eigenem, frischem Kontextfenster. Erledigt eine Teilaufgabe und meldet nur das Ergebnis zurück.</td></tr>
+<tr><td><b>Hook</b></td><td>Shell-Befehl, der garantiert bei einem Ereignis läuft, z. B. nach jeder Dateiänderung. Anders als CLAUDE.md nicht nur eine Bitte.</td></tr>
+<tr><td><b>MCP</b></td><td>Model Context Protocol. Standard, um externe Tools wie Notion, GitHub oder Datenbanken an Claude anzuschließen.</td></tr>
+<tr><td><b>Plugin</b></td><td>Paket aus Skills, Agents, Hooks und MCP-Servern, das man mit einem Befehl installiert und mit anderen teilt.</td></tr>
+<tr><td><b>Git Worktree</b></td><td>Zweiter Arbeitsordner desselben Repos auf einem anderen Branch, ohne das Projekt zu kopieren.</td></tr>
+</tbody></table></div>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="einordnung">
+  <div class="sec-head grid-12"><span class="t-label">Einordnung</span><h2>Kritisch betrachtet</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<ul class="pitfalls">
+  <li><h3>Werkzeuge ändern sich schnell</h3><p>Befehle und Features wie Agent-Teams sind teils experimentell. Was in eurer Version verfügbar ist, zeigt <code>/help</code> bzw. die Doku auf code.claude.com.</p></li>
+  <li><h3>Zahlen sind Faustregeln</h3><p>„Bei 60 % compacten“, „max. 200 Zeilen CLAUDE.md“ oder „ca. 32.000 Tokens bei ultrathink“ sind Erfahrungswerte aus der Praxis, keine Spezifikation.</p></li>
+  <li><h3>Inspiration ist nicht Kopie</h3><p>Layout-Ideen übernehmen ja, fremde Texte, Bilder und Logos nein. Urheberrecht gilt auch für KI-Nachbauten.</p></li>
+  <li><h3>Sicherheit vor Tempo</h3><p>Ein Plugin oder Hook läuft mit euren Rechten. Nur aus vertrauenswürdigen Quellen installieren und zerstörerische Befehle auf die Deny-Liste setzen.</p></li>
+  <li><h3>Verstehen bleibt euer Job</h3><p>Code, den ihr nicht erklären könnt, gehört nicht in die Übergabe. Lasst euch von Claude erklären, was es gebaut hat.</p></li>
+</ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="challenge">
+  <div class="sec-head grid-12"><span class="t-label">Diese Woche</span><h2>Team-Challenge</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<p>Baut ein kleines eigenes Projekt (Portfolio, Quiz-App, Rechner) und arbeitet die Schritte ab. Dokumentiert jeden mit einem Screenshot.</p>
+<ul class="checklist" data-key="claude-code-38-tricks-challenge">
+    <li><label><input type="checkbox"><span><b>Gedächtnis anlegen.</b> <code>/init</code> ausführen, die CLAUDE.md lesen und auf das Wesentliche kürzen. Drei eigene Regeln ergänzen.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Interviewen lassen.</b> Im Plan Mode die Idee beschreiben und Claude fragen lassen, bis eine SPEC.md steht. Wie viele Fragen kamen?</span></label></li>
+    <li><label><input type="checkbox"><span><b>Mit Selbstkontrolle bauen.</b> To-dos mit Screenshot-Checks. Vergleicht V1 mit und ohne Checks nebeneinander.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Kontext-Detektiv.</b> Nach 30 Minuten <code>/context</code>. Was frisst am meisten? Danach gezielt <code>/compact</code> mit eigener Anweisung.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Eigenen Skill bauen.</b> Einen Skill <code>/erklaer</code> anlegen, der geänderten Code für Kolleginnen und Kollegen verständlich erklärt.</span></label></li>
+    <li><label><input type="checkbox"><span><b>Bonus: parallel arbeiten.</b> Zwei Features in zwei Worktrees gleichzeitig bauen und danach mergen.</span></label></li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen</h2></div>
+  <div class="grid-12">
+<div class="prose">
+<ol class="sources">
+  <li><a href="https://code.claude.com/docs/en/best-practices">Claude Code: Best Practices</a> (Prompts, Plan Mode, Verifikation, Stand Oktober 2026)</li>
+  <li><a href="https://code.claude.com/docs/en/skills">Claude Code: Skills</a> (SKILL.md, <code>disable-model-invocation</code>, Stand Oktober 2026)</li>
+  <li><a href="https://code.claude.com/docs/en/hooks-guide">Claude Code: Hooks</a> (Ereignisse, Benachrichtigung, Formatierung, Stand Oktober 2026)</li>
+  <li><a href="https://code.claude.com/docs/en/sub-agents">Claude Code: Subagents</a> (eigenes Kontextfenster, <code>tools</code>, <code>model</code>, Stand Oktober 2026)</li>
+  <li><a href="https://code.claude.com/docs/en/plugins/overview">Claude Code: Plugins</a> (Aufbau und Marktplatz, Stand Oktober 2026)</li>
+  <li><a href="https://code.claude.com/docs/en/mcp">Claude Code: MCP</a> (Server anbinden, <code>claude mcp add</code>, Stand Oktober 2026)</li>
+</ol>
+</div>
+  </div>
+</section>

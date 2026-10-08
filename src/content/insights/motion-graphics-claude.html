@@ -1,0 +1,398 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Dein Team hat einen neuen Freigabeprozess eingeführt. Die Fachabteilung will ein Schulungsvideo von einer Minute, der Vertrieb einen Spot von 30 Sekunden für die Dienstleistung dahinter. Für eine Agentur gibt es kein Budget. Ein KI-Videomodell liefert schöne Bilder, aber das Logo verzieht sich, die Oberfläche ist erfunden, und jede Korrektur ist ein neuer Versuch mit ungewissem Ausgang.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Motion Graphics aus Code sind kein generiertes Video, sondern eine Webseite mit Zeitleiste, die ein Programm Bild für Bild abfotografiert. Deshalb kannst du jede Farbe und jedes Timing gezielt ändern.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Für Software und Dienstleistungen ist das der bessere Weg als ein Videomodell, weil Logo, Schrift, Farben und echte Oberfläche exakt übernommen werden und Text im Bild stimmt.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Prompte nach Ziel, Referenzen und Geschmack und mach wörtlich, was wörtlich sein muss: Text im Bild in Anführungszeichen, Zeitpunkte in Sekunden, Verbote ausdrücklich.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Dein Scrollen ist die Zeit</h2>
+    <p>Das Bild unten ist kein Film, sondern der Code aus diesem Beitrag. Deine Scrollposition ist die Zeit t. Daneben steht, welche Werte <code>render(svg, t)</code> für genau diesen Moment ausrechnet. Rückwärts scrollen spult zurück. Ändere unterwegs den Versatz zwischen den drei Schritten: Das ist eine Zahl im Code, und das Video folgt ihr sofort.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage">
+        <div class="s1-left">
+          <div class="comp-box" id="s1-comp" role="img" aria-label="Bild einer Motion Graphic: Titel Freigabe in drei Schritten, drei Kästen Antrag, Prüfung, Freigabe auf einer Linie, Status-Punkt, Unterzeile"></div>
+          <div class="s1-bar" id="s1-bar" aria-hidden="true"><span class="trk"></span><span class="fill" id="s1-fill"></span><span class="head" id="s1-head"><i></i></span></div>
+        </div>
+        <div class="s1-code">
+          <div class="s1-read" aria-hidden="true"><span class="s1-t" id="s1-t">t = 0.00 s</span><span class="s1-f" id="s1-f">Bild 1 von 136</span></div>
+          <pre class="s1-pre" id="s1-pre" aria-hidden="true"></pre>
+          <div class="s1-cfg"><span class="t-label">Versatz</span>
+            <div class="switch" role="group" aria-label="Versatz zwischen den drei Schritten" id="s1-sw"><button type="button" data-s="0.45" aria-pressed="true">0,45 s</button><button type="button" data-s="0.15" aria-pressed="false">0,15 s</button></div></div>
+        </div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Die Scrollposition ist t.</b> Bei t = 0 ist alles unsichtbar. Ab 0,1 s legt eine Maske den Titel von links frei: Sie skaliert in x von 0 auf 1.</p></div>
+        <div class="cap" data-at="0.222"><span class="n">02</span><p><b>Ab 1,0 s zeichnet sich die Linie,</b> die drei Schritte folgen versetzt: Antrag bei <span data-b="n0">1,00</span> s, Prüfung bei <span data-b="n1">1,45</span> s, Freigabe bei <span data-b="n2">1,90</span> s. Im Code siehst du Deckkraft und Verschiebung jedes Kastens.</p></div>
+        <div class="cap" data-at="0.556"><span class="n">03</span><p><b>Status-Punkt bei <span data-b="dot">2,50</span> s, Unterzeile bei <span data-b="sub">2,90</span> s.</b> Beide Zeitpunkte rechnet <code>beats()</code> aus dem Versatz aus. Keine Uhr, kein Zufall: Für jedes t gibt es genau einen Zustand.</p></div>
+        <div class="cap" data-at="0.778"><span class="n">04</span><p><b>Ab <span data-b="end">3,50</span> s steht alles.</b> Der Rest bis 4,5 s ist Zeit zum Lesen. 4,5 Sekunden mal 30 Bilder pro Sekunde plus das Bild bei t = 0 ergeben 136 Bilder. Scroll zurück: Gleiches t, gleiche Werte.</p></div>
+        <div class="cap" data-at="0.9"><span class="n">05</span><p><b>Schalte den Versatz auf 0,15 s.</b> Eine Zahl ändert sich, und alle Zeitpunkte danach rücken nach vorn. Ein Videomodell müsste das ganze Video neu erzeugen, hier wird nur neu gerendert.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">01 Das Problem</span><h2>Warum nicht einfach ein Videomodell?</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Ein KI-Videomodell erzeugt Pixel aus einem Prompt. Für ein Getränk oder einen Turnschuh funktioniert das inzwischen gut, weil es echte Dinge sind, die das Modell tausendfach gesehen hat. Software und Dienstleistungen kann man nicht in die Kamera halten. Das Modell erfindet dann eine Oberfläche, die es nicht gibt, Text im Bild verrutscht, und das Logo sieht in jeder Szene ein wenig anders aus.</p>
+      <p><strong>Motion Graphics</strong>, also animierte Grafiken aus Formen, Schrift und Bildschirmausschnitten, lösen das anders. Claude schreibt sie als Code. Der Unterschied zeigt sich vor allem, wenn du etwas ändern willst.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="KI-Videomodell und Motion Graphics als Code im Vergleich">
+        <table>
+          <thead><tr><th scope="col">Frage</th><th scope="col">KI-Videomodell</th><th scope="col">Motion Graphics als Code</th></tr></thead>
+          <tbody>
+            <tr><td>Wie entsteht das Bild?</td><td>Das Modell erzeugt Pixel aus dem Prompt</td><td>Ein Browser zeichnet eine Webseite, ein Programm fotografiert jedes Bild ab</td></tr>
+            <tr><td>Eine Farbe ändern</td><td>Neuer Prompt, neues Video, Ergebnis offen</td><td>Ein Wert im Code, dann neu rendern</td></tr>
+            <tr><td>Logo, Schrift, Farben</td><td>Angenähert, schwankt zwischen Szenen</td><td>Exakt, weil die echten Dateien eingebunden werden</td></tr>
+            <tr><td>Text im Bild</td><td>Oft fehlerhaft</td><td>Steht da, wie er im Code steht</td></tr>
+            <tr><td>Zweimal rendern</td><td>Zwei verschiedene Videos</td><td>Zweimal dasselbe Video</td></tr>
+            <tr><td>Stärke</td><td>Realistische Szenen, Menschen, Produkte</td><td>Abläufe, Daten, Oberflächen, Erklärungen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Für einen Werbespot heißt das: Zeig nicht die Software, sondern was sie für den Kunden ändert. Vorher drei Mails und eine Tabelle, nachher ein Antrag mit sichtbarem Status. Das lässt sich aus Formen und echten Ausschnitten der Oberfläche bauen, und genau dafür ist Code gemacht.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="konzept">
+  <div class="sec-head grid-12"><span class="t-label">02 Das Konzept</span><h2>Ein Video ist eine Webseite mit Uhr</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Das Prinzip hat fünf Stationen. Neu ist nicht das Rendern, das gibt es seit Jahren. Neu ist, dass aktuelle Modelle wie Claude Opus 5.5 die ganze Kette selbstständig bedienen: Komposition schreiben, eigene Bilder als Screenshot prüfen, korrigieren, rendern.</p>
+      <ol class="stations">
+        <li><span class="t-label">01 Prompt</span><p>Der Prompt beschreibt das Ziel, gibt Referenzen mit und sagt, was dir gefällt. Wie das Video technisch entsteht, muss nicht drinstehen. Das weiß das Modell, oder ein Werkzeug wie HyperFrames bringt es ihm als Skill bei.</p></li>
+        <li><span class="t-label">02 Komposition</span><p>Claude schreibt eine Komposition: eine Webseite mit fester Größe, zum Beispiel 1920 × 1080 Pixel. Jede Bewegung ist eine Funktion der Zeit. Für t = 1,5 s gibt es genau einen Zustand, egal wie schnell der Rechner ist.</p></li>
+        <li><span class="t-label">03 Vorschau</span><p>In der Vorschau springt Claude zu einzelnen Zeitpunkten, macht Screenshots und prüft sie selbst. Was nicht passt, wird als Korrektur im Code geändert, nicht durch einen neuen Versuch. Von hier führt der Weg also zurück zur Komposition, so oft wie nötig.</p></li>
+        <li><span class="t-label">04 Renderer</span><p>Der Renderer öffnet die Seite in einem Browser ohne Fenster, setzt die Zeit auf 0, 1/30, 2/30 Sekunden und so weiter und fotografiert jedes Bild ab.</p></li>
+        <li><span class="t-label">05 MP4</span><p>FFmpeg, ein freies Werkzeug für Video und Ton, setzt die Bilder und die Tonspur zur MP4 zusammen. Gleicher Code ergibt dasselbe Video, bei mir byte-genau.</p></li>
+      </ol>
+      <p>Das erklärt auch, warum Änderungen billig sind. Du zahlst nicht für ein neues Video, sondern für ein paar Tokens, in denen Claude eine Zeile ändert, und für die Rechenzeit des Renderns.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="praxis">
+  <div class="sec-head grid-12"><span class="t-label">03 Praxis</span><h2>Prompten und rendern</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <h3 style="margin-top:0">Das Werkzeug: HyperFrames</h3>
+      <p>HyperFrames ist ein Open-Source-Framework von HeyGen (Lizenz Apache 2.0), das genau diese Kette für KI-Agenten verpackt. Es bringt Skills für Claude Code mit, also Anleitungen, die Claude bei Bedarf lädt, dazu Vorlagen und einen Renderer. Voraussetzung sind Node.js 22 und FFmpeg. So installierst du es laut README als Plugin in Claude Code:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">claude plugin marketplace add heygen-com/hyperframes
+claude plugin install hyperframes@hyperframes</pre>
+        <div class="code-note">Danach rufst du in Claude Code <code>/hyperframes:hyperframes</code> auf. Ohne Agent geht es mit <code>npx hyperframes init</code>, <code>preview</code> und <code>render</code>.</div></div>
+      <div class="callout note"><span class="t-label">Offen gesagt</span><p>HyperFrames selbst habe ich hier nicht ausgeführt: Meine abgeschottete Testumgebung blockiert das Starten fremder npm-Pakete. Die Angaben zu HyperFrames stammen aus README und Doku (Version 0.8.119). Das Prinzip dahinter habe ich mit einem eigenen Renderer aus Playwright und FFmpeg nachgebaut und gemessen, siehe unten. Ton, Sprecherstimmen und echtes Kameramaterial habe ich nicht getestet.</p></div>
+      <p>Für typische Aufgaben hat HyperFrames eigene Abläufe, die der Router-Skill <code>/hyperframes</code> auswählt:</p>
+      <ul class="tools">
+        <li><code>/talking-head-recut</code> und <code>/embedded-captions</code> für Aufnahmen, in denen jemand in die Kamera spricht,</li>
+        <li><code>/product-launch-video</code> für Spots zu einer Website,</li>
+        <li><code>/faceless-explainer</code> für Erklärvideos ohne Kamerabild,</li>
+        <li><code>/motion-graphics</code> für kurze Animationen ohne Sprecher.</li>
+      </ul>
+
+      <h3>Der Prompt: Ziel, Referenzen, Geschmack</h3>
+      <p>Aktuelle Modelle brauchen keine Schritt-für-Schritt-Anleitung mehr. Sie brauchen drei Dinge, die sie nicht selbst wissen können. Wie du Opus 5.5 allgemein promptest, steht ausführlich im Beitrag <a href="/insights/opus-5-5-prompting">„So promptest du Claude Opus 5.5“</a>. Hier geht es nur um das, was bei Videos dazukommt.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Teile eines Video-Prompts">
+        <table>
+          <thead><tr><th scope="col">Teil</th><th scope="col">Was rein muss</th><th scope="col">Was schiefgeht, wenn es fehlt</th></tr></thead>
+          <tbody>
+            <tr><td>Ziel</td><td>Format, Länge, Plattform, Zielgruppe, was der Zuschauer danach tun soll</td><td>Ein schönes Video für niemanden</td></tr>
+            <tr><td>Referenzen</td><td>Website, Logo, Doku, offizielle Quellen, eigene Dateien für Musik und Stimme</td><td>Claude erfindet Oberfläche, Fakten oder Zahlen</td></tr>
+            <tr><td>Geschmack</td><td>Schnitt, Layouts, Schrift, Untertitel, Tempo, was du nicht willst</td><td>Der Durchschnitt aller Motion Graphics</td></tr>
+            <tr><td>Wörtliches</td><td>Text im Bild in Anführungszeichen, Abschnitte mit Sekunden</td><td>Text wird umformuliert, Dinge überlappen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Die letzte Zeile kommt aus dem Prompt-Leitfaden von HyperFrames: Text ohne Anführungszeichen wird paraphrasiert, und zwei Dinge „bei 4 Sekunden“ überlappen für ein paar Bilder. Schreib lieber „blendet bis 4,2 s aus, ab 4,2 s erscheint …“. Die drei Beispiel-Prompts unten folgen diesem Muster. Sie sind Vorlagen zum Anpassen, nicht von mir ausgeführt.</p>
+      <p>Die Grafik liest jeden Prompt und ordnet seine Zeilen der Zeitleiste zu: Sekundenangaben werden zu Abschnitten, Text in Anführungszeichen landet als wörtlicher Text im Bild, Referenzen und Geschmack gelten für jedes Bild. Schalte zwischen den drei Prompts um.</p>
+    </div>
+    
+    <div class="wide fig" id="anat">
+      <div class="fig-head"><h3>Vom Prompt zur Zeitleiste</h3>
+        <div class="switch" role="group" aria-label="Anwendungsfall" id="an-sw"><button type="button" data-p="short" aria-pressed="false">Short</button><button type="button" data-p="spot" aria-pressed="true">Werbespot</button><button type="button" data-p="erk" aria-pressed="false">Erklärvideo</button></div>
+      </div>
+      <div class="an" id="an">
+        <svg class="an-svg" id="an-svg" aria-hidden="true"></svg>
+        <div class="code"><div class="code-bar"><span class="t-label" id="an-file">prompt-werbespot.txt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0" id="an-pre"></pre></div>
+        <div><div class="an-lanes" id="an-lanes"></div><div class="an-axis" id="an-axis" aria-hidden="true"></div></div>
+      </div>
+      <p class="fig-cap" id="an-say" aria-live="polite">Jede Linie verbindet einen Teil des Prompts mit der Spur, die er festlegt.</p>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Tipp</span><p>Lass dir Schnittliste, Quellen und Sprechertext freigeben, bevor Claude animiert. Ein falscher Satz im Skript kostet vor dem Animieren eine Minute, danach einen ganzen Durchlauf.</p></div>
+
+      <h3>Die Komposition: alles aus der Zeit berechnet</h3>
+      <p>So sieht die kleinste sinnvolle Komposition aus. Es ist dieselbe Datei, die oben in der Geschichte läuft. Entscheidend ist die Funktion <code>render(svg, t)</code>: Sie bekommt eine Zeit und stellt den Zustand für genau diesen Moment her. Bewegt werden nur Deckkraft, Verschiebung, Maske und das Zeichnen der Linie.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">comp.js</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">// Komposition als reine Funktion der Zeit: gleiches t ergibt immer dasselbe Bild.</span>
+<span class="c">// Kein Date.now, keine CSS-Transitions, kein requestAnimationFrame.</span>
+<span class="k">const</span> CONFIG = {
+  duration: 4.5,   <span class="c">// Sekunden</span>
+  fps: 30,
+  stagger: 0.45,   <span class="c">// Versatz zwischen den drei Schritten in Sekunden</span>
+};
+
+<span class="c">// ease-out-expo, wie auf der Website</span>
+<span class="k">const</span> easeOut = (x) =&gt; (x &gt;= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+<span class="c">// Fortschritt 0..1 eines Abschnitts, der bei start beginnt und dur Sekunden dauert</span>
+<span class="k">const</span> span = (t, start, dur) =&gt; easeOut(Math.min(1, Math.max(0, (t - start) / dur)));
+
+<span class="c">// Zeitpunkte aus der Konfiguration berechnen, damit eine Zahl alles verschiebt</span>
+<span class="k">function</span> <span class="f">beats</span>(cfg) {
+  <span class="k">const</span> nodes = [0, 1, 2].map((i) =&gt; 1.0 + i * cfg.stagger);
+  <span class="k">const</span> dot = nodes[2] + 0.6;
+  <span class="k">return</span> { title: 0.1, line: 1.0, nodes, dot, sub: dot + 0.4 };
+}
+
+<span class="k">function</span> <span class="f">render</span>(svg, t, cfg = CONFIG) {
+  <span class="k">const</span> b = beats(cfg);
+  <span class="k">const</span> q = (s) =&gt; svg.querySelector(s);
+  <span class="c">// 1. Titel wird von links freigelegt (Maske skaliert in x)</span>
+  q(<span class="s">"[data-mask]"</span>).setAttribute(<span class="s">"transform"</span>, <span class="s">`translate(40 0) scale(${span(t, b.title, 0.9)} 1) translate(-40 0)`</span>);
+  <span class="c">// 2. Linie zeichnet sich, die Knoten folgen versetzt</span>
+  q(<span class="s">"[data-line]"</span>).style.strokeDashoffset = String(1 - span(t, b.line, 0.6 + 2 * cfg.stagger));
+  b.nodes.forEach((start, i) =&gt; {
+    <span class="k">const</span> p = span(t, start, 0.5);
+    <span class="k">const</span> n = q(<span class="s">`[data-node="${i}"]`</span>);
+    n.style.opacity = String(p);
+    n.style.transform = <span class="s">`translateY(${(1 - p) * 14}px)`</span>;
+  });
+  <span class="c">// 3. Status-Punkt, danach die Unterzeile</span>
+  q(<span class="s">"[data-dot]"</span>).style.transform = <span class="s">`scale(${span(t, b.dot, 0.4)})`</span>;
+  <span class="k">const</span> sub = span(t, b.sub, 0.6);
+  q(<span class="s">"[data-sub]"</span>).style.opacity = String(sub);
+  q(<span class="s">"[data-sub]"</span>).style.transform = <span class="s">`translateY(${(1 - sub) * 8}px)`</span>;
+}
+
+<span class="k">if</span> (<span class="k">typeof</span> window !== <span class="s">"undefined"</span>) Object.assign(window, { CONFIG, beats, render });</pre></div>
+    </div>
+    <div class="prose">
+      <p>Die Seite drumherum (<code>comp.html</code>) enthält nur das SVG mit 1280 × 720 Pixeln, die Schriften als lokale Dateien und eine Zeile, die <code>window.__seek(t)</code> für den Renderer bereitstellt. HyperFrames erwartet statt <code>__seek</code> eine pausierte GSAP-Zeitleiste in <code>window.__timelines</code>. Das Prinzip ist dasselbe.</p>
+
+      <h3>Der Renderer: Bild für Bild</h3>
+      <p>Der Renderer macht, was in Station 04 und 05 oben steht. Er braucht Playwright mit Chromium und FFmpeg, sonst nichts.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">render.mjs</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">// Mini-Renderer nach dem Prinzip von HyperFrames: Seite Bild für Bild auf t setzen,</span>
+<span class="c">// Screenshot machen, mit FFmpeg zu MP4 zusammensetzen.</span>
+<span class="c">// Aufruf: node render.mjs out.mp4 ['{"stagger":0.2}']</span>
+<span class="k">import</span> { chromium } <span class="k">from</span> <span class="s">"playwright"</span>;
+<span class="k">import</span> { spawn } <span class="k">from</span> <span class="s">"node:child_process"</span>;
+<span class="k">import</span> { resolve } <span class="k">from</span> <span class="s">"node:path"</span>;
+
+<span class="k">const</span> [out = <span class="s">"out.mp4"</span>, override = <span class="s">"{}"</span>] = process.argv.slice(2);
+<span class="k">const</span> cfg = JSON.parse(override);
+<span class="k">const</span> browser = <span class="k">await</span> chromium.launch();
+<span class="k">const</span> page = <span class="k">await</span> browser.newPage({ viewport: { width: 1280, height: 720 } });
+<span class="k">await</span> page.goto(<span class="s">"file://"</span> + resolve(<span class="s">"comp.html"</span>));
+<span class="k">await</span> page.evaluate(() =&gt; document.fonts.ready); <span class="c">// Schriften vor dem ersten Bild laden</span>
+<span class="k">const</span> { duration, fps } = <span class="k">await</span> page.evaluate(() =&gt; CONFIG);
+
+<span class="c">// FFmpeg liest PNG-Bilder von stdin</span>
+<span class="k">const</span> ff = spawn(<span class="s">"ffmpeg"</span>, [<span class="s">"-y"</span>, <span class="s">"-loglevel"</span>, <span class="s">"error"</span>, <span class="s">"-f"</span>, <span class="s">"image2pipe"</span>, <span class="s">"-framerate"</span>, String(fps),
+  <span class="s">"-i"</span>, <span class="s">"-"</span>, <span class="s">"-c:v"</span>, <span class="s">"libx264"</span>, <span class="s">"-pix_fmt"</span>, <span class="s">"yuv420p"</span>, <span class="s">"-crf"</span>, <span class="s">"20"</span>, out], { stdio: [<span class="s">"pipe"</span>, <span class="s">"inherit"</span>, <span class="s">"inherit"</span>] });
+
+<span class="k">const</span> frames = Math.round(duration * fps);
+<span class="k">const</span> started = Date.now();
+<span class="k">for</span> (<span class="k">let</span> i = 0; i &lt;= frames; i++) {
+  <span class="k">await</span> page.evaluate(([t, c]) =&gt; window.__seek(t, c), [i / fps, cfg]);
+  <span class="k">const</span> png = <span class="k">await</span> page.locator(<span class="s">"#frame"</span>).screenshot({ type: <span class="s">"png"</span> });
+  <span class="k">if</span> (!ff.stdin.write(png)) <span class="k">await</span> <span class="k">new</span> Promise((r) =&gt; ff.stdin.once(<span class="s">"drain"</span>, r));
+}
+ff.stdin.end();
+<span class="k">await</span> <span class="k">new</span> Promise((r) =&gt; ff.on(<span class="s">"close"</span>, r));
+<span class="k">await</span> browser.close();
+console.log(<span class="s">`${frames + 1} Bilder in ${((Date.now() - started) / 1000).toFixed(1)} s -&gt; ${out}`</span>);</pre>
+        <div class="code-note">Aufruf: <code>node render.mjs final.mp4</code>. Ausgabe bei mir: <code>136 Bilder in 10.5 s -&gt; final.mp4</code></div></div>
+    </div>
+    <div class="prose">
+      <p>Warum 136 Bilder? 4,5 Sekunden mal 30 Bilder pro Sekunde sind 135, und die Schleife läuft von <code>i = 0</code> bis einschließlich <code>frames</code>, also kommt das Bild bei t = 0 dazu. Die Grafik spielt den Lauf nach: Jedes Bild wird aus <code>render()</code> berechnet und abfotografiert, danach kommen die Prüfsummen zweier Läufe.</p>
+    </div>
+    
+    <div class="wide fig" id="shot">
+      <div class="fig-head"><h3>Der Renderer fotografiert</h3><span class="t-label">Bild für Bild</span></div>
+      <div class="sh-top">
+        <div class="comp-box" id="sh-view"><span class="sh-cam" aria-hidden="true">1280 × 720</span><div class="sh-flash" id="sh-flash" aria-hidden="true"></div></div>
+        <dl class="sh-read">
+          <div class="wide2"><dt>Bild</dt><dd class="big"><span id="sh-n">0</span> <small>von 136</small></dd></div>
+          <div><dt>Zeit t</dt><dd><span id="sh-t">0,00</span> s</dd></div>
+          <div><dt>Ausgabe</dt><dd class="sh-ff" id="sh-ff">final.mp4</dd></div>
+        </dl>
+      </div>
+      <div class="sh-strip" id="sh-strip" tabindex="0" role="slider" aria-label="Bild im Filmstreifen wählen" aria-valuemin="1" aria-valuemax="136" aria-valuenow="1">
+        <svg id="sh-svg" viewBox="0 0 136 40" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="sh-still" id="sh-still"></div>
+        <div class="sh-axis" aria-hidden="true"><span>Bild 1</span><span>Bild 136</span></div>
+        <div class="sh-still-tx" id="sh-still-tx"></div>
+      </div>
+      <p class="sh-legend">Filmstreifen: ein Balken pro Bild. Die Höhe zeigt, wie stark sich das Bild zum vorigen ändert, berechnet aus <code>render()</code>. Klick in den Streifen oder nutze die Pfeiltasten, um ein Bild anzusehen.</p>
+      <div class="sh-sum">
+        <div class="sh-row"><span class="t-label">Lauf 1</span><code id="sh-h1"></code></div>
+        <div class="sh-row"><span class="t-label">Lauf 2</span><code id="sh-h2"></code></div>
+        <div class="sh-ticks" id="sh-ticks" aria-hidden="true"></div>
+        <div class="sh-verdict"><span class="mono"><b id="sh-eq">0</b> von 64 Zeichen gleich</span><span class="stamp" id="sh-stamp">identisch</span></div>
+      </div>
+      <p class="fig-cap">Prüfsumme: SHA-256 der Videodatei unten, als Beispielwert. Die Quelle nennt keine Prüfsummen, nur das Ergebnis des Vergleichs: identisch.</p>
+    </div>
+    <div class="prose">
+      <figure class="mg-video">
+        <span class="t-label">Ergebnis</span>
+        <video controls preload="none" playsinline width="1280" height="720" poster="/insights/media/motion-graphics-claude-1.jpg" aria-describedby="vid-cap">
+          <source src="/insights/media/motion-graphics-claude-2.mp4" type="video/mp4">
+        </video>
+        <figcaption id="vid-cap">Das gerenderte Video: 4,5 Sekunden, 1280 × 720, 30 Bilder pro Sekunde, 83 KB. Es startet nur, wenn du auf Abspielen drückst, und hat keinen Ton.</figcaption>
+      </figure>
+
+      <h3>Ändern statt neu würfeln</h3>
+      <p>Gefällt dir das Tempo nicht, sagst du Claude zum Beispiel: „Die drei Schritte kommen zu langsam, verkürze den Versatz auf 0,15 Sekunden.“ Claude ändert eine Zeile. Alles andere, Titel, Linie, Status-Punkt, bleibt Bild für Bild gleich, weil die Zeitpunkte aus dem Versatz berechnet werden. In der Geschichte oben kannst du genau das umschalten.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">comp.js (Änderung)</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">const</span> CONFIG = {
+  duration: 4.5,
+  fps: 30,
+<span class="hl">  stagger: 0.15,   <span class="c">// vorher 0.45</span></span>};</pre>
+        <div class="code-note">Neu rendern: <code>node render.mjs edit.mp4 '{"stagger":0.15}'</code>, wieder 136 Bilder in 10,6 s.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">04 Beim Testen</span><h2>Was beim Testen passiert ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Alle Zahlen hier stammen aus meinen Läufen mit dem Renderer oben, auf einem Cloud-Container mit Node 22.22, Playwright 1.56.1 und FFmpeg 6.1.1.</p>
+      <ul class="pitfalls">
+        <li><h3>Eine CSS-Animation lief dreimal zu schnell</h3><p>Ich habe den Titel testweise mit einer normalen CSS-Animation über 3 Sekunden eingeblendet. Im Video war sie schon nach 1 Sekunde fertig, und zwei Läufe ergaben zwei verschiedene Dateien. Ursache: CSS-Animationen laufen nach der Uhr des Browsers, nicht nach der Zeit, die der Renderer setzt. Lösung: Jeder Zustand wird aus <code>t</code> berechnet. Die Doku von HyperFrames verbietet aus demselben Grund <code>Date.now()</code>, ungesetzte Zufallszahlen und Hover-Zustände.</p></li>
+      </ul>
+      <p>Die Grafik simuliert genau diesen Fall. Ein Renderer braucht für jedes Bild eine gewisse Rechenzeit. Die CSS-Animation zählt diese echte Zeit, die Komposition aus <code>t</code> zählt nur Bilder. Beide blenden den Titel über 3 Sekunden ein.</p>
+    </div>
+    
+    <div class="wide fig" id="race">
+      <div class="fig-head"><h3>Zwei Uhren unter einem langsamen Renderer</h3>
+        <div class="switch" role="group" aria-label="Rechenzeit pro Bild" id="rc-sw"><button type="button" data-r="33" aria-pressed="false">33 ms</button><button type="button" data-r="77" aria-pressed="false">77 ms</button><button type="button" data-r="100" aria-pressed="true">100 ms</button></div>
+      </div>
+      <div class="rc-clock" id="rc-clock" aria-hidden="true"><span>Bild <b id="rc-n">1</b> von 136</span><span>Video-Zeit t <b id="rc-t">0,00</b> s</span><span>Browseruhr <b id="rc-w">0,00</b> s</span></div>
+      <div class="rc-panes">
+        <div class="rc-pane"><span class="t-label">CSS-Animation</span><div class="comp-box" id="rc-v0"></div>
+          <div class="rc-strip"><svg id="rc-s0" viewBox="0 0 136 40" preserveAspectRatio="none" aria-hidden="true"></svg><span class="soll" style="left:66.9%"><span>Soll 3 s</span></span></div>
+          <p class="rc-res" id="rc-r0" aria-live="polite"></p></div>
+        <div class="rc-pane"><span class="t-label">Aus t berechnet</span><div class="comp-box" id="rc-v1"></div>
+          <div class="rc-strip"><svg id="rc-s1" viewBox="0 0 136 40" preserveAspectRatio="none" aria-hidden="true"></svg><span class="soll" style="left:66.9%"><span>Soll 3 s</span></span></div>
+          <p class="rc-res" id="rc-r1" aria-live="polite"></p></div>
+      </div>
+      <div class="rc-runs">
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Ergebnisse der Läufe"><table>
+          <thead><tr><th scope="col">Lauf</th><th scope="col">Pro Bild</th><th scope="col">CSS fertig bei</th><th scope="col">Aus t fertig bei</th></tr></thead>
+          <tbody id="rc-tb"></tbody></table></div>
+        <p class="rc-sum" id="rc-sum" aria-live="polite"></p>
+        <div class="ctrl" style="margin-top:12px"><button type="button" class="btn" id="rc-again">Nochmal rendern</button></div>
+      </div>
+      <p class="fig-cap">Balkenhöhe: wie weit der Titel im jeweiligen Bild freigelegt ist. 77 ms pro Bild entsprechen meinem gemessenen Lauf (136 Bilder in 10,5 s), 100 ms dem dreifach zu schnellen Fall aus dem Test, 33 ms wäre Echtzeit. Die Ladezeit bis zum ersten Bild (0 bis 0,4 s) und die Schwankung der Rechenzeit um ±20 % pro Bild sind angenommene Beispielwerte.</p>
+    </div>
+    <div class="prose">
+      <ul class="pitfalls">
+        <li><h3>Ohne Uhr ist das Video byte-genau gleich</h3><p>Mit der Komposition oben habe ich zweimal gerendert und die Prüfsummen verglichen: identisch. Das ist mehr als eine Kuriosität. Du kannst ein Video in die Versionsverwaltung legen, ändern und sicher sein, dass sich nur das ändert, was du geändert hast.</p></li>
+        <li><h3>Zweieinhalb Sekunden Standbild</h3><p>Meine erste Fassung war 6 Sekunden lang, aber die letzte Bewegung endete nach 3,5 Sekunden. Der Rest war ein eingefrorenes Bild. Der Prompt-Leitfaden von HyperFrames nennt genau das als häufigsten Fehler. Lösung: Dauer an die letzte Bewegung koppeln (bei mir jetzt 4,5 s, also 1 s zum Lesen) oder im Prompt eine ruhige Restbewegung verlangen.</p></li>
+        <li><h3>Die Linie schien durch die Kästen</h3><p>Beim Durchsehen der Einzelbilder fiel auf: Während ein Kasten einblendet, ist die Linie dahinter durch ihn zu sehen, weil die ganze Gruppe halb durchsichtig ist. In der fertigen Szene stört es nicht, bei langsamer Einblendung schon. Lösung: nur Rahmen und Text einblenden, die Füllung sofort deckend zeigen. Genau solche Dinge findet Claude, wenn es Screenshots einzelner Zeitpunkte prüft.</p></li>
+        <li><h3>Rendern kostet Zeit, nicht Geld</h3><p>136 Bilder in 1280 × 720 brauchten 10,5 Sekunden, also gut doppelt so lange wie das Video selbst. Das ist eine einfache Szene ohne Kameramaterial. Mit Video im Hintergrund, Ton und 1920 × 1080 rechne mit deutlich mehr, und plane Korrekturrunden so, dass du nicht jedes Mal das ganze Video renderst, sondern nur einzelne Bilder prüfst.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">05 Entscheidung</span><h2>Wann Code, wann Videomodell?</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Wann Code, wann Videomodell">
+        <table>
+          <thead><tr><th scope="col">Vorhaben</th><th scope="col">Motion Graphics als Code</th><th scope="col">Worauf du achtest</th></tr></thead>
+          <tbody>
+            <tr><td>Short aus eigener Aufnahme</td><td>Gut: Schnitt, Untertitel, Grafiken zum Gesagten</td><td>Schnittliste vorher freigeben. Ton aus Code klingt künstlich, lizenzfreie Musik mitgeben</td></tr>
+            <tr><td>Werbespot für Software oder Dienstleistung</td><td>Sehr gut: echtes Branding, echte Oberfläche</td><td>Nichts erfinden lassen, keine Zahlen, die nicht auf der Website stehen</td></tr>
+            <tr><td>Erklär- und Schulungsvideo</td><td>Sehr gut: Abläufe, Warnzeichen, Schritte</td><td>Inhalte nur aus genannten Quellen. Sprechertext vorher prüfen</td></tr>
+            <tr><td>Realistische Szenen mit Menschen oder Produkten</td><td>Schwach</td><td>Hier ist ein Videomodell besser. Beides lässt sich kombinieren</td></tr>
+            <tr><td>Stimme und Musik</td><td>Nicht der Kern</td><td>Eigene Dateien oder einen Sprachdienst einbinden. Lizenz prüfen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Faustregel</span><p>Wenn das, was du zeigen willst, auf einem Whiteboard erklärbar ist, bau es als Code. Wenn es eine Kamera braucht, nimm ein Videomodell. Fang mit 10 Sekunden an, nicht mit einer Minute.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="selbsttest">
+  <div class="sec-head grid-12"><span class="t-label">Umsetzen</span><h2>Selbsttest und Checkliste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Drei Fragen, jede sofort mit Erklärung.</p>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="a">
+          <legend>Warum ergeben zwei Renderläufe derselben Komposition dasselbe Video?</legend>
+          <label><input type="radio" name="q1" value="a"> Weil jedes Bild nur aus der Zeit t berechnet wird.</label>
+          <label><input type="radio" name="q1" value="b"> Weil FFmpeg Unterschiede zwischen Läufen glättet.</label>
+          <label><input type="radio" name="q1" value="c"> Weil Claude beim zweiten Mal denselben Seed nimmt.</label>
+          <p class="why" hidden>Der Renderer setzt t und fotografiert ab. Hängt nichts an einer Uhr, am Zufall oder an der Maus, ist das Bild für jedes t eindeutig.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="b">
+          <legend>Du willst einen Spot für eine Buchhaltungssoftware. Was zeigst du?</legend>
+          <label><input type="radio" name="q2" value="a"> Eine generierte Person, die zufrieden auf einen Laptop schaut.</label>
+          <label><input type="radio" name="q2" value="b"> Was sich für den Kunden ändert, mit echter Oberfläche und echtem Branding.</label>
+          <label><input type="radio" name="q2" value="c"> Alle Funktionen als Liste, eine nach der anderen.</label>
+          <p class="why" hidden>Software kann man nicht in die Kamera halten. Motion Graphics zeigen die Wirkung, und weil sie Code sind, stimmen Logo, Schrift und Oberfläche.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Claude formuliert deinen Claim im Bild jedes Mal etwas anders. Was hilft?</legend>
+          <label><input type="radio" name="q3" value="a"> Den Aufwand des Modells auf das Maximum stellen.</label>
+          <label><input type="radio" name="q3" value="b"> Den Prompt auf Englisch schreiben.</label>
+          <label><input type="radio" name="q3" value="c"> Den Text wörtlich in Anführungszeichen in den Prompt schreiben.</label>
+          <p class="why" hidden>Text ohne Anführungszeichen gilt als Beschreibung und wird umformuliert. In Anführungszeichen steht er so im Bild.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste für dein erstes Video aus Code</h3>
+      <ul class="checklist" data-key="motion-graphics-claude">
+        <li><label><input type="checkbox"> <span><b>Ziel in einem Satz:</b> Format, Länge, Plattform und was der Zuschauer danach tun soll.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Referenzen beilegen:</b> Website, Logo, Quellen, eigene Dateien für Musik und Stimme.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Geschmack beschreiben:</b> Schnitt, Schrift, Untertitel, Tempo und was du nicht willst.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Wörtliches markieren:</b> Text im Bild in Anführungszeichen, Abschnitte mit Sekunden.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Skript zuerst freigeben:</b> Schnittliste, Quellen und Sprechertext vor dem Animieren prüfen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Einzelbilder prüfen:</b> Screenshots zu festen Zeitpunkten ansehen, bevor das ganze Video gerendert wird.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Keine tote Standzeit:</b> Dauer an die letzte Bewegung koppeln.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://github.com/heygen-com/hyperframes">HyperFrames: README auf GitHub</a> (Version 0.8.119, Stand 4. Oktober 2026)</li>
+        <li><a href="https://github.com/heygen-com/hyperframes/blob/main/skills/hyperframes-core/references/determinism-rules.md">HyperFrames: Determinism, Animation Runtime, and Layout</a> (Version 0.8.119)</li>
+        <li><a href="https://hyperframes.heygen.com/prompting/anatomy">HyperFrames Prompt Guide: Anatomy of a one-shot prompt</a> (Stand 4. Oktober 2026)</li>
+        <li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5">Anthropic: Prompting Claude Opus 5.5</a></li>
+        <li><a href="https://playwright.dev/docs/screenshots">Playwright: Screenshots</a> (getestet mit 1.56.1)</li>
+        <li><a href="https://ffmpeg.org/ffmpeg-formats.html#image2-1">FFmpeg: image2 und image2pipe</a> (getestet mit 6.1.1)</li>
+      </ol>
+    </div>
+  </div>
+</section>

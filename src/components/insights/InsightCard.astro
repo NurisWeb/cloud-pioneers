@@ -1,0 +1,19 @@
+---
+/** Karte für einen Insights-Beitrag (Weiterlesen, Übersicht). */
+import { formatDate, type Insight } from '@/lib/insights';
+
+interface Props {
+	post: Insight;
+}
+const { post } = Astro.props;
+---
+
+<a class="ins-card" href={`/insights/${post.slug}`}>
+	<span class="ins-card__meta"><span class="cat">{post.category}</span><span>{post.minutes} Min.</span></span>
+	<h3>{post.title}</h3>
+	<p>{post.teaser}</p>
+	<span class="ins-card__go">
+		{formatDate(post.date)}
+		<svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+	</span>
+</a>

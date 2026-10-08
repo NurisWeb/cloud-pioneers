@@ -1,0 +1,539 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Du bittest Claude um eine Landingpage für deine Firma. Eine Minute später steht sie: lila Verlauf, runde Karten mit Schatten, ein Emoji vor jeder Überschrift, alles mittig. Sie sieht nicht schlecht aus. Aber jeder erkennt sofort, dass sie aus einer KI kommt, und du kannst nicht sagen, was genau daran stört.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Derselbe Prompt wie alle anderen führt zum selben Ergebnis wie bei allen anderen: Claude braucht eine konkrete Vorlage mit Werten, keine Adjektive wie „modern“ und „clean“.</li>
+    <li><span class="t-label">Mitnehmen 2</span>„Sieht irgendwie besser aus“ hilft Claude nicht. Erst wenn ein Unterschied als Wert benannt ist, etwa Laufweite −0,045 em statt 0, kann Claude ihn umsetzen.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Eine Design-Schleife braucht zwei Arten von Kritikern, ein Skript für alles Messbare und Bild-Kritiker für den Rest, dazu ein festes Stoppkriterium.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Eine Testseite, drei Runden, von 29 Befunden auf null</h2>
+    <p>Ich habe eine Seite absichtlich so gebaut, wie Claude es ohne Vorlage oft tut, und sie durch die Schleife aus diesem Beitrag geschickt. Jede Nadel ist ein Befund des Mess-Skripts, gerechnet mit dem Skript aus Abschnitt 03. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="tp" id="tp">
+          <div class="mk-bar"><span class="lb"><span class="w0">Testseite, absichtlich falsch</span><span class="w1">Testseite nachher</span></span><span id="mk-r">Runde 0</span></div>
+          <div class="mk-body">
+            <div class="mk-bg0"></div>
+            <section class="mk-hero" data-a="hero">
+              <div class="mk-grad"></div>
+              <div class="slot" data-a="h1"><span class="v0 h1a"><i class="emo">🚀</i> Prozesse digitalisieren, die wirklich funktionieren</span><span class="v1 h1b">Prozesse digitalisieren, die wirklich funktionieren</span><span class="v2 h1c">Prozesse digitalisieren, die wirklich funktionieren</span></div>
+              <div class="slot" data-a="p"><span class="v0 pa">Ich helfe Unternehmen, ihre Abläufe mit modernen Enterprise Applications schneller, sicherer und einfacher zu machen, von der Anforderung bis zum Betrieb.</span><span class="v1 pb">Ich helfe Unternehmen, ihre Abläufe mit modernen Enterprise Applications schneller, sicherer und einfacher zu machen, von der Anforderung bis zum Betrieb.</span></div>
+              <div class="slot" data-a="btn"><span class="v0 b0"><i class="b0d"></i><span><i class="emo">✨</i> Jetzt starten</span></span><span class="v1 b1">Jetzt starten</span></div>
+            </section>
+            <section class="mk-cards" data-a="cards">
+              <div class="c0grid">
+                <div class="c0"><i class="c0d"></i><h4><i class="emo">⚡</i> Schnell</h4><p>Kurze Wege von der Idee …</p></div>
+                <div class="c0"><i class="c0d"></i><h4><i class="emo">🔒</i> Sicher</h4><p>Rollen, Freigaben und Protokolle …</p></div>
+                <div class="c0"><i class="c0d"></i><h4><i class="emo">🧠</i> Smart</h4><p>KI dort, wo sie Arbeit abnimmt …</p></div>
+              </div>
+              <div class="c1list">
+                <div class="c1"><span class="ix">01</span><b>Schnell</b><span class="d">Kurze Wege von der Idee …</span></div>
+                <div class="c1"><span class="ix">02</span><b>Sicher</b><span class="d">Rollen, Freigaben und Protokolle …</span></div>
+                <div class="c1"><span class="ix">03</span><b>Smart</b><span class="d">KI dort, wo sie Arbeit abnimmt …</span></div>
+              </div>
+            </section>
+            <div class="slot mk-wide" data-a="wide"><span class="v0 wa">Viele Prozesse laufen heute noch über E-Mail, Excel und Zurufe. Das funktioniert, bis jemand im Urlaub ist oder ein Audit ansteht.</span><span class="v1 wb"><span class="wl">Ausgangslage</span>Viele Prozesse laufen heute noch über E-Mail, Excel und Zurufe. Das funktioniert, bis jemand im Urlaub ist oder ein Audit ansteht.</span></div>
+          </div>
+        </div>
+        <div class="s1-panel" id="s1-panel">
+          <div class="s1-rounds"><span class="t-label">Runde</span><i>0</i><i>1</i><i>2</i><i>3</i></div>
+          <div class="s1-big"><b id="s1-n">0</b><span class="t-label">Befunde im Skript</span><span class="stamp s1-stamp" id="s1-stamp">Stopp</span></div>
+          <div class="s1-crit">Bild-Kritiker, blockierend: <b id="s1-c">0</b></div>
+          <ul class="s1-rules" id="s1-rules"></ul>
+        </div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Runde 0: 29 Befunde.</b> Die Testseite ist absichtlich so gebaut, wie Claude es ohne Vorlage oft tut. Jede Nadel ist ein Befund des Mess-Skripts.</p></div>
+        <div class="cap" data-at="0.17"><span class="n">02</span><p><b>Runde 1: Tokens, Raster, Linien, keine Emoji.</b> Verlauf, Radien und Schatten verschwinden, die Blöcke rücken nach links. Jede behobene Nadel fällt weg.</p></div>
+        <div class="cap" data-at="0.47"><span class="n">03</span><p><b>Das Skript meldete 0, doch die Schrift war Ersatz.</b> Das sah erst der Kritiker für Handwerk. Die Regel „Schrift fehlt“ kam danach und meldet hier 2 Befunde.</p></div>
+        <div class="cap" data-at="0.6"><span class="n">04</span><p><b>Runde 2: Schrift geladen, Kacheln mit Index.</b> Skript: 0. Auf 375 px finden alle drei Bild-Kritiker denselben Fehler: Zwei Kacheln eingerückt, eine nicht.</p></div>
+        <div class="cap" data-at="0.82"><span class="n">05</span><p><b>Runde 3: eine Zeile CSS gegen den Einzug.</b> 0 Befunde im Skript, nichts Blockierendes von den Bild-Kritikern. Die Schleife stoppt.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">01 Das Problem</span><h2>Warum KI-Design sofort auffällt</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>KI-Design sieht heute nicht mehr schlecht aus, aber es ist wiedererkennbar. Der Grund: Ein Modell baut Entwürfe aus dem, was es gesehen hat, und ohne Vorlage ist das der Durchschnitt, nicht herausragendes Design. Gibst du Claude denselben Prompt wie alle anderen, landest du beim selben Durchschnitt wie alle anderen.</p>
+      <p>Den Durchschnitt erkennt man in fünf Bereichen. Zu jedem steht in der Tabelle, woran du ihn misst.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Fünf Bereiche des Einheitslooks">
+        <table>
+          <thead><tr><th scope="col">Bereich</th><th scope="col">Typisches Symptom</th><th scope="col">Woran du es misst</th></tr></thead>
+          <tbody>
+            <tr><td>Typografie</td><td>Standardschrift, Laufweite 0, Zeilenhöhe 1,2 auch bei großen Überschriften</td><td>Laufweite und Zeilenhöhe der h1, geladene Schrift</td></tr>
+            <tr><td>Bilder</td><td>Emoji als Icons, generische 3D-Illustrationen</td><td>Emoji im Text, Herkunft der Bilder</td></tr>
+            <tr><td>Hierarchie</td><td>Alles gleich wichtig, alles mittig</td><td>Anteil zentrierter Absätze, Anzahl h1</td></tr>
+            <tr><td>Farbe</td><td>Lila-blauer Verlauf, Grau auf Weiß mit zu wenig Kontrast</td><td>Farben außerhalb der Palette, Kontrast ≥ 4,5:1</td></tr>
+            <tr><td>Abstände</td><td>Runde Karten mit Schatten, Fließtext über die volle Breite</td><td>Radius, Schatten, Zeichen pro Zeile</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Die Testseite in der Geschichte oben ist genau so eine Seite. Ich habe sie absichtlich so gebaut, wie Claude es ohne Vorlage oft tut, und sie dann durch die Schleife aus diesem Beitrag geschickt. Das Mess-Skript fand auf ihr 29 Befunde: Verlauf, Radien, Schatten, Emoji, Kontrast 2,54:1, Zeilen mit 141 Zeichen. Nach drei Runden waren es 0 Befunde im Skript, und der einzige blockierende Befund der Bild-Kritiker aus Runde 2 war behoben.</p>
+      <h3>Probier es aus: Finde den Unterschied, den du nicht benennen kannst</h3>
+      <p>Die Überschrift unten steht auf den Standardwerten des Browsers, so wie Claude sie ohne Vorlage oft setzt. Schieb Laufweite und Zeilenhöhe, bis sie dir gefällt. Blende dann die Referenz aus unserem Design-System als Kontur ein und lies, was der Mess-Kritiker dazu sagt. Tipp: Erst nach Gefühl schieben, dann vergleichen.</p>
+    </div>
+    
+    <div class="wide fig" id="f2">
+      <div class="fig-head"><h3>Laufweite messen statt schätzen</h3>
+        <div class="ctrl" style="margin:0"><button type="button" class="btn sm" id="f2-ref" aria-pressed="false">Referenz einblenden</button><button type="button" class="btn sm" id="f2-reset">Zurück auf Standard</button></div>
+      </div>
+      <div class="tune">
+        <label><span class="row"><span class="t-label">Laufweite</span><output id="f2-ls-o">0,000 em</output></span>
+          <span class="rw"><input class="rng" type="range" id="f2-ls" min="-0.08" max="0.04" step="0.005" value="0"><span class="tick" aria-hidden="true"><span>Regel ≤ −0,03</span></span></span></label>
+        <label><span class="row"><span class="t-label">Zeilenhöhe</span><output id="f2-lh-o">1,20</output></span>
+          <span class="rw"><input class="rng" type="range" id="f2-lh" min="0.9" max="1.5" step="0.05" value="1.2"><span class="tick" aria-hidden="true"><span>Regel ≤ 1,1</span></span></span></label>
+      </div>
+      <div class="spec" id="f2-spec"><p id="f2-t">Prozesse digitalisieren, die wirklich funktionieren</p><p class="ref" id="f2-r" aria-hidden="true">Prozesse digitalisieren, die wirklich funktionieren</p></div>
+      <dl class="meas">
+        <dt>Gemessen</dt><dd id="f2-m"></dd>
+        <dt>Zeilen</dt><dd id="f2-c"></dd>
+      </dl>
+      <div class="verdict"><span class="t-label">Mess-Kritiker</span><span class="vtag" id="f2-v">ok</span><span class="vtxt" id="f2-vt" aria-live="polite"></span></div>
+      <p class="fig-cap" id="f2-say"></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="konzept">
+  <div class="sec-head grid-12"><span class="t-label">02 Das Konzept</span><h2>Drei Stufen, eine Schleife</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die Lösung hat drei Stufen. Jede setzt voraus, dass Claude gutes Design sehen kann, bevor es eins baut.</p>
+      <ol class="steps">
+        <li><span class="n" aria-hidden="true">01</span><div><span class="t-label">Stufe 1</span><h3>Vorlage und schonungsloser Vergleich</h3><p>Galerien mit Design-Systemen bekannter Seiten liefern Farbpalette, Typografie, Tailwind-Werte und Tokens zum Kopieren. Damit baut Claude entweder Neues im Stil einer Vorlage, oder es vergleicht die eigene Seite schonungslos mit einer Benchmark und benennt jede Lücke als Wert, etwa eine zu lockere Laufweite oder fehlende Höhenstufen für Flächen.</p></div></li>
+        <li><span class="n" aria-hidden="true">02</span><div><span class="t-label">Stufe 2</span><h3>Die Design-Schleife</h3><p>Ein Screenshot ist die Benchmark. Claude baut nach und startet Kritiker als Subagents, zum Beispiel einen für das Briefing, einen für Designqualität und einen für die Wirkung. Die Schleife läuft, bis die Kritiker zufrieden sind. So entstehen Seiten, aber auch Produkt-Mails als HTML.</p></div></li>
+        <li><span class="n" aria-hidden="true">03</span><div><span class="t-label">Stufe 3</span><h3>Das Design-OS</h3><p>Eine lokale Oberfläche, die Bilder über mehrere Anbieter erzeugt und die Kosten pro Bild zeigt, alle Bilder auf dem Rechner mit einem günstigen Modell verschlagwortet und Stil-Rezepte speichert, etwa für einheitliche Thumbnails.</p></div></li>
+      </ol>
+      <div class="callout note"><span class="t-label">Offen gesagt</span><p>Die Schleife unten habe ich selbst gebaut und an einer Testseite in unserem Design-System „Systemplan“ ausprobiert. Alle Zahlen stammen aus diesem einen Testlauf.</p></div>
+      <p>Stufe 2 ist der Kern, und dort entscheidet sich alles an zwei Fragen: woran die Kritiker messen und wann die Schleife aufhört. Kritiker, die nur Noten vergeben, drehen sich im Kreis. Deshalb ergänze ich einen Kritiker, der nicht urteilt, sondern misst. Die Schleife hat fünf Schritte.</p>
+      <ol class="steps">
+        <li><span class="n" aria-hidden="true">01</span><div><h3>Benchmark</h3><p>Die Benchmark ist ein Screenshot, der zeigt, wie es sich anfühlen soll, plus eine DESIGN.md mit den Werten des Systems. Beides geht an den Generator, also die Claude-Sitzung, die die Seite baut.</p></div></li>
+        <li><span class="n" aria-hidden="true">02</span><div><h3>Rendern</h3><p>Der Generator schreibt HTML. Ein Skript rendert die Seite in einem echten Browser, auf dem Desktop mit 1440 px und auf dem Handy mit 375 px. Viele Fehler gibt es nur in einer der beiden Breiten.</p></div></li>
+        <li><span class="n" aria-hidden="true">03</span><div><h3>Mess-Kritiker</h3><p>Der Mess-Kritiker liest die berechneten Stile und prüft Regeln: Farben aus der Palette, kein Radius, Kontrast, Laufweite, Zeilenlänge, geladene Schrift. Er irrt sich nicht und widerspricht sich nicht, aber er sieht nur, wofür es eine Regel gibt.</p></div></li>
+        <li><span class="n" aria-hidden="true">04</span><div><h3>Bild-Kritiker</h3><p>Drei Bild-Kritiker bekommen nur Screenshots, Benchmark und DESIGN.md, jeder in frischem Kontext und mit einer einzigen Frage: Trifft es das Briefing? Ist es handwerklich gut? Bleibt etwas hängen? Jeder nennt höchstens drei Befunde und markiert sie als blockierend oder optional.</p></div></li>
+        <li><span class="n" aria-hidden="true">05</span><div><h3>Filter und Stopp</h3><p>Der Filter streicht Vorschläge, die gegen das System verstoßen, und schickt den Rest zurück an den Generator. Die Schleife stoppt, wenn das Skript nichts findet und kein Kritiker mehr etwas Blockierendes meldet, spätestens nach drei Runden.</p></div></li>
+      </ol>
+      <div class="callout warning"><span class="t-label">Wichtig</span><p>Die Noten der Kritiker sind kein Stoppkriterium. In meinem Test lagen sie nach jeder Runde zwischen 6 und 7 von 10, auch als nichts Wesentliches mehr offen war. Was zählt, ist die Liste der blockierenden Befunde.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="praxis">
+  <div class="sec-head grid-12"><span class="t-label">03 Praxis</span><h2>Die Schleife bauen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <h3>Schritt 1: Das System aufschreiben</h3>
+      <p>Die DESIGN.md ist ein Format, das Google mit Stitch eingeführt hat: eine Markdown-Datei im Projekt, die ein Design-System für Agenten beschreibt, so wie AGENTS.md den Code. Galerien liefern solche Dateien für bekannte Seiten. Für eine eigene Marke schreibst du sie selbst. So sieht unsere aus, gekürzt:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">DESIGN.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"># DESIGN.md: Systemplan
+
+Ruhiges, technisches System: Papier, Tinte, ein Signal. Wirkt wie ein Bauplan, nicht wie ein Startup.
+
+## Farben
+| Token | Hex | Einsatz |
+| --- | --- | --- |
+| paper | #efeeea | Seitenfläche |
+| paper-2 | #e6e5e0 | abgesetzte Fläche |
+| ink | #1a1a18 | Text, Linien der Gruppen |
+| ink-2 | #4b4a46 | Fließtext zweiter Ordnung |
+| ink-3 | #63625d | Metadaten |
+| line | #d2d0c9 | Haarlinien |
+| signal | #ffb224 | nur Signal: aktiv, Fokus, Hover-Balken. Nie Fläche |
+| signal-ink | #8a5300 | Text in Bernstein |
+
+## Typografie
+- Headlines: Schibsted Grotesk 600, Laufweite -0.045em (h1) bis -0.03em (h3), Zeilenhöhe 1.0 bis 1.12.
+- Fließtext: 17px, Zeilenhöhe 1.6, max. 68 Zeichen pro Zeile, linksbündig.
+- Labels: IBM Plex Mono 500, 12px, Versalien, Laufweite +0.12em, höchstens drei Wörter.
+
+## Form
+- Keine Radien, keine Schatten, keine Verläufe, keine Emoji als Icons.
+- Struktur über 1px-Linien: Gruppe beginnt mit border-top ink, Einträge trennt line.
+- Kacheln trennt eine 1px-Fuge (gap 1px auf line-Fläche), kein Rahmen pro Kachel.</pre></div>
+      <h3>Schritt 2: Die Regeln maschinenlesbar machen</h3>
+      <p>Alles, was sich in Zahlen fassen lässt, kommt zusätzlich in eine JSON-Datei. Das ist die Grundlage für den Mess-Kritiker.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">design.json</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">{
+  "name": "Systemplan",
+  "colors": [
+    "#efeeea",
+    "#e6e5e0",
+    "#1a1a18",
+    "#4b4a46",
+    "#63625d",
+    "#d2d0c9",
+    "#ffb224",
+    "#8a5300"
+  ],
+  "radiusMax": 0,
+  "shadows": false,
+  "gradients": false,
+  "h1": {
+    "count": 1,
+    "letterSpacingMaxEm": -0.03,
+    "lineHeightMax": 1.1
+  },
+  "body": {
+    "lineHeightMin": 1.45,
+    "lineHeightMax": 1.7,
+    "maxChars": 75
+  },
+  "contrastMin": 4.5,
+  "centeredBlocksMax": 0.5,
+  "fonts": [
+    "Schibsted Grotesk",
+    "IBM Plex Mono"
+  ]
+}</pre></div>
+      <h3>Schritt 3: Der Mess-Kritiker</h3>
+      <p>Playwright öffnet die Seite in Chromium, und das Skript liest für jedes sichtbare Element die berechneten Stile aus. Es läuft so, wie es dasteht, mit Node 22 und <code>npm i -D playwright@1.56.1</code>.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">critic.mjs</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">// Mess-Kritiker: rendert eine Seite und prüft sie gegen design.json.</span>
+<span class="c">// Aufruf: node critic.mjs seite.html [design.json]</span>
+import { chromium } from "playwright";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const [page = "index.html", rulesFile = "design.json"] = process.argv.slice(2);
+const rules = JSON.parse(readFileSync(rulesFile, "utf8"));
+
+const browser = await chromium.launch();
+const findings = [];
+<span class="c">// Desktop und Mobil: viele Fehler gibt es nur in einer Breite</span>
+for (const width of rules.widths ?? [1440, 375]) {
+const tab = await browser.newPage({ viewport: { width, height: 900 } });
+await tab.goto("file://" + resolve(page));
+await tab.evaluate(() =&gt; document.fonts.ready);
+
+<span class="c">// Alles Messen passiert im Browser, mit den berechneten Stilen</span>
+const found = await tab.evaluate((r) =&gt; {
+  const out = [];
+  const add = (rule, el, detail) =&gt;
+    out.push({ rule, el: el.tagName.toLowerCase() + (el.className ? "." + String(el.className).split(" ")[0] : ""), detail });
+
+<span class="c">  // Farbe als Hex, Alpha 0 ignorieren</span>
+  const hex = (c) =&gt; {
+    const m = c.match(/rgba?\(([\d.]+), ([\d.]+), ([\d.]+)(?:, ([\d.]+))?\)/);
+    if (!m || m[4] === "0") return null;
+    return "#" + [m[1], m[2], m[3]].map((v) =&gt; (+v).toString(16).padStart(2, "0")).join("");
+  };
+  const lum = (h) =&gt; {
+    const [R, G, B] = [1, 3, 5].map((i) =&gt; {
+      const v = parseInt(h.slice(i, i + 2), 16) / 255;
+      return v &lt;= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  };
+  const ratio = (a, b) =&gt; { const [x, y] = [lum(a), lum(b)].sort((p, q) =&gt; q - p); return (x + 0.05) / (y + 0.05); };
+<span class="c">  // Hintergrund: erster Vorfahr mit deckender Farbe</span>
+<span class="c">  // Bei Verlauf oder Bild ist der Kontrast nicht messbar: null zurückgeben</span>
+  const bgOf = (el) =&gt; {
+    for (let e = el; e; e = e.parentElement) {
+      const s = getComputedStyle(e);
+      if (s.backgroundImage !== "none") return null;
+      const h = hex(s.backgroundColor); if (h) return h;
+    }
+    return "#ffffff";
+  };
+
+  const all = [...document.body.querySelectorAll("*")].filter((e) =&gt; e.getClientRects().length);
+  const seen = new Set();
+  let blocks = 0, centered = 0;
+  for (const el of all) {
+    const s = getComputedStyle(el);
+    for (const c of [s.color, s.backgroundColor, s.borderTopColor]) {
+      const h = hex(c);
+      if (h &amp;&amp; !r.colors.includes(h) &amp;&amp; !seen.has(h)) { seen.add(h); add("farbe-ausserhalb-palette", el, h); }
+    }
+    if (parseFloat(s.borderTopLeftRadius) &gt; r.radiusMax) add("radius", el, s.borderTopLeftRadius);
+    if (!r.shadows &amp;&amp; s.boxShadow !== "none") add("schatten", el, s.boxShadow.slice(0, 40));
+    if (!r.gradients &amp;&amp; s.backgroundImage.includes("gradient")) add("verlauf", el, s.backgroundImage.slice(0, 40));
+    const text = [...el.childNodes].some((n) =&gt; n.nodeType === 3 &amp;&amp; n.textContent.trim());
+    if (text) {
+      const fg = hex(s.color), bg = bgOf(el);
+      if (/\p{Extended_Pictographic}/u.test(el.textContent)) add("emoji", el, el.textContent.trim().slice(0, 12));
+      if (fg &amp;&amp; !bg) add("kontrast-nicht-messbar", el, "Hintergrund ist Verlauf oder Bild");
+      else if (fg &amp;&amp; ratio(fg, bg) &lt; r.contrastMin) add("kontrast", el, `${fg} auf ${bg} = ${ratio(fg, bg).toFixed(2)}:1`);
+    }
+    if (el.matches("p, li") &amp;&amp; el.textContent.trim().length &gt; 80) {
+      blocks++;
+      if (s.textAlign === "center") centered++;
+      const lh = parseFloat(s.lineHeight) / parseFloat(s.fontSize);
+      if (lh &lt; r.body.lineHeightMin || lh &gt; r.body.lineHeightMax) add("zeilenhoehe", el, lh.toFixed(2));
+<span class="c">      // Zeichen pro Zeile, grob über die Breite eines "0"</span>
+      const probe = document.createElement("span"); probe.textContent = "0".repeat(10);
+      probe.style.font = s.font; document.body.append(probe);
+      const chars = el.clientWidth / (probe.getBoundingClientRect().width / 10); probe.remove();
+      if (chars &gt; r.body.maxChars) add("zeilenlaenge", el, Math.round(chars) + " Zeichen");
+    }
+  }
+  const h1 = document.querySelectorAll("h1");
+  if (h1.length !== r.h1.count) out.push({ rule: "h1-anzahl", el: "h1", detail: String(h1.length) });
+  for (const el of h1) {
+    const s = getComputedStyle(el);
+    const ls = s.letterSpacing === "normal" ? 0 : parseFloat(s.letterSpacing) / parseFloat(s.fontSize);
+    if (ls &gt; r.h1.letterSpacingMaxEm) add("h1-laufweite", el, ls.toFixed(3) + "em");
+    const lh = s.lineHeight === "normal" ? 1.2 : parseFloat(s.lineHeight) / parseFloat(s.fontSize);
+    if (lh &gt; r.h1.lineHeightMax) add("h1-zeilenhoehe", el, lh.toFixed(2));
+  }
+<span class="c">  // Schrift wirklich geladen? Sonst sieht der Kritiker eine Ersatzschrift.</span>
+<span class="c">  // Browser laden nur benutzte Schnitte, deshalb reicht ein geladener Schnitt pro Familie.</span>
+  for (const f of r.fonts ?? [])
+    if (![...document.fonts].some((x) =&gt; x.family.replace(/"/g, "") === f &amp;&amp; x.status === "loaded"))
+      out.push({ rule: "schrift-fehlt", el: "document", detail: f });
+  if (blocks &amp;&amp; centered / blocks &gt; r.centeredBlocksMax) out.push({ rule: "zentriert", el: "body", detail: `${centered}/${blocks} Absätze` });
+  return out;
+}, rules);
+for (const f of found) findings.push({ ...f, w: width });
+await tab.close();
+}
+
+await browser.close();
+<span class="c">// Gleiche Befunde zusammenfassen, sonst ertrinkt der Generator in Wiederholungen</span>
+const groups = new Map();
+for (const f of findings) {
+  const key = `${f.rule}|${f.el}|${f.detail}`;
+  const g = groups.get(key) ?? { ...f, n: 0, ws: new Set() };
+  g.n++; g.ws.add(f.w); groups.set(key, g);
+}
+for (const f of groups.values())
+  console.log(`${f.rule.padEnd(24)} ${f.el.padEnd(14)} ${[...f.ws].join("+").padEnd(9)} ${f.detail}${f.n &gt; f.ws.size ? `  (${f.n / f.ws.size}x)` : ""}`);
+console.log(`\n${groups.size} Befunde`);
+process.exitCode = groups.size ? 1 : 0;</pre></div>
+    </div>
+    <div class="prose">
+      <p>Auf der Testseite aus Runde 0 sieht die Ausgabe so aus (gekürzt, ganz waren es 29 Zeilen):</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">$ node critic.mjs round0.html
+farbe-ausserhalb-palette section.hero   1440+375  #ffffff
+verlauf                  section.hero   1440+375  linear-gradient(135deg, rgb(99, 102, 241
+emoji                    h1             1440+375  🚀 Prozesse 
+kontrast-nicht-messbar   h1             1440+375  Hintergrund ist Verlauf oder Bild
+farbe-ausserhalb-palette p              1440+375  #e0e7ff
+kontrast-nicht-messbar   p              1440+375  Hintergrund ist Verlauf oder Bild
+zeilenlaenge             p              1440      109 Zeichen
+farbe-ausserhalb-palette a.btn          1440+375  #6366f1
+radius                   a.btn          1440+375  9999px
+schatten                 a.btn          1440+375  rgba(0, 0, 0, 0.15) 0px 10px 25px 0px
+emoji                    a.btn          1440+375  ✨ Jetzt star
+kontrast                 a.btn          1440+375  #6366f1 auf #ffffff = 4.47:1
+…
+zentriert                body           1440+375  5/5 Absätze
+
+29 Befunde</pre></div>
+      <p>Zwei Zeilen darin sind Kontrast-Befunde. Der Button-Text liegt mit 4,47:1 knapp unter der Grenze, der graue Kacheltext mit 2,54:1 weit darunter. Das Skript rechnet mit der WCAG-Formel aus <code>lum</code> und <code>ratio</code>. Unten läuft dieselbe Rechnung live: Die Farbe dunkelt Schritt für Schritt nach, bis 4,5:1 erreicht ist.</p>
+    </div>
+    
+    <div class="wide fig" id="f3">
+      <div class="fig-head"><h3>Kontrast nachdunkeln, bis 4,5:1 erreicht ist</h3>
+        <div class="switch" role="group" aria-label="Farbe aus der Testseite" id="f3-sw"><button type="button" data-k="btn" aria-pressed="true">Button-Text</button><button type="button" data-k="card" aria-pressed="false">Kacheltext</button></div>
+      </div>
+      <div class="ct">
+        <div class="ct-sw" id="f3-sw-box"><span class="smp" id="f3-smp">Jetzt starten</span><span class="smp2" id="f3-smp2">Kurze Wege von der Idee zum ersten lauffähigen Stand.</span></div>
+        <div>
+          <div><span class="ct-big" id="f3-r">4,47:1</span></div>
+          <div class="verdict" style="margin-top:10px"><span class="vtag" id="f3-v">Befund</span><span class="vtxt" id="f3-vt"></span></div>
+          <p class="ct-info" id="f3-i"></p>
+        </div>
+      </div>
+      <div class="ct-scale" id="f3-scale" aria-hidden="true"><span class="ax"></span><span class="min" id="f3-min"><span>Minimum 4,5:1</span></span><span class="mk2" id="f3-mk"></span></div>
+      <div class="ct-steps" id="f3-steps" aria-hidden="true"></div>
+      <div class="ctrl" style="margin-top:14px"><button type="button" class="btn" id="f3-one">Einen Schritt dunkler</button><button type="button" class="btn" id="f3-all">Bis 4,5:1</button><button type="button" class="btn sm" id="f3-back">Zurück</button></div>
+      <p class="fig-cap" id="f3-say" aria-live="polite"></p>
+    </div>
+    <div class="prose">
+      <h3>Schritt 4: Die Bild-Kritiker</h3>
+      <p>Jeder Kritiker ist ein Subagent mit genau einer Frage. Wichtig ist der frische Kontext: Ein Kritiker, der beim Bauen zugesehen hat, verteidigt die eigene Arbeit. Ich habe sie im Test als Subagent-Aufrufe mit genau diesem Text gestartet. Als Datei für Claude Code sieht das so aus:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">.claude/agents/design-critic.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">---
+name: design-critic
+description: Beurteilt Screenshots einer Seite gegen Benchmark und DESIGN.md aus genau einer Perspektive. Für die Design-Schleife.
+tools: Read
+model: sonnet
+---
+
+Du bist einer von drei Kritikern in einer Design-Schleife. Du hast beim Bauen
+nicht zugesehen und verteidigst nichts.
+
+Du bekommst im Auftrag:
+- deine Frage (Briefing, Handwerk oder Wirkung)
+- Pfade zu Screenshots in 1440 und 375 px
+- den Pfad zur Benchmark und zur DESIGN.md
+
+Sieh dir alle Bilder mit Read an. Antworte auf Deutsch, höchstens 100 Wörter:
+
+Score: N/10
+- [blockierend|optional] Was, wo im Screenshot, welcher Wert sich ändern soll
+
+Höchstens drei Befunde, nur was im Screenshot sichtbar ist.
+Schlage nichts vor, was die DESIGN.md verbietet.
+Wenn nichts Wesentliches fehlt: "keine Befunde".</pre></div>
+      <h3>Schritt 5: Die Schleife selbst</h3>
+      <p>Sie ist eine Anweisung an die Hauptsitzung. Der Filter steht ausdrücklich drin, denn ohne ihn setzt der Generator jeden Vorschlag um, auch die, die das System brechen.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">.claude/skills/design-loop/SKILL.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">---
+name: design-loop
+description: Baut eine Seite nach Benchmark und DESIGN.md und verbessert sie in einer Schleife aus Mess-Skript und drei Bild-Kritikern.
+---
+
+1. Lies DESIGN.md und design.json. Die Benchmark ist ein Screenshot vom Nutzer.
+2. Baue die Seite (Runde 1) oder setze die gefilterten Befunde um (ab Runde 2).
+3. Mess-Kritiker: `node critic.mjs seite.html`. Jeder Befund ist blockierend.
+4. Screenshots in 1440 und 375 px. Starte drei design-critic-Subagents
+   parallel, je mit einer Frage: Briefing, Handwerk, Wirkung.
+5. Filter: Streiche Vorschläge, die DESIGN.md oder die Inhaltsregeln brechen
+   (z. B. erfundene Zahlen). Bei Widerspruch zwischen Kritikern entscheidet
+   DESIGN.md. Befunde, die mehrere Kritiker nennen, zuerst.
+6. Stopp, wenn das Skript 0 Befunde meldet und kein Kritiker etwas
+   Blockierendes nennt, spätestens nach Runde 3. Noten sind kein Kriterium.
+7. Berichte: Runden, Befunde pro Runde, was gestrichen wurde und warum,
+   offene optionale Punkte für den Menschen.</pre></div>
+      <p>Was der Filter in Schritt 5 tut, zeigt die Grafik mit den Befunden der Bild-Kritiker aus dem Test: Doppelte werden zusammengefasst, Verstöße gestrichen, und bei einem Widerspruch entscheidet die DESIGN.md. Schalte selbst zwischen den Stufen um.</p>
+    </div>
+    
+    <div class="wide fig" id="f4">
+      <div class="fig-head"><h3>Drei Kritiker, ein Filter</h3>
+        <div class="switch" role="group" aria-label="Stufe des Filters" id="f4-sw"><button type="button" data-s="0" aria-pressed="true">Roh</button><button type="button" data-s="1" aria-pressed="false">Zusammengefasst</button><button type="button" data-s="2" aria-pressed="false">Gefiltert</button></div>
+      </div>
+      <div class="fn-in">
+        <div class="fn-col" data-c="0"><span class="t-label">Briefing</span></div>
+        <div class="fn-col" data-c="1"><span class="t-label">Handwerk</span></div>
+        <div class="fn-col" data-c="2"><span class="t-label">Wirkung</span></div>
+      </div>
+      <div class="fn-mid" aria-hidden="true"><svg viewBox="0 0 100 70" preserveAspectRatio="none"><path d="M0 0 L38 62 M100 0 L62 62"/></svg>
+        <div class="fn-lbl" id="f4-rules"><span>Doppelte zusammen</span><span>DESIGN.md</span><span>Inhaltsregeln</span></div></div>
+      <div class="fn-out">
+        <div class="fn-col" id="fn-gen"><span class="t-label">An den Generator</span></div>
+        <div class="fn-col" id="fn-del"><span class="t-label">Gestrichen</span></div>
+      </div>
+      <div class="fn-count"><b id="f4-n">8</b><span class="t-label">Für den Generator</span></div>
+      <p class="fig-cap" id="f4-say" aria-live="polite"></p>
+      <p class="fig-cap">Die Befunde stammen aus dem Test. Welcher der drei Kritiker welchen Befund nannte, ist hier ein Beispiel; aus dem Test steht fest: Den Einzug nannten alle drei, die Kennzahl zwei, die übrigen je einer.</p>
+    </div>
+    <div class="prose">
+      <p>So sind die drei Runden im Test gelaufen. Generator und Kritiker waren Subagents mit einem kleineren Modell, um Kosten zu sparen.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Runden im Test">
+        <table>
+          <thead><tr><th scope="col">Runde</th><th scope="col" class="num">Skript</th><th scope="col" class="num">Briefing</th><th scope="col" class="num">Handwerk</th><th scope="col" class="num">Wirkung</th><th scope="col">Was sich geändert hat</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td class="num">29</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td>Ausgangsseite</td></tr>
+            <tr><td>1</td><td class="num">0*</td><td class="num">7</td><td class="num">6</td><td class="num">6</td><td>Generator setzt Tokens, Raster, Linien ein, entfernt Emoji</td></tr>
+            <tr><td>2</td><td class="num">0</td><td class="num">7</td><td class="num">7</td><td class="num">6</td><td>Schrift geladen, eigener Abschnitt für den Schlusstext, Kacheln mit Index</td></tr>
+            <tr><td>3</td><td class="num">0</td><td class="num">–</td><td class="num">–</td><td class="num">–</td><td>Einzug der Kacheln auf dem Handy behoben, eine Zeile CSS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="t-note">* Mit der damaligen Regelversion. Die Regel „Schrift fehlt“ kam erst nach Runde 1 dazu und hätte zwei Befunde gemeldet. Bewertungen der Kritiker als Note von 10.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">04 Beim Testen</span><h2>Was beim Testen passiert ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Alle Beispiele habe ich selbst ausgeführt. Die interessantesten Befunde kamen nicht aus dem Design, sondern aus der Schleife selbst.</p>
+      <ul class="pitfalls">
+        <li><h3>Null Befunde, falsche Schrift</h3><p>Nach Runde 1 meldete das Skript nichts. Der Kritiker für Handwerk sah aber sofort: Die Überschrift steht in einer Ersatzschrift. Der Browser im Container konnte Google Fonts nicht laden. Lösung: Schriften lokal einbinden und eine Regel ergänzen, die prüft, ob jede Familie wirklich geladen ist.</p></li>
+        <li><h3>Die eigene Regel war zu streng</h3><p>Die erste Fassung der Schrift-Regel fragte mit <code>document.fonts.check()</code> nach dem Schnitt 400. Browser laden aber nur Schnitte, die benutzt werden, und die Mono-Schrift kam nur in 500 vor. Ergebnis: ein Fehlalarm. Jetzt reicht ein geladener Schnitt pro Familie.</p></li>
+        <li><h3>Nur Desktop geprüft, Fehler auf dem Handy</h3><p>In Runde 1 sahen Skript und Kritiker nur die Desktop-Ansicht. In Runde 2 bekamen die Kritiker auch den 375-px-Screenshot, und alle drei fanden denselben Fehler: Zwei Kacheln waren eingerückt, eine nicht. Seitdem rendert das Skript immer beide Breiten. Den Einzug findet es trotzdem nicht, das bleibt Aufgabe der Bild-Kritiker.</p></li>
+        <li><h3>Kontrast auf Verläufen ist nicht messbar</h3><p>Die erste Version meldete weißen Text mit 1,05:1 Kontrast, weil sie den Verlauf übersah und die weiße Seitenfläche dahinter nahm. Jetzt meldet das Skript „nicht messbar“ und überlässt die Stelle den Bild-Kritikern. Ein Skript, das falsch misst, ist schlimmer als eins, das schweigt.</p></li>
+        <li><h3>Kritiker widersprechen sich und dem System</h3><p>Für denselben Abstand schlug ein Kritiker 48 px vor, ein anderer 96 bis 120 px. Zwei wollten eine Kennzahl pro Kachel, einer einen Status-Punkt vor dem Button. Beides verbietet unser System: keine erfundenen Zahlen, Bernstein nur als Signal. Ohne den Filter hätte der Generator es eingebaut. Den Abstand hat die DESIGN.md entschieden, nicht der Kritiker.</p></li>
+        <li><h3>Wiederholungen ertränken den Generator</h3><p>Drei gleiche Karten ergaben jeden Befund dreimal. Das Skript fasst gleiche Befunde jetzt zusammen und schreibt „(3x)“ dahinter. Die Liste für den Generator wurde dadurch ein Drittel kürzer.</p></li>
+        <li><h3>ESM findet globale Pakete nicht</h3><p><code>import { chromium } from "playwright"</code> scheiterte mit <code>ERR_MODULE_NOT_FOUND</code>, obwohl Playwright global installiert war. ES-Module ignorieren <code>NODE_PATH</code>. Lösung: Playwright lokal im Projekt installieren.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">05 Entscheidung</span><h2>Welche Stufe lohnt sich?</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Welche Stufe lohnt sich">
+        <table>
+          <thead><tr><th scope="col">Situation</th><th scope="col">Stufe 1: Vorlage und Vergleich</th><th scope="col">Stufe 2: Schleife</th><th scope="col">Stufe 3: Design-OS</th></tr></thead>
+          <tbody>
+            <tr><td>Neues Projekt, noch kein eigenes System</td><td>Ja: Vorlage wählen, anpassen, als DESIGN.md festhalten</td><td>Noch nicht, erst braucht es Regeln</td><td>Nein</td></tr>
+            <tr><td>Eigenes System, die Seite wirkt trotzdem flach</td><td>Ja: einmal schonungslos gegen eine Benchmark vergleichen</td><td>Ja, für die Seiten, die du danach baust</td><td>Nein</td></tr>
+            <tr><td>Viele Seiten, Mails oder Folien im selben Stil</td><td>Einmal am Anfang</td><td>Ja: jede neue Seite läuft durch</td><td>Nur bei vielen Bildern</td></tr>
+            <tr><td>Viele Bilder, Thumbnails, Kampagnen</td><td>Für die Bildsprache</td><td>Für Layouts</td><td>Ja: Stil-Rezepte und durchsuchbares Archiv</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Faustregel</span><p>Fang mit dem Vergleich an. Er kostet eine Sitzung und liefert dir die Werte, die in deine DESIGN.md gehören. Die Schleife lohnt sich ab der dritten Seite im selben System, und das Mess-Skript zuerst, weil es nichts kostet und nie widerspricht.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="selbsttest">
+  <div class="sec-head grid-12"><span class="t-label">06 Umsetzen</span><h2>Selbsttest und Checkliste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Drei Fragen, jede mit Erklärung. Wer sich an eine Antwort erinnern muss, behält sie länger.</p>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="b">
+          <legend>Du schreibst „mach es modern und clean“. Warum sieht das Ergebnis trotzdem nach KI aus?</legend>
+          <label><input type="radio" name="q1" value="a"> Das Modell ist zu klein für gutes Design.</label>
+          <label><input type="radio" name="q1" value="b"> Adjektive führen zum Durchschnitt dessen, was das Modell kennt. Erst eine Vorlage mit Werten gibt eine Richtung.</label>
+          <label><input type="radio" name="q1" value="c"> Der Prompt ist zu kurz, mehr Adjektive helfen.</label>
+          <p class="why" hidden>Derselbe Prompt wie alle anderen führt zum selben Ergebnis. Eine DESIGN.md oder ein Benchmark-Bild liefert konkrete Werte, die vom Durchschnitt abweichen.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="b">
+          <legend>Das Mess-Skript meldet 0 Befunde. Ist die Seite fertig?</legend>
+          <label><input type="radio" name="q2" value="a"> Ja, sonst hätte das Skript etwas gefunden.</label>
+          <label><input type="radio" name="q2" value="b"> Nein. Das Skript sieht nur, wofür es eine Regel gibt. Ersatzschrift und Einzug auf dem Handy fanden erst die Bild-Kritiker.</label>
+          <label><input type="radio" name="q2" value="c"> Nein, erst wenn alle Kritiker 10 von 10 geben.</label>
+          <p class="why" hidden>Skript und Bild-Kritiker ergänzen sich. Noten taugen nicht als Stoppkriterium, sie blieben im Test bei 6 bis 7. Es zählt, ob blockierende Befunde offen sind.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Ein Kritiker schlägt eine Kennzahl pro Kachel vor. Was tust du?</legend>
+          <label><input type="radio" name="q3" value="a"> Umsetzen, die Kritiker sind dafür da.</label>
+          <label><input type="radio" name="q3" value="b"> Den Kritiker austauschen.</label>
+          <label><input type="radio" name="q3" value="c"> Gegen die DESIGN.md prüfen. Verstößt der Vorschlag gegen eine Regel, wird er gestrichen, bevor er beim Generator ankommt.</label>
+          <p class="why" hidden>Kritiker kennen das System nur aus dem Text, den sie bekommen. Der Filter schützt die Regeln, sonst baut der Generator Dinge ein, die das System verbietet.</p>
+        </fieldset>
+      </form>
+      <h3>Checkliste für deine erste Design-Schleife</h3>
+      <ul class="checklist" data-key="claude-design-kritiker">
+        <li><label><input type="checkbox"> <span><b>Vorlage statt Adjektiven.</b> Wähle ein Design-System mit Werten oder schreib deins als DESIGN.md auf.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Einmal schonungslos vergleichen.</b> Deine Seite gegen eine Benchmark, jeder Unterschied als Wert.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Regeln als JSON.</b> Palette, Radius, Schatten, Kontrast, Laufweite, Zeilenlänge, Schrift.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Mess-Kritiker in zwei Breiten.</b> Desktop und 375 px, gleiche Befunde zusammengefasst.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Drei Bild-Kritiker mit je einer Frage.</b> Frischer Kontext, höchstens drei Befunde, blockierend oder optional.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Filter vor dem Generator.</b> Was gegen das System verstößt, wird gestrichen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Festes Stoppkriterium.</b> Keine blockierenden Befunde, höchstens drei Runden, den Rest entscheidest du.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://stitch.withgoogle.com/docs/design-md/overview/">Google Stitch: DESIGN.md</a> (Format-Beschreibung)</li>
+        <li><a href="https://github.com/VoltAgent/awesome-design-md">VoltAgent: awesome-design-md</a> (Sammlung von DESIGN.md-Dateien bekannter Seiten)</li>
+        <li><a href="https://github.com/anthropics/skills/tree/main/skills/frontend-design">Anthropic: frontend-design Skill</a></li>
+        <li><a href="https://code.claude.com/docs/en/sub-agents">Claude Code: Subagents</a></li>
+        <li><a href="https://playwright.dev/docs/api/class-page#page-evaluate">Playwright: page.evaluate</a> (getestet mit 1.56.1)</li>
+        <li><a href="https://www.w3.org/TR/WCAG22/#contrast-minimum">WCAG 2.2: Kontrast (Minimum)</a></li>
+      </ol>
+    </div>
+  </div>
+</section>

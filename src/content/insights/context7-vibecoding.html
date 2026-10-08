@@ -1,0 +1,468 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Du sagst deinem Agenten: „Richte Tailwind ein.“ Er legt eine <code>tailwind.config.js</code> an, schreibt <code>@tailwind base;</code> in deine CSS-Datei und nutzt <code>bg-opacity-50</code>. Das sah 2023 korrekt aus. In Tailwind v4 ist alles davon veraltet oder entfernt. Der Build läuft, das Styling ist kaputt, und du verbringst die nächsten 40 Minuten mit Debugging statt mit deinem Feature.</p>
+  <div class="prose mt">
+    <p>Das ist kein Fehler des Modells im engeren Sinn. Sprachmodelle schreiben aus ihren Trainingsdaten, und die sind oft ein Jahr oder älter. Frameworks bewegen sich schneller. Genau diese Lücke schließt Context7: ein MCP-Server, der deinem Agenten zur Laufzeit versionsgenaue Dokumentation liefert. In diesem Artikel erfährst du, wie Context7 funktioniert, wie du es in fünf Minuten einrichtest und welche Gewohnheiten aus Vibecoding verlässliche Softwareentwicklung machen.</p>
+  </div>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Sprachmodelle schreiben aus Trainingsdaten, die oft ein Jahr oder älter sind, und schlagen deshalb gern veraltete APIs vor, die trotzdem kompilieren.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Context7 liefert deinem Agenten zur Laufzeit versionsgenaue Dokumentation, aber nur die richtige Version, wenn du deinen Stack mit Versionen nennst.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Verlässlich wird Vibecoding durch einen Prozess: Explore, Plan, Code, Verify und ein Commit nach jedem funktionierenden Schritt.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Was hinter dem Stichtag liegt, sieht das Modell nicht</h2>
+    <p>Eine Zeitachse, ein Prompt, fünf Zeilen CSS und Markup. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="tlx" id="tlx">
+          <span class="base"></span>
+          <span class="cut" id="cut"></span>
+          <span class="cut-l" id="cut-l">Wissensstichtag</span>
+          <span class="ev v3" id="ev3"><span class="mk m1"></span>Tailwind v3</span>
+          <span class="ev v4" id="ev4"><span class="mk m0"></span>Tailwind v4</span>
+          <span class="ax l" id="ax-l">Trainingsdaten</span>
+          <span class="ax r" id="ax-r">Danach released</span>
+          <span class="eye" id="eye"><span>Das kennt das Modell</span></span>
+          <span class="blind" id="blind">fehlt im Modell</span>
+        </div>
+        <div class="cp" id="cp">
+          <div class="cp-head" id="cp-head"><span class="t-label" style="white-space:nowrap">app.css</span><span class="cp-st"><span class="bad" id="st-bad">Build läuft, Styling kaputt</span><span class="good" id="st-good">passt zu v4</span></span></div>
+          <div class="cp-pr"><span class="who">Du: </span><span id="pr1"></span><span class="u" id="pr2"></span></div>
+          <ol class="cp-rows" id="cp-rows"></ol>
+        </div>
+        <div class="s1-pk" id="s1-pk">query-docs: Tailwind v4</div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Ein Modell kennt die Welt bis zu seinem Trainingsstichtag.</b> Alles, was davor oft geschrieben wurde, hat Übergewicht. Tailwind v3 liegt links der Linie.</p></div>
+        <div class="cap" data-at="0.18"><span class="n">02</span><p><b>Tailwind v4 erscheint rechts der Linie.</b> Alles, was nach dem Stichtag released wurde, fehlt dem Modell. Es weiß nicht, dass sich etwas geändert hat.</p></div>
+        <div class="cap" data-at="0.38"><span class="n">03</span><p><b>Also schreibt es v3-Code.</b> Jede Zeile sieht plausibel aus, der Build läuft. Das Styling ist trotzdem kaputt.</p></div>
+        <div class="cap" data-at="0.6"><span class="n">04</span><p><b>„use context7“ holt die Doku von rechts der Linie.</b> Context7 fragt zur Laufzeit die Dokumentation der installierten Version ab, nicht die Erinnerung.</p></div>
+        <div class="cap" data-at="0.76"><span class="n">05</span><p><b>Zeile für Zeile wird aus v3 jetzt v4.</b> <code>@import "tailwindcss"</code>, <code>bg-black/50</code>, <code>shadow-xs</code>, <code>outline-hidden</code>, <code>shrink-0</code>. Beides sah plausibel aus, nur eines passt zu deiner package.json.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="vibecoding">
+  <div class="sec-head grid-12"><span class="t-label">01 Begriff</span><h2>Vibecoding in einem Absatz</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Den Begriff hat Andrej Karpathy am 2. Februar 2025 geprägt:</p>
+      <figure class="pull">
+        <blockquote lang="en">„There's a new kind of coding I call ‚vibe coding‘, where you fully give in to the vibes, embrace exponentials, and forget that the code even exists.“</blockquote>
+        <figcaption>Andrej Karpathy auf X, 2. Februar 2025</figcaption>
+      </figure>
+      <p>Karpathy meinte damit Wochenendprojekte, bei denen man Diffs nicht mehr liest. Simon Willison hat kurz darauf die wichtige Unterscheidung gezogen: Vibecoding heißt, Software mit einem LLM zu bauen, ohne den generierten Code zu prüfen. Sobald du Code reviewst, testest und verstehst, ist es verantwortungsvolles KI-gestütztes Programmieren. Seine Faustregel: Committe keinen Code, den du nicht jemand anderem genau erklären könntest.</p>
+      <p>Für dich als Entwickler heißt das: Nutze das Tempo von Vibecoding, aber bau Leitplanken ein. Aktuelle Dokumentation ist eine der wirksamsten davon.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="zahlen">
+  <div class="sec-head grid-12"><span class="t-label">02 Zahlen</span><h2>Was die Zahlen sagen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>KI-Coding ist Mainstream. Das Vertrauen in den Output hält damit nicht Schritt, und dafür gibt es messbare Gründe.</p>
+    </div>
+    <div class="wide">
+      <div class="tiles stats" style="--cols:4">
+        <div class="tile"><span class="tile-in"><b>84 %</b><span class="d">der Entwickler nutzen KI-Tools oder planen es. 2024 waren es 76 %.</span><span class="src">Stack Overflow Developer Survey 2025</span></span></div>
+        <div class="tile"><span class="tile-in"><b>66 %</b><span class="d">nennen „fast richtig, aber eben nicht ganz“ als größten Frust mit KI-Code.</span><span class="src">Stack Overflow Developer Survey 2025</span></span></div>
+        <div class="tile"><span class="tile-in"><b>45 %</b><span class="d">der KI-generierten Code-Samples fielen durch Security-Tests mit OWASP-Top-10-Schwachstellen.</span><span class="src">Veracode GenAI Code Security Report 2025</span></span></div>
+        <div class="tile"><span class="tile-in"><b>5,2 %</b><span class="d">der Package-Vorschläge kommerzieller Modelle sind erfunden. Bei Open-Source-Modellen sind es 21,7 %.</span><span class="src">Spracklen et al., USENIX Security 2025</span></span></div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Dazu kommt eine unbequeme Studie: In einem randomisierten Experiment von <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">METR</a> (Juli 2025) brauchten erfahrene Open-Source-Entwickler mit KI-Tools 19 % länger, glaubten aber hinterher, 20 % schneller gewesen zu sein. Das <a href="https://metr.org/blog/2026-02-24-uplift-update/">Follow-up vom Februar 2026</a> zeigt mit neueren Tools kleinere Effekte, und METR weist selbst auf methodische Grenzen hin. Die Lehre bleibt: Gefühlte Geschwindigkeit ist kein Messwert. „Fast richtig“ kostet Zeit, und ein großer Teil von „fast richtig“ geht auf veraltetes API-Wissen zurück.</p>
+      <p>Die vierte Zahl ist die gefährlichste. Ein erfundener Paketname fällt erst auf, wenn die Installation scheitert, oder gar nicht, wenn jemand den Namen inzwischen registriert hat. Unten siehst du, was 5,2 % und 21,7 % bei 1.000 Vorschlägen bedeuten, und kannst selbst Namen prüfen.</p>
+    </div>
+    
+    <div class="wide fig" id="pkfig">
+      <div class="fig-head"><h3>Gibt es das Paket?</h3><span class="t-label">Prüfen statt raten</span></div>
+      <div class="pk">
+        <div>
+          <form class="pk-form" id="pk-form" onsubmit="return false">
+            <label class="t-label" for="pk-in">Paketname</label>
+            <input id="pk-in" type="text" autocomplete="off" spellcheck="false" placeholder="z. B. react">
+            <button class="btn primary" type="submit" id="pk-go">Prüfen</button>
+          </form>
+          <div class="pk-res" aria-live="polite"><code id="pk-name">Noch nichts geprüft</code><span class="stamp" id="pk-stamp" hidden></span></div>
+          <p class="hint" style="margin:12px 0 0">Geprüft wird nur gegen diese kleine Liste in der Grafik, nicht gegen npm. Im echten Projekt prüfst du die Registry-Seite, das Alter und die Downloads.</p>
+          <ul class="pk-reg" id="pk-reg" aria-label="Pakete in der Liste dieser Grafik"></ul>
+        </div>
+        <div>
+          <div class="switch" role="group" aria-label="Modellart" id="pk-mode"><button type="button" data-p="5.2" aria-pressed="true">Kommerziell 5,2 %</button><button type="button" data-p="21.7" aria-pressed="false">Open Source 21,7 %</button></div>
+          <div class="pk-grid" id="pk-grid" aria-hidden="true"></div>
+          <div class="pk-cnt"><b id="pk-n">52</b><span>von 1.000 Paketvorschlägen erfunden</span></div>
+          <div class="legend" style="margin-top:8px"><span><span class="mk m2"></span>erfunden</span><span><span class="mk" style="background:var(--line);border-color:var(--line)"></span>existiert</span></div>
+        </div>
+      </div>
+      <p class="fig-cap">Der Anteil kommt aus Spracklen et al. (USENIX Security 2025), die Felder sind daraus berechnet: 5,2 % von 1.000 sind 52, 21,7 % sind 217. Welche Felder markiert sind, ist zufällig verteilt.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">03 Problem</span><h2>Das Problem heißt Knowledge Cutoff</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Ein Modell kennt die Welt bis zu seinem Trainingsstichtag. Alles, was danach released wurde, fehlt, und alles, was davor oft geschrieben wurde, hat Übergewicht. Darum schlagen Agenten gerne die Muster vor, die im Netz am häufigsten vorkommen, auch wenn sie längst deprecated sind. Drei typische Beispiele:</p>
+      <ul class="pitfalls">
+        <li><h3>Next.js</h3><p><code>getServerSideProps</code> aus dem Pages Router statt async Server Components im App Router.</p></li>
+        <li><h3>React 19</h3><p><code>ReactDOM.render</code>, <code>propTypes</code> und <code>defaultProps</code> auf Function Components oder String-Refs. All das wurde entfernt, und <code>useRef</code> braucht in TypeScript jetzt ein Argument.</p></li>
+        <li><h3>Tailwind v4</h3><p>Konfiguration wandert von <code>tailwind.config.js</code> in CSS mit <code>@theme</code>, und mehrere Utilities wurden umbenannt.</p></li>
+      </ul>
+    </div>
+    <div class="wide">
+      <div class="code-pair">
+        <div class="code"><div class="code-bar"><span class="t-label">Aus dem Gedächtnis (v3)</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">/* app.css */</span>
+<span class="k">@tailwind</span> base;
+<span class="k">@tailwind</span> components;
+<span class="k">@tailwind</span> utilities;
+
+<span class="c">/* Markup */</span>
+bg-black bg-opacity-50
+shadow-sm outline-none
+flex-shrink-0</pre></div>
+        <div class="code"><div class="code-bar"><span class="t-label">Mit aktuellen Docs (v4)</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">/* app.css */</span>
+<span class="k">@import</span> <span class="s">"tailwindcss"</span>;
+<span class="k">@theme</span> {
+  --color-brand: oklch(0.6 0.2 250);
+}
+<span class="c">/* Markup */</span>
+bg-black/50
+shadow-xs outline-hidden
+shrink-0</pre></div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Beide Varianten sehen plausibel aus. Nur eine passt zu der Version in deiner <code>package.json</code>. Quelle: <a href="https://tailwindcss.com/docs/upgrade-guide">Tailwind CSS Upgrade Guide</a>. Oben in der Geschichte hast du dieselben Zeilen einzeln umspringen sehen.</p>
+      <div class="callout warning"><span class="t-label">Das Tückische</span><p>Veralteter Code kompiliert oft trotzdem. Er erzeugt Warnings, stilles Fehlverhalten oder Sicherheitslücken. Du merkst es erst spät, und dein Agent „repariert“ es im nächsten Schritt mit noch mehr veraltetem Wissen.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="context7">
+  <div class="sec-head grid-12"><span class="t-label">04 Konzept</span><h2>Was Context7 macht</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p><a href="https://github.com/upstash/context7">Context7</a> ist ein Open-Source-MCP-Server von Upstash (MIT-Lizenz). Er indexiert die Dokumentation und Code-Beispiele von Libraries direkt aus deren Repos und Websites und liefert deinem Agenten genau die Ausschnitte, die er für die aktuelle Aufgabe braucht, passend zur Version. Mit über 62.000 GitHub-Stars (Stand Oktober 2026) ist er einer der meistgenutzten MCP-Server überhaupt.</p>
+      <h3>Die zwei Tools</h3>
+      <p>Context7 stellt deinem Agenten zwei MCP-Tools bereit:</p>
+      <ul>
+        <li><code>resolve-library-id</code> nimmt einen Library-Namen und deine Aufgabe und gibt die passende Context7-ID zurück, zum Beispiel <code>/vercel/next.js</code> oder <code>/supabase/supabase</code>.</li>
+        <li><code>query-docs</code> nimmt die ID und deine Frage und liefert die relevantesten Doku-Abschnitte und Code-Beispiele.</li>
+      </ul>
+      <p>So läuft eine Abfrage: Du promptest, Context7 löst die Library auf, fragt die Docs ab, und der Agent schreibt Code auf Basis der aktuellen Docs statt der Trainingsdaten. Gibst du die Library-ID direkt an, entfällt der Auflösungsschritt. Die Grafik schickt drei Prompts durch die Stationen. Schreib danach selbst einen.</p>
+    </div>
+    
+    <div class="wide fig" id="qfig">
+      <div class="fig-head"><h3>Eine Abfrage, Station für Station</h3><span class="t-label">Dein Prompt</span></div>
+      <form class="qin" id="q-form" onsubmit="return false">
+        <label class="sr-only" for="q-in">Prompt an den Agenten</label>
+        <input id="q-in" type="text" autocomplete="off" spellcheck="false" placeholder="Prompt mit oder ohne use context7">
+        <button class="btn primary" type="submit" id="q-go">Senden</button>
+      </form>
+      <div class="qex" aria-label="Beispiel-Prompts"><span class="hint">Beispiele:</span>
+        <button type="button" class="btn sm" data-ex="0">Mit Namen</button>
+        <button type="button" class="btn sm" data-ex="1">Mit ID</button>
+        <button type="button" class="btn sm" data-ex="2">Ohne Auslöser</button>
+      </div>
+      <ol class="qst" id="qst">
+        <li><span class="nd" aria-hidden="true"></span><span class="t-label">01</span><b>Du promptest</b><p class="out"></p></li>
+        <li><span class="nd" aria-hidden="true"></span><span class="t-label">02</span><b>Library auflösen</b><code class="tool">resolve-library-id</code><p class="out"></p><span class="stamp st"></span></li>
+        <li><span class="nd" aria-hidden="true"></span><span class="t-label">03</span><b>Docs abfragen</b><code class="tool">query-docs</code><p class="out"></p><span class="stamp st"></span></li>
+        <li><span class="nd" aria-hidden="true"></span><span class="t-label">04</span><b>Agent schreibt Code</b><p class="out"></p></li>
+      </ol>
+      <span class="qpk" id="qpk" aria-hidden="true">Anfrage</span>
+      <div class="qout"><span class="big" id="q-n">0</span><span class="lbl">Tool-Aufrufe</span><p id="q-say" aria-live="polite">Schreib einen Prompt oder nimm ein Beispiel.</p></div>
+    </div>
+    <div class="prose mt">
+      <h3>Versionen und Aktualität</h3>
+      <p>Versionen pinnst du direkt in der ID, etwa <code>/vercel/next.js/v15.1.8</code>, oder du nennst sie im Prompt („Next.js 14“). Populäre Libraries werden häufiger neu indexiert:</p>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Neu-Indexierung nach Beliebtheit">
+        <table>
+          <thead><tr><th scope="col">Libraries</th><th scope="col">Neu indexiert</th></tr></thead>
+          <tbody>
+            <tr><td>Top 100</td><td>täglich</td></tr>
+            <tr><td>Top 1.000</td><td>alle 15 Tage</td></tr>
+            <tr><td>Top 5.000</td><td>alle 30 Tage</td></tr>
+            <tr><td>der Rest</td><td>alle 45 Tage</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Seit einem Architektur-Update im Januar 2026 rankt Context7 die Snippets serverseitig mit Vector Search und Reranking. Laut Upstash sinkt der Token-Verbrauch pro Abfrage dadurch um rund 65 % (von etwa 9.700 auf 3.300 Tokens). Die Grafik zeigt, wo die Tokens bleiben: Nur die Snippets, die zur Frage passen, gehen noch in den Kontext.</p>
+    </div>
+    
+    <div class="wide fig" id="tkfig">
+      <div class="fig-head"><h3>Weniger Tokens pro Abfrage</h3>
+        <div class="switch" role="group" aria-label="Stand" id="tk-mode"><button type="button" data-v="0" aria-pressed="true">Vor dem Update</button><button type="button" data-v="1" aria-pressed="false">Mit Reranking</button></div>
+      </div>
+      <div class="tk-q">Frage: „Middleware in Next.js 15 aufsetzen“</div>
+      <div class="tk-tot">
+        <div class="tk-num"><span id="tk-n">9.700</span><small>Tokens pro Abfrage</small></div>
+        <div class="tk-pc" id="tk-pc" aria-live="polite"></div>
+        <div class="tk-bar" aria-hidden="true"><i id="tk-bar"></i></div>
+      </div>
+      <ul class="tk-list" id="tk-list"></ul>
+      <p class="fig-cap">Die Summen 9.700 und 3.300 Tokens nennt Upstash. Die Aufteilung auf einzelne Snippets und deren Titel sind Beispielwerte. Die Prozentzahl rechnet die Grafik selbst aus.</p>
+    </div>
+    <div class="prose mt">
+      <div class="callout tip"><span class="t-label">Warum das zählt</span><p>Weniger Tokens pro Abfrage heißt mehr Platz im Kontextfenster für deinen eigenen Code. Und ein volles Kontextfenster ist einer der Hauptgründe, warum Agenten im Laufe einer Session schlechter werden.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="setup">
+  <div class="sec-head grid-12"><span class="t-label">05 Setup</span><h2>Setup in fünf Minuten</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Am schnellsten geht es mit dem offiziellen CLI. Es erledigt den Login per OAuth, erzeugt einen API-Key und richtet deinen Client ein. Du brauchst Node.js 18 oder neuer.</p>
+    </div>
+    <div class="wide" id="setup-tabs">
+      <div class="switch" role="group" aria-label="Client"><button type="button" data-t="t-claude" aria-pressed="true">Claude Code</button><button type="button" data-t="t-cursor" aria-pressed="false">Cursor</button><button type="button" data-t="t-vscode" aria-pressed="false">VS Code</button><button type="button" data-t="t-other" aria-pressed="false">Andere Clients</button></div>
+      <div id="t-claude" class="prose" style="max-width:none">
+        <p><b>Variante A: per CLI.</b> Das installiert zusätzlich einen Skill, der Context7 bei Library-Fragen automatisch aktiviert.</p>
+        <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">npx ctx7 setup --claude</pre></div>
+        <p><b>Variante B: als Plugin aus dem Marketplace.</b> Danach <code>/mcp</code> ausführen und Context7 auswählen, um dich im Browser anzumelden.</p>
+        <div class="code"><div class="code-bar"><span class="t-label">Claude Code</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">/plugin marketplace add upstash/context7
+/plugin install context7@context7-marketplace</pre></div>
+      </div>
+      <div id="t-cursor" class="prose" style="max-width:none" hidden>
+        <p>Per CLI:</p>
+        <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">npx ctx7 setup --cursor</pre></div>
+        <p>Oder manuell in <code>~/.cursor/mcp.json</code> (global) bzw. <code>.cursor/mcp.json</code> (pro Projekt):</p>
+        <div class="code"><div class="code-bar"><span class="t-label">mcp.json</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">{
+  <span class="s">"mcpServers"</span>: {
+    <span class="s">"context7"</span>: {
+      <span class="s">"url"</span>: <span class="s">"https://mcp.context7.com/mcp"</span>,
+      <span class="s">"headers"</span>: {
+        <span class="s">"Authorization"</span>: <span class="s">"Bearer DEIN_API_KEY"</span>
+      }
+    }
+  }
+}</pre></div>
+      </div>
+      <div id="t-vscode" class="prose" style="max-width:none" hidden>
+        <p>Installiere die Extension <code>Upstash.context7-mcp</code> aus dem VS Code Marketplace und trage deinen API-Key in den Einstellungen unter „context7“ ein. Prüfen kannst du die Verbindung mit dem Befehl <code>MCP: List Servers</code>.</p>
+        <p>Für GitHub Copilot legst du die Regel aus dem nächsten Abschnitt in <code>.github/copilot-instructions.md</code> ab.</p>
+      </div>
+      <div id="t-other" class="prose" style="max-width:none" hidden>
+        <p>Jeder MCP-fähige Client kann den gehosteten Server nutzen:</p>
+        <div class="code"><div class="code-bar"><span class="t-label">Remote (HTTP)</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">URL:    https://mcp.context7.com/mcp
+Header: Authorization: Bearer DEIN_API_KEY</pre></div>
+        <p>Oder lokal über stdio:</p>
+        <div class="code"><div class="code-bar"><span class="t-label">mcp.json</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">{
+  <span class="s">"mcpServers"</span>: {
+    <span class="s">"context7"</span>: {
+      <span class="s">"command"</span>: <span class="s">"npx"</span>,
+      <span class="s">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@upstash/context7-mcp"</span>, <span class="s">"--api-key"</span>, <span class="s">"DEIN_API_KEY"</span>]
+    }
+  }
+}</pre></div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Lieber ohne MCP? Das CLI funktioniert auch direkt im Terminal:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">npx ctx7 docs /facebook/react <span class="s">"useEffect cleanup mit async"</span></pre></div>
+      <h3>API-Key und Limits</h3>
+      <p>Den Key erstellst du im <a href="https://context7.com/dashboard">Context7-Dashboard</a>. Er beginnt mit <code>ctx7sk</code>. Der Free-Plan umfasst laut <a href="https://context7.com/plans">Preisseite</a> 1.000 API-Calls pro Monat für öffentliche Repos. Pro kostet 10 $ pro Seat und Monat und schließt private Repos ein (Stand Oktober 2026). Speichere den Key als Umgebungsvariable <code>CONTEXT7_API_KEY</code> statt im Repo.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="prompting">
+  <div class="sec-head grid-12"><span class="t-label">06 Prompting</span><h2>Richtig prompten mit Context7</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <h3 style="margin-top:0">1. Explizit auslösen</h3>
+      <p>Der einfachste Weg: Häng <code>use context7</code> an deinen Prompt.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Richte Row-Level-Security für die Tabelle "projects" ein,
+sodass Nutzer nur ihre eigenen Zeilen sehen. <span class="f">use context7</span></pre></div>
+      <h3>2. Library-ID und Version mitgeben</h3>
+      <p>Wenn du die Library kennst, spar dir den Auflösungsschritt. Das ist schneller, verbraucht weniger Tokens und verhindert, dass ein ähnlich benanntes Paket gewählt wird.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Prompt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="f">use context7 with /vercel/next.js/v15.1.8</span>
+Baue eine Middleware, die nicht eingeloggte Nutzer
+von /dashboard auf /login umleitet.</pre></div>
+      <h3>3. Als Regel verankern</h3>
+      <p>Damit du nicht jedes Mal daran denken musst, legst du eine Regel in die Kontextdatei deines Projekts: <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursor/rules</code> oder <code>.github/copilot-instructions.md</code>. Die offizielle Formulierung aus dem Context7-README:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">AGENTS.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">## Dokumentation</span>
+Always use Context7 when I need library/API documentation, code generation,
+setup or configuration steps without me having to explicitly ask.
+
+<span class="k">## Stack (verbindliche Versionen)</span>
+- Next.js 15 (App Router, keine Pages-Router-Patterns)
+- React 19
+- Tailwind CSS v4 (Konfiguration per @theme in CSS)
+- Supabase JS v2</pre></div>
+      <p>Die Stack-Liste ist der unterschätzte Teil. Context7 kann nur die richtige Version liefern, wenn der Agent weiß, welche Version du nutzt.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="workflow">
+  <div class="sec-head grid-12"><span class="t-label">07 Workflow</span><h2>Der Workflow: Explore, Plan, Code, Verify</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Context7 löst das Wissensproblem. Gute Ergebnisse brauchen zusätzlich einen Prozess. Dieser Ablauf basiert auf den <a href="https://code.claude.com/docs/en/best-practices">Best Practices von Anthropic für Claude Code</a> und funktioniert mit jedem Agenten.</p>
+      <ol class="wf">
+        <li><span class="n">01</span><div><h3>Explore</h3><p>Lass den Agenten zuerst lesen statt schreiben: relevante Dateien, bestehende Patterns, die <code>package.json</code>. Bei neuen Libraries holt er sich hier per Context7 die aktuellen Docs.</p></div></li>
+        <li><span class="n">02</span><div><h3>Plan</h3><p>Lass dir einen Plan geben, bevor Code entsteht. Prüfe ihn auf falsche Annahmen. Wenn du den Diff in einem Satz beschreiben kannst, darfst du diesen Schritt überspringen.</p></div></li>
+        <li><span class="n">03</span><div><h3>Code</h3><p>Setze in kleinen Schritten um. Ein Feature, ein Diff. Große Aufgaben zerlegst du vorher.</p></div></li>
+        <li><span class="n">04</span><div><h3>Verify</h3><p>Der Agent muss beweisen, dass es funktioniert: Tests, Build, Linter, Typecheck, notfalls ein Screenshot. Fordere Ausgaben statt Beteuerungen.</p></div></li>
+        <li><span class="n">05</span><div><h3>Commit</h3><p>Jeder funktionierende Zwischenstand bekommt einen Commit. Git ist dein Undo-Button, wenn der nächste Prompt danebengeht.</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="practices">
+  <div class="sec-head grid-12"><span class="t-label">08 Praxis</span><h2>10 Best Practices für Vibecoding mit Context7</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <div class="bp-group" style="margin-top:0"><span class="t-label">Kontext</span>
+        <ul class="pitfalls">
+          <li><h3>01 Versionen pinnen, überall</h3><p>Schreib deinen Stack mit Versionsnummern in <code>AGENTS.md</code> oder <code>CLAUDE.md</code> und nutze versionierte Library-IDs. Ohne Version rät der Agent, und er rät meist alt.</p></li>
+          <li><h3>02 Kontextdateien kurz halten</h3><p>Build- und Test-Befehle, Konventionen, die vom Standard abweichen, bekannte Stolperfallen. Was der Agent aus dem Code ableiten kann, gehört nicht hinein. Aufgeblähte Dateien führen dazu, dass Regeln ignoriert werden.</p></li>
+          <li><h3>03 Kontext gezielt zurücksetzen</h3><p>Starte zwischen unabhängigen Aufgaben eine neue Session oder nutze <code>/clear</code>. Wenn du einen Fehler zweimal korrigiert hast und er bleibt, beginne neu mit einem besseren Prompt.</p></li>
+        </ul>
+      </div>
+      <div class="bp-group"><span class="t-label">Prompting</span>
+        <ul class="pitfalls">
+          <li><h3>04 Präzise statt vage</h3><p>Nenne Dateien, Constraints und ein bestehendes Pattern, an dem sich der Agent orientieren soll. Beschreibe, woran du erkennst, dass die Aufgabe erledigt ist.</p></li>
+          <li><h3>05 Erst Spec, dann Code</h3><p>Lass dich vom Agenten zu einem Feature interviewen und eine <code>SPEC.md</code> schreiben, inklusive dem, was ausdrücklich nicht dazugehört. Umsetzen lässt du sie dann in einer frischen Session.</p></li>
+        </ul>
+      </div>
+      <div class="bp-group"><span class="t-label">Qualität</span>
+        <ul class="pitfalls">
+          <li><h3>06 Tests als Leitplanke</h3><p>Lass zuerst einen fehlschlagenden Test schreiben, der den Bug reproduziert, und erst dann den Fix. Ohne prüfbares Kriterium ist „sieht fertig aus“ das einzige Signal.</p></li>
+          <li><h3>07 Diffs mit frischem Blick reviewen</h3><p>Lies jeden Diff, bevor du ihn committest, oder lass einen zweiten Agenten ohne Vorgeschichte reviewen.</p></li>
+          <li><h3>08 Deterministisches automatisieren</h3><p>Was immer passieren muss, gehört in Hooks oder CI statt in einen Prompt: Linter nach jeder Änderung, Formatter, Typecheck, Security-Scan. Regeln in Kontextdateien sind Empfehlungen, Hooks werden immer ausgeführt.</p></li>
+        </ul>
+      </div>
+      <div class="bp-group"><span class="t-label">Sicherheit</span>
+        <ul class="pitfalls">
+          <li><h3>09 Jedes neue Paket prüfen</h3><p>Modelle erfinden Paketnamen, und Angreifer registrieren genau diese Namen (Slopsquatting). Prüfe vor jedem <code>npm install</code> die Registry-Seite, das Alter und die Downloads. Lockfiles gehören ins Repo.</p></li>
+          <li><h3>10 Secrets und Rechte begrenzen</h3><p>Keine Keys in Prompts oder Code, Tool-Freigaben per Allowlist, riskante Experimente in Sandbox oder Container. Bei Auth, Payments und personenbezogenen Daten ist Vibecoding tabu und Review Pflicht.</p></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="grenzen">
+  <div class="sec-head grid-12"><span class="t-label">09 Grenzen</span><h2>Grenzen und Sicherheit</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Context7 ist ein starkes Werkzeug, aber kein Freifahrtschein. Diese Punkte solltest du kennen:</p>
+      <ul class="pitfalls">
+        <li><h3>Community-Inhalte</h3><p>Viele Einträge werden von der Community eingereicht. Upstash schreibt selbst, dass Genauigkeit und Sicherheit nicht für jede Library garantiert werden können. Bevorzuge offizielle oder verifizierte Libraries.</p></li>
+        <li><h3>Prompt Injection über Doku</h3><p>Im Februar 2026 meldete Noma Labs die Schwachstelle „ContextCrush“. Über die Custom-Rules-Funktion konnten präparierte Libraries Anweisungen an Agenten weiterreichen, etwa <code>.env</code>-Dateien auszulesen. Upstash hat die Lücke innerhalb von fünf Tagen geschlossen und scannt Snippets inzwischen auf Injection und Malware. Das Grundrisiko bleibt bei jedem Tool, das externe Inhalte in deinen Kontext lädt.</p></li>
+        <li><h3>Nur Dokumentation</h3><p>Context7 kennt Docs und Beispiele, nicht deinen Code, nicht GitHub-Issues und keine Fixes aus Diskussionen. Für Repo-Verständnis eignen sich andere Werkzeuge besser.</p></li>
+        <li><h3>Rate Limits</h3><p>1.000 Calls im Monat sind bei intensiver Nutzung schnell erreicht. Versionierte IDs im Prompt sparen Calls, weil die Auflösung entfällt.</p></li>
+      </ul>
+      <div class="callout warning"><span class="t-label">Sicherheitsregel</span><p>Lass Tool-Aufrufe, die Dateien lesen, Befehle ausführen oder Netzwerkzugriffe machen, nicht pauschal ohne Bestätigung laufen. Dokumentation ist Input aus dem Internet und sollte so behandelt werden.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">10 Entscheidung</span><h2>Alternativen im Überblick</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Alternativen zu Context7">
+        <table>
+          <thead><tr><th scope="col">Ansatz</th><th scope="col">Stärke</th><th scope="col">Wann sinnvoll</th></tr></thead>
+          <tbody>
+            <tr><td>Context7</td><td>Versionsgenaue Library-Docs, breite Abdeckung</td><td>Standardfall für Framework- und Library-Code</td></tr>
+            <tr><td>DeepWiki</td><td>Erklärt ganze GitHub-Repos</td><td>Fremde Codebases verstehen</td></tr>
+            <tr><td>llms.txt</td><td>Vom Hersteller kuratierte Doku für LLMs</td><td>Wenn ein Projekt eine pflegt, als direkte URL im Prompt</td></tr>
+            <tr><td>Doku-URL im Prompt</td><td>Kein Setup, volle Kontrolle</td><td>Einmalige Fragen, interne Docs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="selbsttest">
+  <div class="sec-head grid-12"><span class="t-label">Umsetzen</span><h2>Selbsttest und Checkliste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="b">
+          <legend>Warum schreibt dein Agent Tailwind-v3-Code, obwohl v4 installiert ist?</legend>
+          <label><input type="radio" name="q1" value="a"> Weil v3-Code nicht mehr kompiliert und er es nicht merkt.</label>
+          <label><input type="radio" name="q1" value="b"> Weil v4 nach seinem Trainingsstichtag kam und v3 in den Trainingsdaten Übergewicht hat.</label>
+          <label><input type="radio" name="q1" value="c"> Weil Context7 die falsche Version geliefert hat.</label>
+          <p class="why" hidden>Ein Modell kennt die Welt bis zu seinem Trainingsstichtag. Was danach released wurde, fehlt, und was davor oft geschrieben wurde, hat Übergewicht. Der veraltete Code kompiliert oft trotzdem.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Was bringt <code>use context7 with /vercel/next.js/v15.1.8</code> gegenüber einem bloßen <code>use context7</code>?</legend>
+          <label><input type="radio" name="q2" value="a"> Der Agent braucht dann gar keine Doku mehr.</label>
+          <label><input type="radio" name="q2" value="b"> Context7 indexiert die Library sofort neu.</label>
+          <label><input type="radio" name="q2" value="c"> Der Schritt resolve-library-id entfällt, das spart Tokens und Calls und verhindert ein ähnlich benanntes Paket.</label>
+          <p class="why" hidden>Mit der ID springt die Abfrage direkt zu query-docs. Die Version steckt in der ID.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="a">
+          <legend>Dein Agent schlägt ein Paket vor, das du nicht kennst. Was tust du?</legend>
+          <label><input type="radio" name="q3" value="a"> Vor dem Installieren Registry-Seite, Alter und Downloads prüfen.</label>
+          <label><input type="radio" name="q3" value="b"> Installieren und schauen, ob der Build läuft.</label>
+          <label><input type="radio" name="q3" value="c"> Den Agenten fragen, ob es das Paket wirklich gibt.</label>
+          <p class="why" hidden>Modelle erfinden Paketnamen, bei kommerziellen Modellen 5,2 % der Vorschläge. Angreifer registrieren genau diese Namen (Slopsquatting). Ein laufender Build beweist nichts.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste zum Abhaken</h3>
+      <p>Geh die Liste einmal für dein aktuelles Projekt durch. Dein Fortschritt wird nur in deinem Browser gespeichert.</p>
+      <ul class="checklist" data-key="context7-vibecoding">
+        <li><label><input type="checkbox"> <span><b>Context7 ist in meinem Agenten eingerichtet</b> und mit <code>/mcp</code> oder „MCP: List Servers“ geprüft.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Der API-Key liegt in einer Umgebungsvariable,</b> nicht im Repo.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Meine AGENTS.md oder CLAUDE.md</b> enthält die Context7-Regel und den Stack mit Versionen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Für meine Kern-Libraries</b> kenne ich die Context7-IDs.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Der Agent kann Tests, Build und Linter</b> selbst ausführen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Ich committe</b> nach jedem funktionierenden Zwischenschritt.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Neue Pakete prüfe ich auf der Registry,</b> bevor ich sie installiere.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Tool-Freigaben laufen über eine Allowlist,</b> riskante Befehle brauchen meine Bestätigung.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="fazit">
+  <div class="sec-head grid-12"><span class="t-label">Fazit</span><h2>Die meisten Fehler sind Kontextfehler</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die meisten Fehler von KI-Agenten sind Kontextfehler. Das Modell kann programmieren, es weiß nur nicht, welche Version du nutzt und was sich seit seinem Training geändert hat. Context7 schließt diese Lücke mit einem Setup-Befehl. Den Rest erledigen Gewohnheiten: Versionen pinnen, planen vor dem Coden, verifizieren vor dem Committen.</p>
+      <p>Vibecoding bleibt schnell. Mit aktuellen Docs und klaren Leitplanken wird daraus Code, den du auch nächsten Monat noch erklären kannst.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li>Andrej Karpathy, <a href="https://x.com/karpathy/status/1886192184808149383">Post auf X</a>, 2. Februar 2025</li>
+        <li>Simon Willison, <a href="https://simonwillison.net/2025/Mar/19/vibe-coding/">Not all AI-assisted programming is vibe coding</a>, 19. März 2025</li>
+        <li><a href="https://survey.stackoverflow.co/2025/ai">Stack Overflow Developer Survey 2025: AI</a></li>
+        <li><a href="https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/">Veracode 2025 GenAI Code Security Report</a></li>
+        <li>Spracklen et al., <a href="https://arxiv.org/abs/2406.10279">We Have a Package for You!</a>, USENIX Security 2025</li>
+        <li>METR, <a href="https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/">Early-2025 AI and experienced OS developer productivity</a>, Juli 2025, und <a href="https://metr.org/blog/2026-02-24-uplift-update/">Update</a>, Februar 2026</li>
+        <li><a href="https://github.com/upstash/context7">Context7 auf GitHub</a> und <a href="https://context7.com/docs/overview">Context7 Docs</a></li>
+        <li>Upstash, <a href="https://upstash.com/blog/new-context7">The new Context7</a> und <a href="https://context7.com/docs/library-updates.md">Library Updates</a></li>
+        <li><a href="https://context7.com/plans">Context7 Pläne und Preise</a></li>
+        <li>Infosecurity Magazine, <a href="https://www.infosecurity-magazine.com/news/contextcrush-ai-development-tools/">ContextCrush</a>, Februar 2026</li>
+        <li>Anthropic, <a href="https://code.claude.com/docs/en/best-practices">Claude Code Best Practices</a></li>
+        <li><a href="https://tailwindcss.com/docs/upgrade-guide">Tailwind CSS Upgrade Guide</a> und <a href="https://react.dev/blog/2024/04/25/react-19-upgrade-guide">React 19 Upgrade Guide</a></li>
+      </ol>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,439 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Deine Spec ist in fünf Tickets zerlegt, mit Blockier-Kanten dazwischen. Bisher startest du jedes Ticket selbst: umsetzen lassen, warten, Kontext leeren, nächstes Ticket. Am Ende schreibt der Agent einen PR-Text aus vier Absätzen Prosa, du überfliegst ihn, und niemand fragt, ob sich der Merge zurücknehmen lässt. Was in der Sitzung holprig lief, vergisst ihr beide bis zum nächsten Mal.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span><code>implement-spec</code> nimmt dir die for-Schleife ab. Ein Orchestrator liest die Tickets als Graph, lässt die ganze Front parallel in Worktrees bauen und landet alles auf einem Integrations-Branch.</li>
+    <li><span class="t-label">Mitnehmen 2</span><code>pr</code> macht aus dem PR-Text drei Antworten: was sich ändert, als kleinstes Bild; dass es funktioniert, vorher und nachher; wie gefährlich der Merge ist, als Tür und Blast Radius.</li>
+    <li><span class="t-label">Mitnehmen 3</span><code>retro</code> verbessert die Umgebung, nicht den Code, und bleibt bewusst beim Menschen. Es findet fast immer etwas, auch Fehlalarme. Entscheiden musst du.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Ein Lauf von implement-spec</h2>
+    <p>Eine Spec, fünf Tickets, die Pfeile sind Blockier-Kanten. Graph und Dauern sind ein ausgedachtes Beispiel. Die Grafik berechnet daraus, welches Ticket wann startet und landet. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <svg class="s1-svg" id="s1-svg"></svg>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Spec und Tickets lesen.</b> Die Tickets sind ein Aufgabengraph, keine Liste. Optional erkundet ein eigener Subagent Code und Doku und legt Notizen außerhalb des Repos ab, für alle späteren Subagenten.</p></div>
+        <div class="cap" data-at="0.115"><span class="n">02</span><p><b>Integrations-Branch anlegen, Front starten.</b> 01 und 02 haben keine Blocker. Jedes bekommt einen Implementierer im eigenen Worktree, der seine Basis prüft und mit <code>tdd</code> baut: erst rot, dann grün.</p></div>
+        <div class="cap" data-at="0.33"><span class="n">03</span><p><b>Vor dem Fertigmelden die Spitze holen.</b> Jeder Implementierer merged die Spitze des Integrations-Branch in seinen Branch. Der Merger muss dann nur vorspulen: ein Fast-Forward.</p></div>
+        <div class="cap" data-at="0.44"><span class="n">04</span><p><b>Die Front wird neu berechnet.</b> 03 startet, sobald 01 gelandet ist, 04 nach 02. 05 wartet auf 03 und 04. Das Tempo bestimmt der Graph, nicht die Reihenfolge im Tracker.</p></div>
+        <div class="cap" data-at="0.7"><span class="n">05</span><p><b>Einmal Review, dann aufräumen.</b> <code>code-review</code> läuft einmal über den Integrations-Branch, ein Implementierer behebt alle Funde. Die Tickets werden geschlossen, die Worktrees verschwinden.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="wege">
+  <div class="sec-head grid-12"><span class="t-label">01 Drei Wege</span><h2>Drei Wege durch die Tickets</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Eine Spec beschreibt das Ziel. Tickets zerlegen es in Stücke, von denen jedes in eine Sitzung eines Coding-Agenten passt. Du kannst die ganze Spec auch einem einzigen Agenten geben. Dann gerät er laut Matt in die „dumb zone“, den Teil des Kontextfensters, in dem er schlechter arbeitet, und unter Umständen in ein automatisches Zusammenfassen (Auto-Compact). Das geht manchmal gut und wird mit jedem Modell besser. Tickets sind trotzdem sauberer.</p>
+      <p>Bleibt die Frage, wer die Tickets abarbeitet. Matt nennt drei Wege:</p>
+      <ol class="steps">
+        <li><strong>Manuelle Schleife.</strong> Du sagst „setze Ticket 1 um“, wartest, leerst den Kontext, sagst „Ticket 2“, wartest, leerst. Du spielst die for-Schleife. Nicht praktikabel.</li>
+        <li><strong>Deterministische Schleife.</strong> Ein Skript liest jedes Ticket und startet die Umsetzung. Das ist Matts Empfehlung für die meisten: Es läuft jedes Mal gleich, ist sehr zuverlässig und billig, weil weder ein Agent noch ein Mensch die Schleife steuert. Dafür ist es aufwendig einzurichten und braucht Geduld beim Verfeinern. Für Einsteiger ist das zu viel.</li>
+        <li><strong>Der Mittelweg.</strong> Subagenten setzen um, ein Agent passt auf statt eines Menschen. Das geht erst, seit Subagenten selbst Subagenten starten können. Vorher waren sie beschnitten, jetzt sind sie so stark wie ein Orchestrator-Agent. Schlechter als die deterministische Schleife, aber ein guter Einstieg in AFK-Arbeit (away from keyboard: du gehst weg, die Spec wird umgesetzt).</li>
+      </ol>
+      <p>Die Grafik zählt für jeden Weg, wie oft ein Mensch in die Schleife eingreifen muss. Zieh am Regler: Die Marken verteilen sich neu.</p>
+    </div>
+    
+    <div class="wide fig" id="loop">
+      <div class="fig-head"><h3>Wer spielt die for-Schleife?</h3>
+        <label class="lp-ctl"><span class="t-label">Tickets</span><input class="range" type="range" id="lp-n" min="3" max="12" step="1" value="5" aria-describedby="lp-say"><output id="lp-v" for="lp-n">5</output></label>
+      </div>
+      <div class="lp-lanes">
+        <div class="lp-lane" data-k="hand">
+          <div class="lp-h"><span><b>Du, von Hand</b><span class="sub">implement pro Ticket</span></span><span class="lp-num"><span class="v">10</span>Eingriffe pro Lauf</span></div>
+          <div class="lp-track" aria-hidden="true"></div>
+          <ul class="lp-props"><li>du startest, wartest und leerst den Kontext</li><li>du liest jedes Ergebnis</li><li>nicht praktikabel</li></ul>
+        </div>
+        <div class="lp-lane" data-k="script">
+          <div class="lp-h"><span><b>Ein Skript</b><span class="sub">deterministische Schleife</span></span><span class="lp-num"><span class="v">0</span>Eingriffe pro Lauf</span></div>
+          <div class="lp-track" aria-hidden="true"></div>
+          <ul class="lp-props"><li>läuft jedes Mal gleich</li><li>sehr zuverlässig und billig</li><li>aufwendig einzurichten</li></ul>
+        </div>
+        <div class="lp-lane" data-k="agent">
+          <div class="lp-h"><span><b>Ein Orchestrator-Agent</b><span class="sub">implement-spec</span></span><span class="lp-num"><span class="v">1</span>Eingriffe pro Lauf</span></div>
+          <div class="lp-track" aria-hidden="true"></div>
+          <ul class="lp-props"><li>keine Infrastruktur nötig</li><li>du kannst zusehen und steuern</li><li>Einstieg in AFK-Arbeit</li></ul>
+        </div>
+      </div>
+      <div class="lp-legend" aria-hidden="true"><span><i></i>starten</span><span><i class="c"></i>Kontext leeren</span><span><i class="go"></i>Lauf starten</span><span><i class="t"></i>ein Ticket</span></div>
+      <p class="fig-cap" id="lp-say" aria-live="polite"></p>
+    </div>
+    <div class="prose mt">
+      <p>Der dritte Weg ist in 1.3 erwachsen geworden: <code>implement-spec</code> ist ins Engineering-Paket aufgestiegen. Damit steckt er im Plugin für Claude Code, hat eine eigene Doku-Seite, und der Wegweiser-Skill <code>ask-matt</code> empfiehlt ihn als parallele Alternative zu <code>implement</code> pro Ticket.</p>
+      <p>Matt greift öfter dazu als gedacht, vor allem dort, wo noch keine deterministischen Skripte eingerichtet sind, also keine „Software-Fabrik“ läuft. Er nennt ihn eine Basisversion: Du kannst dir eine eigene bauen, zum Beispiel mit gestapelten PRs. Für Arbeit, die wirklich ohne dich laufen soll, bleibt die Doku deutlich: Eine deterministische Schleife wie <a href="https://github.com/mattpocock/sandcastle">Sandcastle</a>, ein Shell-Skript oder ein CI-Job ist schneller, billiger und zuverlässiger, weil kein Agent die Entscheidungen der Orchestrierung trifft.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="implement-spec">
+  <div class="sec-head grid-12"><span class="t-label">02 implement-spec</span><h2>Ein Lauf, ein Integrations-Branch</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Matts Rat vor jedem Skill: ihn ganz lesen. <code>implement-spec</code> ist kurz, neun Schritte und etwas Referenz darüber. Vier Begriffe tragen ihn:</p>
+      <ul class="pitfalls">
+        <li><h3>Aufgabengraph</h3><p>Die Tickets haben blockierende Beziehungen. Sie sind keine Liste von Schritten, sondern ein Graph.</p></li>
+        <li><h3>Front</h3><p>Alle Tickets, deren Blocker gelandet sind. Alle laufen gleichzeitig. Die Form des Graphen bestimmt das Tempo, nicht die Reihenfolge im Tracker.</p></li>
+        <li><h3>Integrations-Branch</h3><p>Das Ziel des Laufs. Alles landet auf diesem einen Branch, jedes Ticket wird so geschlossen, wie der Tracker Arbeit schließt.</p></li>
+        <li><h3>Kontext-Zeiger</h3><p>Subagenten bekommen Verweise auf Spec, Ticket, Erkundungsnotizen und frühere Commits statt kopierter Zusammenfassungen. Das hält ihre Prompts klein und lässt im Fenster des Orchestrators Platz für den Graphen.</p></li>
+      </ul>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">skills/engineering/implement-spec/SKILL.md · Auszug</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">3. Create the integration branch. If the issue tracker closes work through PRs,
+   or the user asks for one, open a draft PR after the first merge in step 5
+   (a branch with no commits ahead of main can't open one) [...]
+
+4. Use <span class="k">implementer subagents</span> to implement each ticket, each in its own
+   worktree on its own branch. Each implementer subagent:
+   - confirms its worktree is based on the integration branch before starting,
+     and resets onto it if not;
+   - calls the Skill tool with `tdd` to build the ticket;
+<span class="hl">   - merges the integration branch tip into its own branch before reporting done</span>
+5. Once an implementer subagent completes, merge its work to the integration
+   branch with a <span class="k">merger subagent</span>.
+
+6. If this changes the <span class="k">frontier</span> of available tickets, kick off more
+   implementer subagents to work on the new tickets.
+
+7. Once all tickets are complete, call the Skill tool with `code-review` on the
+   integration branch. Fix all issues raised by the code review in a single
+   implementer subagent.</pre>
+        <div class="code-note">Die markierte Zeile macht jedes Landen zu einem Fast-Forward. Schritt 1 und 2 (lesen, optional erkunden) sowie 8 und 9 (PR fertig melden oder Tickets schließen, Worktrees aufräumen) siehst du oben in der Geschichte.</div></div>
+    </div>
+    <div class="prose">
+      <h3>Was sich vor 1.3 geändert hat</h3>
+      <p>Das Ziel ist jetzt der Integrations-Branch, nicht mehr ein PR. Einen Entwurfs-PR gibt es nur, wenn dein Tracker Arbeit über PRs schließt oder du einen verlangst, und erst nach dem ersten Merge. So endet ein Lauf mit einem lokalen Markdown-Tracker vollständig offline. Ist kein Tracker eingerichtet, rät der Skill nicht mehr still zu <code>gh</code>, sondern sagt dir, dass du <code>/setup-matt-pocock-skills</code> ausführen sollst. Und jeder Implementierer prüft seine Basis, baut mit <code>tdd</code> und holt vor dem Fertigmelden die Spitze des Integrations-Branch.</p>
+      <h3>Was der Lauf voraussetzt</h3>
+      <p>Einen Issue-Tracker, Tickets mit Blockier-Kanten, wie <code>/to-tickets</code> sie schreibt, und eine Umgebung, die Subagenten im Hintergrund laufen lässt und jedem einen eigenen Git-Worktree gibt. Ohne Kanten ist der Graph flach, und alle Tickets starten auf einmal. Ohne parallele Subagenten ist <code>implement-spec</code> nur ein langsameres <code>implement</code>.</p>
+      <p>Zum Start leerst du den Kontext und tippst <code>/implement-spec</code> mit einem Zeiger auf die Spec, also einer Issue-Nummer oder einem Dateipfad. Der Preis: Du liest die Arbeit an den einzelnen Tickets nicht mehr, während sie landet. Du prüfst am Ende den Integrations-Branch.</p>
+      <div class="callout tip"><span class="t-label">Läuft richtig, wenn</span><p>mehrere Implementierer gleichzeitig arbeiten, sobald der Graph es erlaubt; ein Ticket startet, sobald sein letzter Blocker gelandet ist; jede Spur zeigt <code>tdd</code> mit einem roten Test vor dem Code; die Merges in den Integrations-Branch Fast-Forwards sind und der Lauf auf einem Branch mit allen Tickets geschlossen endet.</p></div>
+      <h3>Zwei Implementierer, eine Datei</h3>
+      <p>Worktrees verhindern Kollisionen nicht, sie verschieben sie auf den Merge. Eine Blockier-Kante aus dem Ticket-Text ist nur eine Vermutung, welche Dateien ein Ticket anfasst. Zwei Tickets an „verschiedenen Stellen“ teilen sich trotzdem einen Textkatalog, eine Konfiguration oder einen Typ. Jeder Implementierer sieht nur sein Ticket und die gemeinsamen Notizen, nie die laufende Arbeit des anderen. Ein Nutzer berichtet, dass seine Tickets für Web und Mobil denselben Text einmal als <code>blockedSince</code> und einmal als <code>blockedOn</code> anlegten.</p>
+      <p>Die Grafik spielt genau das nach. Wähle eine der zwei Lösungen aus der Doku, der Ausgang wird aus dem gewählten Zustand berechnet. Die Git-Ausgaben habe ich mit git 2.43 nachgestellt, die Dauern sind Beispielwerte.</p>
+    </div>
+    
+    <div class="wide fig" id="coll">
+      <div class="fig-head"><h3>Zwei Tickets, eine Datei</h3><span class="t-label">messages.ts</span></div>
+      <ul class="picks" role="group" aria-label="Lösung wählen">
+        <li><button type="button" data-m="par" aria-pressed="true"><b>Ohne Absprache</b>beide parallel, jeder wählt selbst einen Namen</button></li>
+        <li><button type="button" data-m="edge" aria-pressed="false"><b>Blockier-Kante</b>Mobil wartet, bis Web gelandet ist</button></li>
+        <li><button type="button" data-m="notes" aria-pressed="false"><b>Namen festlegen</b>die Erkundungsnotizen nennen den Eintrag</button></li>
+      </ul>
+      <div class="co-gantt" aria-hidden="true">
+        <div class="co-row"><span class="co-l">Web</span><div class="co-tr"><i class="co-bar" id="co-web"></i></div></div>
+        <div class="co-row"><span class="co-l">Mobil</span><div class="co-tr"><i class="co-bar" id="co-mob"></i></div></div>
+        <div class="co-row"><span class="co-l">Integration</span><div class="co-tr" id="co-int"><b class="co-mk" id="co-mweb"><i></i><span></span></b><b class="co-mk" id="co-mmob"><i></i><span></span></b></div></div>
+        <div class="co-row"><span class="co-l">Takte</span><div class="co-axis" id="co-axis"></div></div>
+      </div>
+      <div class="co-files">
+        <div class="co-f"><span class="t-label">Worktree Web</span><pre id="co-pweb" tabindex="0" aria-label="messages.ts im Worktree Web"></pre></div>
+        <div class="co-f"><span class="t-label">Worktree Mobil</span><pre id="co-pmob" tabindex="0" aria-label="messages.ts im Worktree Mobil"></pre></div>
+        <div class="co-f res"><span class="t-label">Spitze holen</span><pre id="co-pres" tabindex="0" aria-label="messages.ts nach dem Holen der Spitze"></pre><p class="co-git" id="co-git"></p><span class="stamp" id="co-stamp">Konflikt</span></div>
+      </div>
+      <p class="fig-cap" id="co-say" aria-live="polite"></p>
+    </div>
+    <div class="prose mt">
+      <p>Beide Lösungen kosten etwas. Die Kante macht aus zwei parallelen Tickets zwei nacheinander. Die festgelegten Namen kosten etwas Arbeit in der Erkundung, bevor überhaupt ein Implementierer startet. Welche du nimmst, hängt davon ab, ob der Name schon feststeht.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="pr">
+  <div class="sec-head grid-12"><span class="t-label">03 pr</span><h2>Drei Antworten statt einer Textwand</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>PRs sind für Matt weiterhin der Engpass auf dem Weg nach <code>main</code>. Das Ziel von <code>pr</code> ist deshalb, das Review für Menschen so leicht wie möglich zu machen. Der Skill ist kein Ablauf, sondern nur eine Vorlage für den PR-Text. Er pusht nichts, öffnet keinen PR und entscheidet nicht, was hineingehört. Er ist vom Modell aufrufbar: Der Agent greift von selbst darauf zurück, sobald er einen PR-Text schreibt. Laut Matt gehört er zu den Skills, die am zuverlässigsten automatisch geladen werden, zumindest auf Opus 5.5.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">skills/engineering/pr/SKILL.md · Vorlage</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">## Summary</span>
+
+&lt;diagram, diff-sketch, or tree&gt;
+
+<span class="k">## Evidence</span>
+
+- **Before:** &lt;screenshot/output/failing test run&gt;
+  **After:** &lt;screenshot/output/passing test run&gt;
+
+<span class="k">## Merge Danger</span>
+
+<span class="hl">**Door:** &lt;one-way or two-way&gt;</span>&lt;optional: description&gt;
+
+**Blast Radius:** &lt;one-word description&gt;
+
+&lt;optional: potential ramifications of merge&gt;</pre></div>
+    </div>
+    <div class="prose">
+      <h3>Summary: das kleinste Bild</h3>
+      <p>Statt den Diff in Prosa nachzuerzählen, wählt der Agent die kleinste Ansicht, die den Kern zeigt: Pseudocode, einen Aufrufbaum, einen Komponentenbaum, einen flachen Dateibaum, ein Mermaid-Diagramm oder einen Diff in der passenden Form. Meist eine, selten mehrere, fast nie alle. Diese Auswahl stammt aus dem Skill <code>show-me</code> von Dex Horthy, fast wörtlich übernommen und auf einen Diff statt auf ein Gespräch gerichtet. Die Herkunft steht in der <code>CREDITS.md</code> des Skills. Begriffe nimmt der Agent aus der <code>GLOSSARY.md</code>.</p>
+      <h3>Evidence: vorher und nachher</h3>
+      <p>Ein Screenshot ist der stärkste Beleg, wenn die Änderung sichtbar ist und die Umgebung einen machen kann. Sonst zählt der genaue Test, der vorher scheitert und jetzt besteht, als Pseudocode, oder die Konsolenausgabe, die sich geändert hat. „Die Tests sind grün“ allein ist eine Behauptung, kein Vorher und Nachher. Für Matt ist das der Weg, einem Agenten vertrauen zu lernen: Wer Belege verlangt, bekommt oft einen zusätzlichen Testlauf oder Screenshot. Ohne harte Belege sagt ein Agent leicht, es laufe wahrscheinlich, er habe den Code ja gelesen. Verifikation ist gerade Matts Obsession.</p>
+      <h3>Merge Danger: Tür und Blast Radius</h3>
+      <p>Durch eine <strong>Zwei-Wege-Tür</strong> kommst du zurück: Der PR lässt sich billig zurücknehmen. Eine <strong>Einbahn-Tür</strong> tut etwas in der Welt, löscht Daten oder ist teuer zurückzurollen, etwa eine zerstörende Migration, das Entfernen einer öffentlichen API oder eine schwer umkehrbare Entscheidung. Der <strong>Blast Radius</strong> sagt in einem Wort, was kaputtgehen kann, wenn die Änderung falsch ist: Layout, Nutzer einer API, die mobile Ansicht. Daraus folgt, wie genau du liest. Eine Zwei-Wege-Tür mit kleinem Blast Radius überfliegst du, eine Einbahn-Tür liest du langsam.</p>
+      <p>Matts eigenes Beispiel: Zwei fast gleiche Algorithmen wurden zusammengeführt. Die Summary zeigt gelöschte und neue Dateien und die Aufrufstruktur, der Beleg zeigt ein echtes Objekt vorher ohne Intro und nachher mit Intro, wie gewollt. Merge Danger: Zwei-Wege-Tür, ein reiner Refactor plus eine bewusste Verhaltensänderung, kleiner Blast Radius.</p>
+      <p>Die Einschätzung schreibt allerdings der Agent, der die Änderung gebaut hat. Die Grafik prüft sie mit einem Gedankenexperiment: mergen, Zeit vergehen lassen, zurückrollen. Wähle einen der Beispiel-PRs. Einschätzungen und Zahlen sind Beispielwerte.</p>
+    </div>
+    
+    <div class="wide fig" id="door">
+      <div class="fig-head"><h3>Einbahn- oder Zwei-Wege-Tür</h3><span class="t-label">Beispiel-PRs</span></div>
+      <ul class="picks" role="group" aria-label="Pull Request wählen">
+        <li><button type="button" data-p="algo" aria-pressed="true"><b>Algorithmen vereint</b>Refactor plus gewollte Änderung</button></li>
+        <li><button type="button" data-p="col" aria-pressed="false"><b>Spalte löschen</b>Migration</button></li>
+        <li><button type="button" data-p="mail" aria-pressed="false"><b>Batch-E-Mails</b>beim Deploy verschickt</button></li>
+        <li><button type="button" data-p="flag" aria-pressed="false"><b>Rollout hinter Flag</b>neues Speicherformat</button></li>
+      </ul>
+      <div class="dr-main">
+        <div class="dr-left" aria-hidden="true">
+          <div class="dr-scene">
+            <div class="dr-frame"></div>
+            <div class="dr-leaf" id="dr-leaf"><i class="dr-knob"></i><i class="dr-bolt" id="dr-bolt"></i></div>
+            <span class="stamp" id="dr-stamp">Einbahn</span>
+          </div>
+          <div class="dr-world"><span class="t-label">Welt draußen</span><b id="dr-wv">0</b><span id="dr-wl">keine Wirkung</span></div>
+        </div>
+        <dl class="dr-facts">
+          <div><dt class="t-label">Laut PR</dt><dd id="dr-claim"></dd></div>
+          <div><dt class="t-label">Code auf main</dt><dd id="dr-code"></dd></div>
+          <div><dt class="t-label">Wirkung draußen</dt><dd id="dr-world"></dd></div>
+          <div><dt class="t-label">Nach Zurückrollen</dt><dd id="dr-truth"></dd></div>
+          <div><dt class="t-label">Review</dt><dd><span class="dr-dep"><span data-d="skim">überfliegen</span><span data-d="slow">langsam lesen</span></span></dd></div>
+        </dl>
+      </div>
+      <div class="ctrl"><button class="btn" type="button" id="dr-merge">Mergen</button><button class="btn" type="button" id="dr-hour">Eine Stunde später</button><button class="btn" type="button" id="dr-back">Zurückrollen</button></div>
+      <p class="fig-cap" id="dr-say" aria-live="polite"></p>
+    </div>
+    <div class="prose mt">
+      <p>Die Doku sagt es so: Sei am misstrauischsten, wenn der Agent „Zwei-Wege, kleiner Blast Radius“ schreibt. Ein Nutzer bringt es auf den Punkt: Ein zurückgerollter Commit holt keine verschickten E-Mails zurück. Und ein Rollout hinter einem Flag bleibt nur so lange eine Zwei-Wege-Tür, bis der erste Schreibvorgang im neuen Format landet. Zwei Dinge helfen: Gib dem Agenten Ticket oder Spec, nicht nur den Diff. Und schreib auf, welche Änderungen in eurem Repo immer als Einbahn gelten, etwa Schema-Migrationen und alles, was nach außen geht oder löscht, an eine Stelle, die der Agent vor seiner Einschätzung liest.</p>
+      <p>Was <code>pr</code> nicht tut: Den PR öffnen, den Text aktuell halten, wenn sich der PR im Review ändert, oder Review-Kommentare sortieren. Eine PR-Vorlage im Repo (<code>.github/pull_request_template.md</code>) beachtet er nicht, das müsst ihr in euren Agenten-Dokumenten klären. Und ein Mermaid-Diagramm sieht im Terminal wie roher Text aus, GitHub und GitLab zeichnen es im PR. Wer schon einen eigenen PR-Skill hat, kann sich laut Matt einfach Teile herausnehmen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="glossary">
+  <div class="sec-head grid-12"><span class="t-label">04 Umbenennung</span><h2>GLOSSARY.md statt CONTEXT.md</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die Datei mit der Fachsprache eines Projekts hieß bisher <code>CONTEXT.md</code>, die Übersicht über mehrere davon <code>CONTEXT-MAP.md</code>. Der Name kam aus Eric Evans' Domain-Driven Design, vom „bounded context“. In 1.3 heißen sie <code>GLOSSARY.md</code> und <code>GLOSSARY-MAP.md</code>, überall dort, wo die Skills sie lesen und schreiben: in elf Skills, auf den Doku-Seiten und im Glossar des Repos selbst.</p>
+      <p>Matts Gründe: <code>CONTEXT.md</code> war zu vage. Der Name hat den Agenten nicht im richtigen Moment dazu gebracht, die Datei zu laden, und Nutzer verwirrt. Der Inhalt war ohnehin auf ein reines Glossar geschrumpft. Viele Skills verlassen sich darauf, eine <code>GLOSSARY.md</code> zu sehen, um die Fachsprache durchgehend zu nutzen. Ab jetzt suchen sie nur noch nach dem neuen Namen. Sonst ändert sich am Verhalten nichts.</p>
+    </div>
+    
+    <div class="wide fig" id="gl">
+      <div class="fig-head"><h3>Elf Skills suchen eine Datei</h3><span class="t-label"><span id="gl-n">0</span>/11 gefunden</span></div>
+      <div class="gl-net" id="gl-net">
+        <ul class="gl-skills" id="gl-skills" aria-label="Skills, die GLOSSARY.md lesen oder schreiben"></ul>
+        <svg class="gl-svg" id="gl-svg" aria-hidden="true"></svg>
+        <div class="gl-repo"><span class="t-label">Repo</span><div class="gl-tree"><span>AGENTS.md</span><span class="gl-file" id="gl-file">CONTEXT.md</span><span>docs/adr/</span><span>src/</span></div></div>
+      </div>
+      <div class="gl-legend" aria-hidden="true"><span><i class="ln"></i>sucht GLOSSARY.md, findet nichts</span><span><i class="ln on"></i>gefunden</span></div>
+      <div class="term">
+        <div class="code-bar"><span class="t-label">Terminal</span><button class="btn sm" type="button" id="gl-run">Ausführen</button></div>
+        <div class="screen" tabindex="0" role="region" aria-label="Terminal"><span class="p">$ </span><span id="gl-cmd"></span><span id="gl-out"></span></div>
+      </div>
+      <p class="fig-cap" id="gl-say" aria-live="polite"></p>
+    </div>
+    <div class="prose mt">
+      <h3>Ein Glossar und sonst nichts</h3>
+      <p>Geschrieben wird die Datei vor allem von <code>domain-modeling</code>, oft angetrieben von <code>grill-with-docs</code>. Der Skill hält die Fachsprache aktiv sauber: Er widerspricht, wenn ein Begriff dem Glossar widerspricht, fragt nach, wenn ein Wort mehrere Dinge meint, und trägt einen Begriff in dem Moment ein, in dem er feststeht. Die Datei entsteht erst, wenn es etwas einzutragen gibt.</p>
+      <p>Die wichtigste Regel steht wörtlich im Skill: Die <code>GLOSSARY.md</code> ist ein Glossar und nichts anderes. Keine Implementierungsdetails, keine Spec, kein Notizblock. Das ist laut Doku das am häufigsten gemeldete Problem: Modelle lesen „schreib in die GLOSSARY.md“ als Erlaubnis, jede Antwort abzulegen, und die Datei wird zur laufenden Spec. Entscheidungen gehören in ein ADR unter <code>docs/adr/</code>, aber nur, wenn alle drei Bedingungen gelten: schwer umkehrbar, ohne Kontext überraschend und das Ergebnis einer echten Abwägung.</p>
+      <p>In 1.3 reagiert <code>domain-modeling</code> außerdem schon, wenn ihr über Begriffe im Code sprecht oder eine <code>GLOSSARY.md</code> oder ein ADR direkt bearbeitet. Und <code>wait-what</code> folgt einer <code>GLOSSARY-MAP.md</code> zur richtigen <code>GLOSSARY.md</code>, wenn ein Repo mehrere Bereiche so ordnet.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="retro">
+  <div class="sec-head grid-12"><span class="t-label">05 retro</span><h2>Ein zweiter Agent schaut zurück</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Matts Skills verlangen einiges vom Nutzer: <code>AGENTS.md</code> pflegen, Skills pflegen, das Repo sparsam mit Tokens halten, eine sichere Umgebung, gute Lint-Regeln, gute Navigation. Das hat Matt selbst ständig getan, also hat er es in einen Skill gepackt. Von den drei neuen Skills hat <code>retro</code> in sozialen Netzwerken am stärksten eingeschlagen.</p>
+      <p><code>retro</code> läuft auf einer Agenten-Sitzung, der aktuellen oder einer früheren aus den Sitzungsprotokollen, und schlägt Verbesserungen für das nächste Mal vor. Nicht am Code, sondern an der <strong>Umgebung</strong> des Agenten. Es liest echte Sitzungen und sieht Ineffizienzen, die der Agent versteckt: Er beschwert sich zu wenig und baut das Feature trotzdem irgendwie fertig. Deshalb muss ein zweiter Agent zurückschauen. Jeder Fund landet in einer Kategorie, und die Kategorie bestimmt, wohin die Lösung gehört:</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Kategorien von retro">
+        <table>
+          <thead><tr><th scope="col">In der Sitzung</th><th scope="col">Kategorie</th><th scope="col">Lösung</th></tr></thead>
+          <tbody>
+            <tr><td>Der Agent sucht lange nach einer Datei oder einem Fakt</td><td>Navigation</td><td>Ein Verweis aus einer Datei, die er ohnehin liest</td></tr>
+            <tr><td>Ein Fehler, den ein Werkzeug hätte finden können</td><td>Automatische Prüfungen</td><td>Lint-Regel, Typ, Test, Pre-Commit-Hook oder CI-Job</td></tr>
+            <tr><td>Der Review-Agent übersieht eine Ermessensfrage</td><td>Coding-Standards</td><td>Eine Regel in <code>CODING_STANDARDS.md</code></td></tr>
+            <tr><td><code>AGENTS.md</code> oder <code>CLAUDE.md</code> ist groß</td><td>Globale AGENTS.md</td><td>Steuerung hinaus, in Standards oder Prüfungen</td></tr>
+            <tr><td>Ein Werkzeugaufruf ist teuer für das, was er liefert</td><td>Tool-Ökonomie</td><td>Werkzeug verschlanken oder ersetzen</td></tr>
+            <tr><td>Steuerdateien voller Zeilen, die nichts ändern</td><td>No-ops</td><td>Diese Zeilen löschen</td></tr>
+            <tr><td>Der Agent braucht eine Information, an die er nicht kommt</td><td>Informationszugang</td><td>Zugang erweitern, etwa Server-Log in eine Datei, Lesezugriff auf einen Dienst</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Die Leitidee: Standards gehören zum <strong>Review-Agenten</strong>, nicht zum Implementierer. Der Implementierer steht unter dem größten Kontextdruck, er erkundet, schreibt Code und debuggt. Der Reviewer bekommt nur einen Diff. Eine neue Regel kommt dorthin, wo Platz ist, sie anzuwenden, und nie in die <code>AGENTS.md</code>, die in jede Sitzung geladen wird. Vorher ordnet <code>retro</code> jeden Verstoß ein: Ein mechanischer Verstoß, etwa eine verbotene API oder eine Importform, bekommt eine deterministische Prüfung, denn eine Prüfung kann scheitern, ein Satz in einer Standards-Datei nicht. Nur echte Ermessensfragen werden Prosa. Ein Repo ganz ohne Leitplanke, also ohne Pre-Commit-Hook und ohne CI-Job für Lint, Typprüfung und Tests, ist schon für sich ein Fund.</p>
+      <h3>Matts Sitzung, nachgebaut</h3>
+      <p>Matt hat <code>retro</code> auf eine eigene Sitzung angesetzt. Es fand fünf Dinge: Der Agent hatte herausgefunden, warum das Release 1.3.0 fehlte, und dann ohne zu fragen ein Release ausgeführt, eine unumkehrbare öffentliche Aktion, bevor Matt einen Fix gewählt hatte. Deshalb gibt es auf der Release-Seite kein 1.3.0, nur 1.3.1. Dazu kamen ein <code>pnpm check</code>, das nichts ausführt, Kontextverlust zwischen zwei Compactions mit wiederholten Anweisungen, eine eigene CLI, die Tokens verschwendet, und eine zweite CLI, die lokal nicht im PATH liegt. Den Release-Befund hielt <code>retro</code> für den schwersten. Matt ist er egal, ein Release kann er jederzeit neu schneiden.</p>
+      <p>Die Grafik baut daraus ein Beispiel-Protokoll. Eine Scanlinie liest es, Treffer werden als Kandidaten nach der Schwere einsortiert, die <code>retro</code> vergibt. Dann entscheidet der Mensch. Darunter zeigt ein kleines Modell, was passiert, wenn niemand entscheidet.</p>
+    </div>
+    
+    <div class="wide fig" id="rt">
+      <div class="fig-head"><h3>retro liest eine Sitzung</h3><span class="t-label">Beispiel-Protokoll</span></div>
+      <div class="rt-grid">
+        <div class="rt-log" id="rt-log" tabindex="0" role="region" aria-label="Sitzungsprotokoll, Beispiel"><i class="rt-scan" id="rt-scan" aria-hidden="true"></i></div>
+        <div class="rt-side"><span class="t-label">Kandidaten nach Schwere</span><ol class="rt-list" id="rt-list" aria-live="polite"></ol></div>
+      </div>
+      <div class="rt-model">
+        <div class="rt-mh"><span class="t-label">Zehn Sitzungen, Modell</span>
+          <div class="switch" role="group" aria-label="Wer entscheidet" id="rt-mode"><button type="button" data-v="human" aria-pressed="true">Mensch im Loop</button><button type="button" data-v="auto" aria-pressed="false">automatisch</button></div>
+        </div>
+        <svg class="rt-chart" id="rt-chart" role="img" aria-label="Säulen je Sitzung: nützliche und unnötige Regeln, darüber die Fehlalarme"></svg>
+        <div class="legend"><span><i class="mk m1"></i>nützliche Regeln</span><span><i class="mk m0"></i>unnötige Regeln</span><span>Zahl darüber: Fehlalarme in der Sitzung</span></div>
+        <p class="rt-say" id="rt-say" aria-live="polite"></p>
+      </div>
+      <p class="fig-cap">Protokoll und Einordnung in die Kategorien sind ein Beispiel nach Matts fünf Befunden. Das Modell ist eine Annahme, nicht gemessen: drei Kandidaten pro Sitzung, die Hälfte lässt sich einem Moment zuordnen, eine unnötige Regel schlägt pro Sitzung mit 50 Prozent auf gutem Code an. Automatisch wird alles angenommen, und jeder Fehlalarm erzeugt einen neuen Fix-Kandidaten. Der Mensch nimmt nur Nachvollziehbares an. Von den übrigen rutschen 10 Prozent durch. Er löscht eine Regel, sobald sie falsch anschlägt. Zufall mit festem Startwert 42.</p>
+    </div>
+    <div class="prose mt">
+      <p>Der Mensch im Loop ist Absicht. Fast jeder will <code>retro</code> automatisieren. Matts Rat: nicht tun. Der Agent gerät in eine Schleife, findet ständig Fehlalarme, versucht ständig zu fixen und treibt Repo und Agent in eine Richtung, in die sie nicht gehören. <code>retro</code> schlägt deshalb nur vor und ändert nichts, bis du einen Kandidaten wählst. „Retro ist gnadenlos“, sagt Matt, es findet fast immer etwas.</p>
+      <p>Seine Empfehlung: <code>retro</code> auf einer Stichprobe von Sitzungen laufen lassen, wenn du Zeit hast, vor allem auf Sitzungen, die schiefgingen oder in denen der Agent seltsam war. Eine glatte Sitzung hat wenig zu lehren. Am besten läuft es in der Sitzung selbst, solange die Mühen noch im Kontext stehen. Ist sie schon zu lang, leerst du den Kontext und zeigst einem frischen <code>/retro</code> das Protokoll der alten Sitzung. Matt sagt, seine Token-Effizienz und die Qualität seiner Arbeit seien durch regelmäßiges <code>retro</code> massiv gestiegen. In 1.3.1 verweist <code>ask-matt</code> nach einem behobenen Bug auf <code>/retro</code>, um zu fragen, was den Bug verhindert hätte.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="einrichten">
+  <div class="sec-head grid-12"><span class="t-label">06 Einrichten</span><h2>Installieren und umbenennen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Es gibt zwei Wege, und du nimmst nur einen. Das Plugin für Claude Code ist ein verwaltetes, schreibgeschütztes Paket, das sich mit jedem Release aktualisiert. Der Installer von <code>skills.sh</code> kopiert die Skills als normale Dateien in dein Projekt, die du anpassen kannst. Wer beide nutzt, hat jeden Skill doppelt. Die Befehle stammen aus der README mit Stand Release 1.3.1. Den <code>git mv</code> habe ich mit git 2.43 ausprobiert.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Claude Code: Plugin aus dem offiziellen Marketplace</span>
+claude plugins install mattpocock-skills
+<span class="c"># oder in einer laufenden Sitzung: /plugin install mattpocock-skills</span>
+
+<span class="c"># Codex, andere Agenten oder zum Selbst-Anpassen</span>
+npx skills@latest add mattpocock/skills
+<span class="c"># später neue Versionen holen (nur dieser Weg)</span>
+npx skills update
+
+<span class="c"># danach im Agenten, einmal pro Repository</span>
+/setup-matt-pocock-skills
+
+<span class="c"># alte Glossar-Dateien umbenennen, die Skills suchen nur noch die neuen Namen</span>
+<span class="hl">git mv CONTEXT.md GLOSSARY.md</span>git mv CONTEXT-MAP.md GLOSSARY-MAP.md   <span class="c"># nur falls vorhanden</span></pre></div>
+      <p>Mit dem Installer wählst du die Skills selbst aus. Achte darauf, dass <code>setup-matt-pocock-skills</code> dabei ist. Danach führst du im Agenten einmal pro Repository <code>/setup-matt-pocock-skills</code> aus. Er fragt nach dem Issue-Tracker (GitHub, Linear oder lokale Dateien), nach den Labels für die Triage und danach, wo Dokumente abgelegt werden. <code>implement-spec</code> braucht den Tracker, sonst bittet er dich, genau diesen Schritt nachzuholen.</p>
+      <div class="callout note"><span class="t-label">Was wegfällt</span><p>Der Skill <code>resolving-merge-conflicts</code> ist in 1.3 entfernt. Er wird nicht mehr gebraucht, der Agent löst einen laufenden Merge- oder Rebase-Konflikt auch ohne eigenen Skill. Seine Doku-Seite bleibt als Archiv erreichbar.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">07 Beim Testen</span><h2>Was Nutzer gemeldet haben</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die folgenden Stolperstellen stehen in den häufigen Fragen der Doku-Seiten, gemeldet von Nutzern der Skills. Ich habe sie nicht selbst nachgestellt, mit Ausnahme der Git-Ausgaben in der Grafik zu zwei Tickets in einer Datei.</p>
+      <ul class="pitfalls">
+        <li><h3>Die Review-Schleife läuft stundenlang</h3><p>Ein Nutzer meldet für ein Feature aus fünf Tickets rund vier Stunden Review und Fix. Das passiert, wenn <code>code-review</code> irgendwo anders läuft als an der einen vorgesehenen Stelle. Es vergleicht den Code mit der ganzen Spec, mitten im Lauf liest sich jedes ungebaute Ticket als Fehler. Der Agent baut es, das löst das nächste Review aus. Der Skill sagt außerdem noch nicht, wann nach dem Fix Schluss ist. Lösung: Startet ein zweites breites Review, sag dem Orchestrator, er soll nur noch gezielt die behobenen Funde prüfen und dann aufhören. Rechne damit, dass das erste Review echte Probleme findet: Der Lauf liefert einen Entwurf, den das Review vervollständigt.</p></li>
+        <li><h3>Zwei Implementierer kollidieren</h3><p>Zwei Tickets der Front fassen dieselbe Datei an oder benennen dasselbe verschieden. Lösung: eine Blockier-Kante zwischen beiden, oder die Erkundungsnotizen legen die genauen Namen fest. Die Grafik in Abschnitt 02 zeigt beides.</p></li>
+        <li><h3>Blockierte Tickets starten auf GitHub nicht</h3><p>Der Zähler „blocked by“ im Tracker sinkt erst, wenn ein Blocker geschlossen wird. Tickets schließen typischerweise mit dem Merge des PR, also am Ende des Laufs. Der Tracker ist die richtige Quelle für den Start, mitten im Lauf aber veraltet. Lösung: Sag dem Orchestrator, er soll selbst festhalten, welche Tickets im Integrations-Branch gelandet sind, und die Front daraus berechnen.</p></li>
+        <li><h3>Ein Test wird im Worktree still übersprungen</h3><p>Ein Worktree enthält nur, was Git verfolgt. Tests, die ignorierte Fixtures, lokale Datenbanken oder Zugangsdaten lesen, werden dort unter Umständen still übersprungen, und das Ticket meldet grün. Lösung: Hängt die Prüfung an solchem Material, lass das Ticket im Haupt-Checkout laufen.</p></li>
+        <li><h3>Der Tür-Einschätzung blind trauen</h3><p>Der Agent, der die Änderung gebaut hat, bewertet sie auch. Am misstrauischsten solltest du sein, wenn er „Zwei-Wege, kleiner Blast Radius“ schreibt, denn ob sich eine Änderung zurücknehmen lässt, versteckt der Diff oft. Lösung: Prüf die Merge-Danger-Zeile am genauesten, gib dem Agenten Ticket oder Spec und schreib eure Einbahn-Änderungen auf.</p></li>
+        <li><h3>retro erfindet allgemeine Ratschläge</h3><p>Die stärkste Kritik am Skill: Am Ende einer Sitzung vergisst die KI die Mühen aus der Mitte und erfindet allgemeine Ratschläge, um die Kategorien zu füllen. Jeder Kandidat muss aus dem Protokoll der Sitzung kommen. Das hat auch eine Kehrseite: Eine einzelne Sitzung kann zu viel Gewicht bekommen. Lösung: Verwirf jeden Kandidaten, den du keinem Moment zuordnen kannst, und behandle die Reihenfolge nach Schwere als ersten Entwurf. Ein leiser, teurer Fehler kann unter einem lauten, billigen landen.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">08 Entscheidung</span><h2>Welcher Skill, welcher Weg?</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Welcher Skill wann">
+        <table>
+          <thead><tr><th scope="col">Situation</th><th scope="col">Skill oder Weg</th><th scope="col">Warum</th></tr></thead>
+          <tbody>
+            <tr><td>Spec mit Tickets und Blockier-Kanten, soll in einem Lauf landen</td><td><code>/implement-spec</code></td><td>Die Front läuft parallel, am Ende steht ein Integrations-Branch.</td></tr>
+            <tr><td>Ein Ticket nach dem anderen, Kontext leeren dazwischen</td><td><code>implement</code></td><td>Du bist der Dispatcher und liest jedes Ergebnis, sobald es landet.</td></tr>
+            <tr><td>Kleine Änderung ohne echten Graphen</td><td><code>implement</code> direkt</td><td>Der Orchestrator hätte nichts zu verteilen.</td></tr>
+            <tr><td>Spec ist noch nicht in Tickets zerlegt</td><td><code>/to-tickets</code> zuerst</td><td>Erst die Kanten machen aus Tickets einen Graphen.</td></tr>
+            <tr><td>Echte AFK-Arbeit, oft wiederholt</td><td>Deterministische Schleife: Sandcastle, Shell-Skript, CI-Job</td><td>Schneller, billiger, zuverlässiger.<small>Kostet Einrichtung und Geduld.</small></td></tr>
+            <tr><td>Umgebung startet Subagenten nur nacheinander</td><td><code>implement</code></td><td><code>implement-spec</code> wäre nur ein langsameres <code>implement</code>.</td></tr>
+            <tr><td>Ein PR-Text ist fällig</td><td><code>pr</code>, lädt sich selbst</td><td>Summary, Evidence, Merge Danger, nach einem Review mit <code>code-review</code>.</td></tr>
+            <tr><td>Eine Sitzung war schwerer als nötig</td><td><code>/retro</code></td><td>Verbessert die Umgebung, damit es beim nächsten Mal glatter läuft.</td></tr>
+            <tr><td>Du willst ein Urteil über den Code</td><td><code>code-review</code>, nicht <code>retro</code></td><td><code>retro</code> braucht eine Sitzung als Eingabe und ändert die Umgebung, nicht den Code.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Die Kette</span><p>Laut Doku sitzen die drei Skills so im Hauptweg: <code>grill-with-docs</code>, <code>to-spec</code>, <code>to-tickets</code>, dann <code>implement-spec</code> oder <code>implement</code> pro Ticket, <code>code-review</code>, <code>pr</code>, wenn der Bau als PR ausgeliefert wird, und zum Schluss <code>retro</code>. Bist du unsicher, wo du stehst, frag <code>ask-matt</code>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="selbsttest">
+  <div class="sec-head grid-12"><span class="t-label">Umsetzen</span><h2>Selbsttest und Checkliste</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <h3>Selbsttest</h3>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="a">
+          <legend>Wann startet <code>implement-spec</code> ein blockiertes Ticket?</legend>
+          <label><input type="radio" name="q1" value="a"> Sobald sein letzter Blocker auf dem Integrations-Branch gelandet ist.</label>
+          <label><input type="radio" name="q1" value="b"> Wenn alle Tickets der aktuellen Front fertig sind.</label>
+          <label><input type="radio" name="q1" value="c"> Wenn der Tracker den Blocker geschlossen hat.</label>
+          <p class="why" hidden>Die Front wird nach jedem Landen neu berechnet. Darauf zu warten, dass der Tracker den Blocker schließt, ist genau die Falle auf GitHub: Geschlossen wird oft erst am Ende des Laufs.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="b">
+          <legend>Ein PR verschickt beim Deploy eine Batch-E-Mail. Welche Tür?</legend>
+          <label><input type="radio" name="q2" value="a"> Zwei-Wege, der Commit lässt sich ja zurückrollen.</label>
+          <label><input type="radio" name="q2" value="b"> Einbahn, denn Zurückrollen holt keine Mail zurück.</label>
+          <label><input type="radio" name="q2" value="c"> Das hängt nur vom Blast Radius ab.</label>
+          <p class="why" hidden>Die Tür folgt aus der Wirkung in der Welt, nicht aus dem Diff. Der Code kommt zurück, die verschickten E-Mails nicht. Also langsam lesen.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend><code>retro</code> nennt einen Kandidaten, den du keinem Moment der Sitzung zuordnen kannst. Was tust du?</legend>
+          <label><input type="radio" name="q3" value="a"> Annehmen, <code>retro</code> hat ihn als schwer eingestuft.</label>
+          <label><input type="radio" name="q3" value="b"> Als neue Zeile in die <code>CLAUDE.md</code> schreiben.</label>
+          <label><input type="radio" name="q3" value="c"> Verwerfen.</label>
+          <p class="why" hidden>Jeder Kandidat muss aus dem Protokoll kommen. Was sich nicht zuordnen lässt, ist wahrscheinlich ein allgemeiner Ratschlag, und die <code>CLAUDE.md</code> ist ohnehin nur für Verweise da.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste für den Umstieg auf 1.3</h3>
+      <ul class="checklist" data-key="matt-skills-1-3">
+        <li><label><input type="checkbox"> <span><b>Skills auf genau einem Weg installiert</b> und auf 1.3.1 aktualisiert: Plugin oder <code>skills.sh</code>.</span></label></li>
+        <li><label><input type="checkbox"> <span><b><code>/setup-matt-pocock-skills</code> ausgeführt:</b> Tracker, Triage-Labels, Ablage für Dokumente.</span></label></li>
+        <li><label><input type="checkbox"> <span><b><code>CONTEXT.md</code> und <code>CONTEXT-MAP.md</code> umbenannt,</b> mit <code>git mv</code>.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Tickets mit Blockier-Kanten,</b> gemeinsame Dateien geprüft: Kante setzen oder Namen in den Notizen festlegen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b><code>/implement-spec</code> nach dem Leeren des Kontexts gestartet,</b> mit Zeiger auf die Spec.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Nur ein breites Review:</b> danach gezielte Prüfungen der behobenen Funde.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Tickets mit ungetrackten Testdaten</b> im Haupt-Checkout statt im Worktree geprüft.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Einbahn-Änderungen eures Repos aufgeschrieben,</b> Merge-Danger-Zeile jedes PR selbst geprüft.</span></label></li>
+        <li><label><input type="checkbox"> <span><b><code>/retro</code> nach schwierigen Sitzungen,</b> jeden Kandidaten einem Moment zugeordnet oder verworfen.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://github.com/mattpocock/skills">mattpocock/skills</a> (Release 1.3.1 vom 04.10.2026, Commit 4588b32): <a href="https://github.com/mattpocock/skills/blob/main/CHANGELOG.md">CHANGELOG</a> und README, Abschnitt Installation</li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/implement-spec/SKILL.md">implement-spec/SKILL.md</a> und <a href="https://aihero.dev/skills-implement-spec">Doku-Seite implement-spec</a></li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/pr/SKILL.md">pr/SKILL.md</a>, <a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/pr/CREDITS.md">pr/CREDITS.md</a> und <a href="https://aihero.dev/skills-pr">Doku-Seite pr</a></li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/retro/SKILL.md">retro/SKILL.md</a> und <a href="https://aihero.dev/skills-retro">Doku-Seite retro</a></li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/domain-modeling/SKILL.md">domain-modeling/SKILL.md</a> und <a href="https://aihero.dev/skills-domain-modeling">Doku-Seite domain-modeling</a></li>
+        <li>Dex Horthy: <a href="https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md">show-me</a> (Vorbild für die Summary von <code>pr</code>)</li>
+        <li><a href="https://github.com/mattpocock/sandcastle">Sandcastle</a> (deterministische Schleife, in der Doku genannt)</li>
+        <li>Eric Evans: Domain-Driven Design (Herkunft von „bounded context“)</li>
+        <li>git 2.43: <code>git mv</code>, <code>git merge</code> mit und ohne Konflikt, nachgestellt am 06.10.2026</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec grid-12" id="weiter" aria-label="Weiterlesen">
+  <div class="prose next"><span class="t-label">Weiterlesen</span><p>Wie der Weg davor aussieht, vom Ausfragen über Spec und Tickets bis Test-first, steht in <a href="/insights/matt-pocock-workflow">Coding-Agenten im Alltag</a>.</p></div>
+</section>

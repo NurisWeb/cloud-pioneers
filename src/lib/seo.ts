@@ -65,6 +65,14 @@ export const PAGES = {
 			'Wer hinter Cloud Pioneers steht: ein festes Kernteam aus Cloud-, AI- und Security-Engineering mit klarer Verantwortung für jedes Projekt.',
 		ogTitle: 'Das Team hinter Cloud Pioneers',
 	},
+	insights: {
+		slug: 'insights',
+		path: '/insights',
+		title: 'Insights — Fachbeiträge zu KI-Engineering und Coding-Agenten | Cloud Pioneers',
+		description:
+			'Leitfäden aus unserer Projektarbeit: KI-Engineering, Coding-Agenten, Observability und Zusammenarbeit im Team. Mit getestetem Code und interaktiven Grafiken.',
+		ogTitle: 'Insights aus der Projektarbeit',
+	},
 	karriere: {
 		slug: 'karriere',
 		path: '/karriere',

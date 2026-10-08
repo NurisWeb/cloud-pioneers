@@ -1,0 +1,102 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PageIntro from '@/components/PageIntro.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import '@/styles/insights.css';
+import { PAGES, absoluteUrl } from '@/lib/seo';
+import { INSIGHTS, CATEGORIES, formatDate } from '@/lib/insights';
+
+const [feature, ...rest] = INSIGHTS;
+const count = (c: string) => INSIGHTS.filter((p) => p.category === c).length;
+
+const listJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	itemListElement: INSIGHTS.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: absoluteUrl(`/insights/${p.slug}`), name: p.title })),
+};
+---
+
+<Layout seo={PAGES.insights} extraJsonLd={[listJsonLd]}>
+	<main class="ins-index">
+		<PageIntro
+			eyebrow="Insights"
+			title="Wissen aus der Projektarbeit"
+			lead="Leitfäden zu KI-Engineering, Coding-Agenten und Zusammenarbeit im Team. Jeder Beitrag ist in echten Projekten entstanden, mit getestetem Code und Grafiken, die man ausprobieren kann."
+		/>
+
+		<div class="mx-auto max-w-6xl px-6">
+			<a class="ins-feature" href={`/insights/${feature.slug}`} data-cat={feature.category}>
+				<div>
+					<p class="font-mono text-[11px] tracking-[0.14em] uppercase" style="color: var(--signal-ink)">Neu · {feature.category}</p>
+					<h2 class="mt-4" style={`view-transition-name: t-${feature.slug}`}>
+						{feature.title}<span class="sub">{feature.subtitle}</span>
+					</h2>
+				</div>
+				<div class="grid gap-5">
+					<p>{feature.teaser}</p>
+					<span class="ins-card__go">
+						{formatDate(feature.date)} · {feature.minutes} Min. Lesezeit
+						<svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+					</span>
+				</div>
+			</a>
+
+			<div class="mt-16 mb-6 flex flex-col gap-5">
+				<h2 class="text-2xl font-medium md:text-3xl">Alle Beiträge</h2>
+				<div class="ins-filter" role="group" aria-label="Nach Rubrik filtern" data-filter hidden>
+					<button type="button" aria-pressed="true" data-cat="">Alle<span class="n">{INSIGHTS.length}</span></button>
+					{CATEGORIES.map((c) => (
+						<button type="button" aria-pressed="false" data-cat={c}>{c}<span class="n">{count(c)}</span></button>
+					))}
+				</div>
+			</div>
+
+			<ul class="ins-list" data-list>
+				{rest.map((p) => (
+					<li data-cat={p.category}>
+						<a class="ins-row" href={`/insights/${p.slug}`}>
+							<span class="ins-row__meta">
+								<span class="cat">{p.category}</span>
+								<span>{formatDate(p.date)}</span>
+								<span>{p.minutes} Min.</span>
+							</span>
+							<span class="ins-row__title" style={`view-transition-name: t-${p.slug}`}>
+								{p.title} <span class="sub">{p.subtitle}</span>
+							</span>
+							<p class="ins-row__teaser">{p.teaser}</p>
+							<span class="ins-row__go" aria-hidden="true">
+								<svg width="14" height="10" viewBox="0 0 14 10"><path d="M0 5h12M8 1l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+							</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+	</main>
+
+	<CtaBanner eyebrow="Zusammenarbeit" headline="Sie möchten diese Ansätze in Ihrem Unternehmen umsetzen? Sprechen Sie mit uns." buttonLabel="Gespräch vereinbaren" />
+</Layout>
+
+<script>
+	// Filter nach Rubrik. Ohne JavaScript bleibt die Leiste verborgen und alle Beiträge sind sichtbar.
+	const bar = document.querySelector<HTMLElement>('[data-filter]');
+	const feature = document.querySelector<HTMLElement>('.ins-feature');
+	const items = [...document.querySelectorAll<HTMLElement>('[data-list] > li')];
+	if (bar) {
+		bar.hidden = false;
+		const buttons = [...bar.querySelectorAll<HTMLButtonElement>('button')];
+		const apply = (cat: string) => {
+			buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === cat)));
+			items.forEach((li) => (li.hidden = !!cat && li.dataset.cat !== cat));
+			if (feature) feature.hidden = !!cat && feature.dataset.cat !== cat;
+		};
+		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		buttons.forEach((b) =>
+			b.addEventListener('click', () => {
+				const run = () => apply(b.dataset.cat ?? '');
+				if (document.startViewTransition && !reduce) document.startViewTransition(run);
+				else run();
+			})
+		);
+	}
+</script>

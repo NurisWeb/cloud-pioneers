@@ -3,6 +3,7 @@ export const NAV = [
 	{ href: '/leistungen', label: 'Leistungen' },
 	{ href: '/#ablauf', label: 'Ablauf' },
 	{ href: '/unternehmen', label: 'Unternehmen' },
+	{ href: '/insights', label: 'Insights' },
 	{ href: '/karriere', label: 'Karriere' },
 	{ href: '/kontakt', label: 'Kontakt' },
 ];

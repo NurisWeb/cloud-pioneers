@@ -1,0 +1,343 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Seit dem letzten Release melden Monteure, dass ihre Eingaben im Prüfprotokoll verloren gehen. Du öffnest das <code>git log</code> und findest für die fragliche Woche drei Einträge: „Update“, „Fixes“ und „Templates aktualisiert“. Hinter dem letzten stecken 23 geänderte Dateien. Die nächste Stunde liest du Diffs, statt den Fehler zu beheben.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Ein Commit enthält genau eine zusammengehörige Änderung, und der Staging-Bereich ist das Werkzeug, mit dem du sie auswählst.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Lieber zu viele kleine Commits als ein großer, denn zusammenfassen geht später mit einem Befehl, aufteilen kostet Handarbeit.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Die erste Zeile sagt in höchstens 50 Zeichen, was der Commit bewirkt; wenn du dafür „und“ brauchst, sind es zwei Commits.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Aus einem Commit werden vier</h2>
+    <p>Sechs Dateien, ein Arbeitstag. Die Sequenz zeigt, was <code>git add .</code> daraus macht und was gezieltes Auswählen daraus macht. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="cmd"><span id="c1"></span><span id="c2"></span><span id="c3"></span></div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Feierabend.</b> <code>git status</code> zeigt sechs geänderte Dateien. Dahinter stecken vier verschiedene Gründe.</p></div>
+        <div class="cap" data-at="0.14"><span class="n">02</span><p><b>git add . legt alles in einen Commit.</b> Die Nachricht „Templates aktualisiert“ nennt eins von vier Themen. Den Timeout-Fix findet darüber niemand.</p></div>
+        <div class="cap" data-at="0.42"><span class="n">03</span><p><b>Gezielt auswählen.</b> Was zusammengehört, kommt zusammen: Fix und Test bleiben ein Paar, Kontaktseite und Footer-Link auch.</p></div>
+        <div class="cap" data-at="0.64"><span class="n">04</span><p><b>Vier Commits.</b> Jede Zeile im Log beantwortet „Was ist hier passiert?“ und lässt sich einzeln finden und zurücknehmen.</p></div>
+        <div class="cap" data-at="0.86"><span class="n">05</span><p><b>Ein Befehl findet den Fix.</b> <code>git log --grep=Timeout</code> trifft genau einen Commit, mit Fix und Test darin.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">01 Das Problem</span><h2>Git ist kein Backup</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Viele lernen git als Sicherung: Am Ende des Tages <code>git add .</code>, eine Nachricht wie „Update“, <code>git push</code>, und der Code liegt sicher auf dem Server. Das funktioniert, solange niemand zurückschaut. Ein Backup schneidet nach der Uhrzeit. Ein Commit soll nach dem Inhalt schneiden: eine Änderung, ein Grund, eine Nachricht.</p>
+      <p>Dafür gibt es den <strong>Staging-Bereich</strong>, die Zwischenablage zwischen Arbeitskopie und Commit. Was du mit <code>git add</code> dort hineinlegst, landet im nächsten Commit, alles andere bleibt liegen. Wer immer alles hineinlegt, verschenkt genau diese Auswahl.</p>
+      <p>Das Ergebnis siehst du oben am Ende der Sequenz. Mit vier Commits findet <code>git log --grep=Timeout</code> den Fix sofort, und <code>git revert</code> nimmt den Header zurück, ohne die Kontaktseite wiederherzustellen. Mit dem einen Sammel-Commit geht beides nicht.</p>
+      <p>Das gilt auch, wenn du allein an einem Projekt arbeitest. Dein zukünftiges Ich ist der Kollege, der den Code nicht mehr im Kopf hat. Im Team kommt dazu, dass du überwiegend Commits liest, die du nicht selbst geschrieben hast.</p>
+      <p>Der häufigste Einwand: „Dann ist das Log voller winziger Commits.“ Ein Commit, der nur eine Hintergrundfarbe ändert, ist trotzdem ein guter Commit. Und wem die vielen kleinen Commits vor dem Merge zu viel sind, fasst sie mit einem Befehl zusammen (Schritt 4 unten). Der umgekehrte Weg, einen großen Commit nachträglich aufzuteilen, heißt: zurücksetzen und jede Zeile neu sortieren.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="konzept">
+  <div class="sec-head grid-12"><span class="t-label">02 Das Konzept</span><h2>Eine Nachricht, fünf Teile</h2></div>
+  <div class="grid-12">
+    <div class="prose"><p>Eine Commit-Nachricht hat eine feste Form, und jedes Werkzeug rund um git verlässt sich darauf. <code>git log --oneline</code>, GitHub und GitLab zeigen nur die erste Zeile. Der Rest ist für den, der genauer wissen will, warum. Die Nachricht schreibt sich unten einmal selbst, danach geht die Grafik die fünf Teile durch. Du kannst jeden Teil auch selbst anklicken.</p></div>
+    <div class="full fig" id="anat">
+      <div class="anat">
+        <div class="code editor">
+          <div class="code-bar"><span class="t-label">.git/COMMIT_EDITMSG</span></div>
+          <div class="msg" tabindex="0" role="region" aria-label="Beispiel einer Commit-Nachricht">
+            <div class="ln"><span class="no" aria-hidden="true">1</span><span><span class="part" data-p="type">fix(session):</span> <span class="part" data-p="subject">Timeout auf 60 Sekunden erhöhen</span></span></div>
+            <div class="ln"><span class="no" aria-hidden="true">2</span><span class="part gap" data-p="blank"></span></div>
+            <div class="ln"><span class="no" aria-hidden="true">3</span><span class="part" data-p="body">Monteure füllen das Prüfprotokoll am Tablet aus.</span></div>
+            <div class="ln"><span class="no" aria-hidden="true">4</span><span class="part" data-p="body">Bei schwachem WLAN dauerte das Speichern länger als</span></div>
+            <div class="ln"><span class="no" aria-hidden="true">5</span><span class="part" data-p="body">30 Sekunden, die Sitzung lief ab, Eingaben gingen</span></div>
+            <div class="ln"><span class="no" aria-hidden="true">6</span><span class="part" data-p="body">verloren.</span></div>
+            <div class="ln"><span class="no" aria-hidden="true">7</span><span class="part gap" data-p="blank"></span></div>
+            <div class="ln"><span class="no" aria-hidden="true">8</span><span class="part" data-p="footer">Refs: WERK-212</span></div>
+          </div>
+          <div class="ruler"><span>Zeile 1: <b id="anat-len">45</b> Zeichen</span><span>Body: höchstens <b>72</b> pro Zeile</span></div>
+        </div>
+        <div class="notes" aria-live="polite">
+          <div class="note on" data-p="all"><span class="t-label">Aufbau</span><p>Fünf Teile, jeder beantwortet eine eigene Frage: Welche Art Änderung? Was bewirkt sie? Warum war sie nötig? Wo steht mehr dazu? Wähle unten einen Teil.</p></div>
+          <div class="note" data-p="type"><span class="t-label">01 Typ und Bereich</span><p><code>fix(session):</code> sagt, welche Art Änderung das ist und wo sie liegt. Das Format kommt aus der Spezifikation Conventional Commits: <code>fix</code> behebt einen Fehler, <code>feat</code> bringt eine neue Funktion, dazu üblich <code>docs</code>, <code>refactor</code>, <code>test</code>, <code>chore</code>. Ein <code>!</code> nach dem Bereich markiert eine Änderung, die bestehende Nutzung bricht.</p></div>
+          <div class="note" data-p="subject"><span class="t-label">02 Betreff</span><p>„Timeout auf 60 Sekunden erhöhen“ beschreibt, was der Commit bewirkt, nicht was du getan hast. Also „erhöhen“ statt „erhöht“ oder „habe erhöht“, ohne Punkt am Ende. Die ganze erste Zeile bleibt unter 50 Zeichen. Wird sie länger, steckt meist mehr als eine Änderung im Commit.</p></div>
+          <div class="note" data-p="blank"><span class="t-label">03 Leerzeile</span><p>Die leere zweite Zeile trennt Betreff und Begründung. git behandelt alles bis zur ersten Leerzeile als Betreff. Fehlt sie, klebt der erste Satz der Begründung in <code>git log --oneline</code> an der Überschrift.</p></div>
+          <div class="note" data-p="body"><span class="t-label">04 Begründung</span><p>Der Body erklärt, warum die Änderung nötig war und was vorher schieflief. Das Wie steht im Diff. Das Warum steht nirgends sonst, und genau das fehlt dir in zwei Jahren. Zeilen bricht man nach 72 Zeichen um, damit sie im Terminal lesbar bleiben.</p></div>
+          <div class="note" data-p="footer"><span class="t-label">05 Verweis</span><p>Die letzte Zeile verknüpft den Commit mit Ticket, Fehlermeldung oder Review. Hier steht auch <code>BREAKING CHANGE:</code> mit einer Erklärung, wenn der Commit bestehende Nutzung bricht.</p></div>
+        </div>
+      </div>
+      <ul class="picks" style="--n:5" role="group" aria-label="Teil der Nachricht wählen">
+        <li><button type="button" data-p="type" aria-pressed="false"><b>Typ und Bereich</b>Welche Art Änderung, wo</button></li>
+        <li><button type="button" data-p="subject" aria-pressed="false"><b>Betreff</b>Was der Commit bewirkt</button></li>
+        <li><button type="button" data-p="blank" aria-pressed="false"><b>Leerzeile</b>Trennt Betreff und Body</button></li>
+        <li><button type="button" data-p="body" aria-pressed="false"><b>Begründung</b>Warum es nötig war</button></li>
+        <li><button type="button" data-p="footer" aria-pressed="false"><b>Verweis</b>Ticket oder Review</button></li>
+      </ul>
+    </div>
+    <div class="prose mt"><p>Nicht jeder Commit braucht alle fünf Teile. Ein korrigierter Tippfehler kommt mit der ersten Zeile aus. Sobald die Frage „Warum?“ nicht offensichtlich ist, gehört die Antwort in den Body.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="praxis">
+  <div class="sec-head grid-12"><span class="t-label">03 Praxis</span><h2>So committest du im Alltag</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Alle Befehle habe ich in einem frischen Repository mit git 2.43 ausgeführt. Das Skript dazu spielt jeden Schritt automatisch durch.</p>
+      <h3>1. Erst schauen, dann auswählen</h3>
+      <p>Bevor du etwas stagest, verschaff dir einen Überblick. <code>git status</code> zeigt, welche Dateien sich geändert haben, <code>git diff</code> zeigt die Zeilen. Dann legst du gezielt in den Staging-Bereich, was zusammengehört:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">git status
+<span class="c"># nur die zwei Dateien zur Kontaktseite</span>
+git add pages/kontakt.html templates/footer.html
+<span class="c"># prüfen, was wirklich im Commit landet</span>
+git diff --cached --stat</pre></div>
+      <h3>2. Zwei Änderungen in einer Datei trennen</h3>
+      <p>Oft stecken zwei Themen in derselben Datei. <code>git add -p</code> geht die Änderungen Abschnitt für Abschnitt durch und fragt jedes Mal: <code>y</code> nimmt den Abschnitt, <code>n</code> lässt ihn liegen, <code>s</code> teilt ihn in kleinere, <code>e</code> öffnet ihn zum Bearbeiten. Unten drückt der Cursor <code>s</code>, <code>y</code> und <code>n</code>. Danach kannst du die Tasten selbst drücken.</p>
+    </div>
+    
+    <div class="wide fig" id="addp">
+      <div class="ap-ask">
+        <span class="q" id="ap-q" aria-live="polite">(1/1) Stage this hunk [y,n,q,a,d,s,e,?]?</span>
+        <span class="keys" role="group" aria-label="Antwort an git add -p">
+          <button type="button" class="btn" data-key="y">y</button>
+          <button type="button" class="btn" data-key="n">n</button>
+          <button type="button" class="btn" data-key="s">s</button>
+        </span>
+      </div>
+      <div class="ap-cols">
+        <div class="ap-col">
+          <span class="t-label">Arbeitskopie · app.py</span>
+          <div class="hunks joined" id="ap-hunks">
+            <div class="hunk" id="hk-a"><div class="hh" id="hk-a-h">@@ -1,6 +1,6 @@</div><div> def timeout():</div><div class="del">-    return 30</div><div class="add">+    return 60</div><div class="kept">bleibt für den nächsten Commit</div></div>
+            <div class="hunk" id="hk-b"><div class="hh">Teil 2 · Begrüßung</div><div> ...</div><div class="del">-    return "Hallo"</div><div class="add">+    return "Hallo, Welt"</div><div class="kept">bleibt für den nächsten Commit</div></div>
+          </div>
+        </div>
+        <div class="ap-col" id="ap-staged">
+          <span class="t-label">Staging-Bereich</span>
+          <p class="ap-empty" id="ap-empty">Noch leer.</p>
+        </div>
+      </div>
+      <p class="fig-cap" id="ap-say" aria-live="polite">Eine Datei, zwei Themen: Timeout und Begrüßung.</p>
+    </div>
+    <div class="prose">
+      <div class="code"><div class="code-bar"><span class="t-label">git add -p · Ausgabe gekürzt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">$ git add -p app.py
+@@ -1,6 +1,6 @@
+ def timeout():
+-    return 30
++    return 60
+ ...
+-    return "Hallo"
++    return "Hallo, Welt"
+(1/1) Stage this hunk [y,n,q,a,d,s,e,?]? <span class="f">s</span>
+Split into 2 hunks.
+<span class="c"># erster Teil (Timeout): y, zweiter Teil (Begrüßung): n</span>
+$ git diff --cached
+-    return 30
++    return 60</pre></div>
+      <p>Im Commit landet nur der Timeout. Die Begrüßung bleibt in der Arbeitskopie für den nächsten Commit.</p>
+
+      <h3>3. Die Nachricht schreiben</h3>
+      <p>Ohne <code>-m</code> öffnet <code>git commit</code> deinen Editor, und du schreibst Betreff, Leerzeile und Body wie oben. Für kurze Nachrichten aus dem Terminal geht es auch mit zweimal <code>-m</code>: Das erste wird der Betreff, das zweite der Body, die Leerzeile setzt git selbst.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">git commit -m <span class="s">"chore(site): Kontaktseite entfernen"</span> \
+  -m <span class="s">"Anfragen laufen seit dem Relaunch über das Formular im Footer."</span>
+<span class="c"># Ergebnis prüfen</span>
+git log -1 --format=%B</pre></div>
+      <p>Damit niemand die Form vergisst, legt ihr eine Vorlage ins Repository. git zeigt sie jedes Mal im Editor an, Zeilen mit <code>#</code> landen nicht in der Nachricht:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">.gitmessage</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">
+<span class="c"># typ(bereich): was der Commit bewirkt, max. 50 Zeichen</span>
+<span class="c"># Typen: feat fix docs refactor test build ci chore perf revert</span>
+<span class="c">#</span>
+<span class="c"># Warum ist die Änderung nötig? Was war vorher das Problem?</span>
+<span class="c">#</span>
+<span class="c"># Refs: TICKET-123</span></pre></div>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal · einmal pro Klon</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">git config commit.template .gitmessage
+<span class="c"># zeigt im Editor zusätzlich den Diff unter der Vorlage</span>
+git config commit.verbose true</pre></div>
+
+      <h3>4. Nachbessern, ohne das Log zu verstopfen</h3>
+      <p>Beim Review fällt auf: 60 Sekunden reichen nicht, es müssen 90 sein. Statt eines neuen Commits „Timeout nochmal angepasst“ markierst du die Korrektur als Nachtrag zum ursprünglichen Commit. Vor dem Merge faltet git sie hinein.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">git log --oneline        <span class="c"># Hash des Ziel-Commits suchen, z. B. 91fd3b7</span>
+git add src/session/config.py
+<span class="hl">git commit --fixup=amend:91fd3b7</span><span class="c"># Editor öffnet sich: Body und Betreff auf 90 Sekunden ändern,</span>
+<span class="c"># die erste Zeile "amend! ..." aber stehen lassen</span>
+git rebase -i --autosquash main
+<span class="c"># die Liste ist schon sortiert: speichern und schließen</span></pre></div>
+    </div>
+    
+    <div class="wide fig" id="squash">
+      <div class="fig-head"><h3>Der Nachtrag geht in seinem Commit auf</h3>
+        <div class="switch" role="group" aria-label="Zustand des Logs" id="sq-switch"><button type="button" data-v="0" aria-pressed="true">Vorher</button><button type="button" data-v="1" aria-pressed="false">rebase --autosquash</button></div>
+      </div>
+      <div class="sq-log" id="sq-log" tabindex="0" role="region" aria-label="git log --oneline">
+        <div class="sq-row fix" id="sq-fix"><span class="bar" aria-hidden="true"></span><span class="h">4e2b1d9</span><span class="m">amend! fix(session): Timeout auf 60 Sekunden erhöhen</span></div>
+        <div class="sq-row" id="sq-a"><span class="bar" aria-hidden="true"></span><span class="h">a71c0e4</span><span class="m">docs(readme): Tippfehler korrigieren</span></div>
+        <div class="sq-row" id="sq-b"><span class="bar" aria-hidden="true"></span><span class="h">c03e6a1</span><span class="m">feat(header): Hintergrund aufhellen</span></div>
+        <div class="sq-row" id="sq-t"><span class="bar" aria-hidden="true"></span><span class="h">91fd3b7</span><span class="m">fix(session): Timeout auf <span id="sq-n">60</span> Sekunden erhöhen</span></div>
+      </div>
+      <p class="fig-cap" id="sq-say" aria-live="polite">Vorher: Der Nachtrag steht als eigener Commit oben im Log.</p>
+    </div>
+    <div class="prose">
+      <p>Danach gibt es einen einzigen Commit „fix(session): Timeout auf 90 Sekunden erhöhen“ mit dem richtigen Inhalt. Reicht die alte Nachricht, nimmst du <code>--fixup=91fd3b7</code> ohne <code>amend:</code>. Genauso fasst du mehrere kleine Commits zusammen: In der Liste von <code>git rebase -i</code> ersetzt du <code>pick</code> durch <code>fixup</code> oder <code>squash</code>.</p>
+      <div class="callout warning"><span class="t-label">Nur auf deinem Branch</span><p>Rebase schreibt Commits neu. Mach das nur auf deinem eigenen Feature-Branch, bevor er in <code>main</code> landet. Wer Commits neu schreibt, die andere schon geholt haben, bringt deren Klone durcheinander.</p></div>
+
+      <h3>5. Das Format im Team absichern</h3>
+      <p>Eine Vereinbarung im Wiki hält zwei Wochen. Ein Hook hält länger: ein Skript, das git vor jedem Commit ausführt. Der <code>commit-msg</code>-Hook bekommt die Nachricht als Datei und kann den Commit mit einem Fehlercode ablehnen. Diese Fassung prüft Typ, Bereich und Länge und lässt von git erzeugte Nachrichten wie <code>Merge</code>, <code>Revert</code> und <code>fixup!</code> durch:</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">.githooks/commit-msg</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">#!/bin/sh
+<span class="c"># Prüft die erste Zeile der Commit-Nachricht gegen Conventional Commits.</span>
+<span class="c"># Ablage: .githooks/commit-msg, aktivieren mit: git config core.hooksPath .githooks</span>
+msg_file=<span class="s">"$1"</span>
+subject=$(grep -v <span class="s">'^#'</span> <span class="s">"$msg_file"</span> | head -n 1)
+<span class="c"># Von git erzeugte Nachrichten durchlassen</span>
+<span class="k">case</span> <span class="s">"$subject"</span> <span class="k">in</span>
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *|amend!\ *) <span class="k">exit</span> 0 ;;
+<span class="k">esac</span>
+<span class="hl">pattern=<span class="s">'^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?!?: .+'</span></span><span class="k">if</span> ! printf <span class="s">'%s\n'</span> <span class="s">"$subject"</span> | grep -Eq <span class="s">"$pattern"</span>; <span class="k">then</span>
+  echo <span class="s">"Commit abgelehnt: \"$subject\""</span> >&2
+  echo <span class="s">"Format: typ(bereich): beschreibung, z. B. fix(login): Sitzung nach Timeout beenden"</span> >&2
+  <span class="k">exit</span> 1
+<span class="k">fi</span>
+<span class="c"># Zeichen zählen, nicht Bytes: Umlaute sind in UTF-8 zwei Bytes lang</span>
+len=$(printf <span class="s">'%s'</span> <span class="s">"$subject"</span> | LC_ALL=C.UTF-8 wc -m)
+<span class="k">if</span> [ <span class="s">"$len"</span> -gt 72 ]; <span class="k">then</span>
+  echo <span class="s">"Commit abgelehnt: erste Zeile hat $len Zeichen, erlaubt sind 72."</span> >&2
+  echo <span class="s">"Tipp: Passt es nicht in eine Zeile, steckt meist mehr als eine Änderung im Commit."</span> >&2
+  <span class="k">exit</span> 1
+<span class="k">fi</span>
+<span class="k">if</span> [ <span class="s">"$len"</span> -gt 50 ]; <span class="k">then</span>
+  echo <span class="s">"Hinweis: erste Zeile hat $len Zeichen, Ziel sind 50."</span> >&2
+<span class="k">fi</span></pre></div>
+    </div>
+    <div class="prose">
+      <p>Über 50 Zeichen gibt der Hook nur einen Hinweis, über 72 lehnt er ab. Der Typ und der Bereich kosten schon 10 bis 15 Zeichen, eine harte Grenze bei 50 würde zu oft greifen. Ins Repository kommt der Hook mit Ausführungsrecht, danach aktiviert ihn jeder einmal in seinem Klon:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">chmod +x .githooks/commit-msg
+<span class="hl">git update-index --chmod=+x .githooks/commit-msg   <span class="c"># falls schon ohne Recht eingecheckt</span></span>git add .githooks && git commit -m <span class="s">"build(git): Hook für Commit-Nachrichten"</span>
+<span class="c"># jeder im Team, einmal pro Klon</span>
+git config core.hooksPath .githooks</pre></div>
+      <p>So sah das im Test aus. Drei Versuche, drei Antworten des Hooks:</p>
+    </div>
+    
+    <div class="wide fig term" id="hook">
+      <div class="code-bar"><span class="t-label">Terminal · Ausgabe im Test</span><button class="copy" type="button">Kopieren</button></div>
+      <div class="screen" tabindex="0" role="region" aria-label="Ausgabe des Hooks im Test">
+        <div class="att"><div><div class="in">$ git commit -m "fixed stuff"</div><div class="out err">Commit abgelehnt: "fixed stuff"</div><div class="out err">Format: typ(bereich): beschreibung, z. B. fix(login): Sitzung nach Timeout beenden</div></div><span class="stamp">abgelehnt</span></div>
+        <div class="att"><div><div class="in">$ git commit -m "fix(session): Abmeldung nach Timeout erzwingen ohne Rückfrage"</div><div class="out">Hinweis: erste Zeile hat 61 Zeichen, Ziel sind 50.</div></div><span class="stamp soft">nur Hinweis</span></div>
+        <div class="att"><div><div class="in">$ git commit -m "feat(api)!: Endpunkt v1 entfernen"</div><div class="out">[main 7230073] feat(api)!: Endpunkt v1 entfernen</div></div><span class="stamp ok">angenommen</span></div>
+      </div>
+    </div>
+    <div class="prose mt">
+      <p>Ein lokaler Hook ist eine Hilfe, keine Kontrolle: <code>git commit --no-verify</code> überspringt ihn. Wer das Format verbindlich machen will, prüft die Nachrichten zusätzlich in der CI-Pipeline des Pull Requests. Das habe ich hier nicht aufgesetzt.</p>
+      <h3>6. Die Vereinbarung aufschreiben</h3>
+      <p>Der Hook prüft die Form, nicht den Schnitt. Was ein Commit enthalten soll, gehört als kurze Regel ins Repository, zum Beispiel in die <code>CONTRIBUTING.md</code>:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">CONTRIBUTING.md · Ausschnitt</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">## Commits
+- Ein Commit = eine Änderung mit einem Grund. Im Zweifel kleiner.
+- Erste Zeile: typ(bereich): was der Commit bewirkt, max. 50 Zeichen.
+- Body, wenn das Warum nicht offensichtlich ist. Ticket in die letzte Zeile.
+- Nachbesserungen vor dem Merge mit --fixup und rebase --autosquash.
+- Einmal pro Klon: git config core.hooksPath .githooks</pre></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">04 Beim Testen</span><h2>Was beim Testen passiert ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Alle Beispiele habe ich mit einem Skript in frischen Repositorys durchgespielt. Diese sechs Dinge sind dabei schiefgegangen.</p>
+      <ul class="pitfalls">
+        <li><h3>Hook läuft still nicht</h3><p>Der Commit „fixed stuff“ ging einfach durch. git meldete nur <code>hint: The '.githooks/commit-msg' hook was ignored because it's not set as executable.</code> Der Hook war ohne Ausführungsrecht kopiert, und <code>git add</code> hatte ihn als <code>100644</code> gespeichert. Lösung: <code>chmod +x</code> und, wenn er schon eingecheckt ist, <code>git update-index --chmod=+x</code>.</p></li>
+        <li><h3>Umlaute verfälschen die Länge</h3><p>Der Hook zählte für „… ohne Rückfrage“ 62 Zeichen, es sind 61. <code>wc -m</code> zählt in der Standard-Locale Bytes, und „ü“ ist in UTF-8 zwei Bytes lang. Lösung: <code>LC_ALL=C.UTF-8 wc -m</code>.</p></li>
+        <li><h3>Fixup mit alter Nachricht</h3><p>Nach <code>--fixup</code> und <code>autosquash</code> stand im Code 90, in der Nachricht weiter „60 Sekunden“. Ein einfaches Fixup übernimmt nur den Inhalt. Lösung: <code>--fixup=amend:&lt;hash&gt;</code> (seit git 2.32) und die Nachricht im Editor korrigieren.</p></li>
+        <li><h3>Amend wird nicht gefaltet</h3><p>Nach <code>--fixup=amend:</code> blieb der Nachtrag als eigener Commit stehen. Ich hatte auch die erste Zeile „amend! fix(session): …“ geändert. Über genau diese Zeile findet <code>autosquash</code> sein Ziel. Lösung: nur die Zeilen darunter bearbeiten.</p></li>
+        <li><h3>Fixup im falschen Commit</h3><p>Ich hatte das Ziel per <code>git log --grep="Timeout"</code> gesucht. Getroffen hat das den neueren Commit „Abmeldung nach Timeout …“, der Fix landete dort. Lösung: den Hash aus <code>git log --oneline</code> ablesen und direkt angeben.</p></li>
+        <li><h3>Suche nach Typ findet zu viel</h3><p><code>git log -E --grep='^fix'</code> fand auch „fixed stuff“. Lösung: <code>--grep='^fix[(!:]'</code> verlangt nach dem Typ eine Klammer, ein Ausrufezeichen oder einen Doppelpunkt.</p></li>
+      </ul>
+      <p>Zur Version: <code>git rebase --autosquash</code> funktioniert seit git 2.44 auch ohne <code>-i</code>. Mit 2.43 braucht es noch <code>-i</code>. Im Skript habe ich den Editor dafür mit <code>GIT_SEQUENCE_EDITOR=:</code> übersprungen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">05 Entscheidung</span><h2>Wie groß ist ein Commit?</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Wie groß ist ein Commit">
+        <table>
+          <thead><tr><th scope="col">Situation</th><th scope="col">So committest du</th><th scope="col">Warum</th></tr></thead>
+          <tbody>
+            <tr><td>Eine Farbe im Header geändert</td><td>Ein eigener Commit</td><td>Klein ist kein Problem. Man findet und revertiert ihn einzeln.</td></tr>
+            <tr><td>Neue Funktion über fünf Dateien</td><td>Ein Commit, wenn alle fünf für die Funktion nötig sind</td><td>Ein halber Commit würde den Build brechen oder ins Leere verlinken.</td></tr>
+            <tr><td>Fehler behoben und nebenbei umbenannt</td><td>Zwei Commits, zuerst das Umbenennen</td><td>Der Fix bleibt im Diff lesbar und lässt sich einzeln zurücknehmen.</td></tr>
+            <tr><td>Ganze Datei neu formatiert</td><td>Eigener Commit vor der inhaltlichen Änderung</td><td>Sonst versteckt sich eine geänderte Zeile zwischen hundert verschobenen.</td></tr>
+            <tr><td>Feierabend, halb fertig</td><td>Zwischenstand auf deinem Branch, vor dem Merge falten</td><td>Gesichert ist er trotzdem, nur <code>main</code> sieht ihn nie.</td></tr>
+            <tr><td>Test zum Fix</td><td>Im selben Commit wie der Fix</td><td>Fix und Prüfung gehören zusammen, auch beim Revert.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Faustregel</span><p>Lies deine Betreffzeile laut. Wenn du dafür „und“ brauchst, sind es zwei Commits. Wenn du nicht weißt, was du schreiben sollst, weißt du noch nicht, was der Commit tut.</p></div>
+
+      <h3>Selbsttest</h3>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="a">
+          <legend>Du hast heute den Header umgefärbt und einen Timeout-Fehler behoben. Wie committest du?</legend>
+          <label><input type="radio" name="q1" value="a"> Zwei Commits, einer pro Änderung.</label>
+          <label><input type="radio" name="q1" value="b"> Ein Commit „Header und Timeout angepasst“.</label>
+          <label><input type="radio" name="q1" value="c"> Ein Commit „Diverse Änderungen“, der Diff sagt den Rest.</label>
+          <p class="why" hidden>Zwei Änderungen mit zwei Gründen sind zwei Commits. So kann jemand den Header zurücknehmen, ohne den Fix zu verlieren, und findet den Fix über seine eigene Nachricht.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="b">
+          <legend>Warum lieber zu viele kleine Commits als zu wenige große?</legend>
+          <label><input type="radio" name="q2" value="a"> Kleine Commits lassen sich schneller pushen.</label>
+          <label><input type="radio" name="q2" value="b"> Zusammenfassen geht später mit einem Befehl, aufteilen nur von Hand.</label>
+          <label><input type="radio" name="q2" value="c"> git speichert kleine Commits platzsparender.</label>
+          <p class="why" hidden>Mit <code>fixup</code> oder <code>squash</code> im interaktiven Rebase werden aus fünf Commits einer. Einen großen Commit aufzuteilen heißt dagegen: zurücksetzen und jede Zeile neu sortieren.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Der Hook liegt im Repository, aber bei einer Kollegin läuft er nicht. Was fehlt am wahrscheinlichsten?</legend>
+          <label><input type="radio" name="q3" value="a"> Sie muss git neu installieren.</label>
+          <label><input type="radio" name="q3" value="b"> Hooks laufen nur auf dem Server.</label>
+          <label><input type="radio" name="q3" value="c"> <code>git config core.hooksPath .githooks</code> in ihrem Klon oder das Ausführungsrecht der Datei.</label>
+          <p class="why" hidden><code>core.hooksPath</code> ist eine lokale Einstellung und wird nicht mitgeklont. Und eine Hook-Datei ohne Ausführungsrecht ignoriert git, mit nur einem Hinweis.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste für euer Team</h3>
+      <ul class="checklist" data-key="git-commits">
+        <li><label><input type="checkbox"> <span><b>Vor jedem Commit <code>git status</code> und <code>git diff</code> lesen.</b> Erst wissen, was sich geändert hat, dann auswählen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Gezielt stagen statt <code>git add .</code></b> Dateien einzeln, gemischte Dateien mit <code>git add -p</code>.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Eine Änderung pro Commit.</b> Wenn der Betreff ein „und“ braucht, aufteilen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Erste Zeile unter 50 Zeichen, mit Typ und Bereich.</b> Was der Commit bewirkt, nicht was du getan hast.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Das Warum in den Body.</b> Nach einer Leerzeile, mit Verweis aufs Ticket.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Nachbesserungen mit <code>--fixup</code> falten.</b> Nur auf dem eigenen Branch, vor dem Merge.</span></label></li>
+        <li><label><input type="checkbox"> <span><b><code>.githooks/commit-msg</code> und <code>.gitmessage</code> einchecken.</b> Mit Ausführungsrecht, Regel in die <code>CONTRIBUTING.md</code>.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Jeder aktiviert den Hook in seinem Klon.</b> <code>git config core.hooksPath .githooks</code></span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits 1.0.0</a> (Format, Typen, <code>!</code> und <code>BREAKING CHANGE</code>)</li>
+        <li><a href="https://git-scm.com/docs/SubmittingPatches">git: SubmittingPatches</a> (Befehlston, 50 Zeichen als weiche Grenze)</li>
+        <li><a href="https://cbea.ms/git-commit/">Chris Beams: How to Write a Git Commit Message</a> (sieben Regeln, Umbruch nach 72 Zeichen)</li>
+        <li><a href="https://git-scm.com/docs/git-add">git-add</a> (<code>-p</code>, getestet mit git 2.43)</li>
+        <li><a href="https://git-scm.com/docs/git-commit">git-commit</a> (<code>--fixup=amend:</code>, <code>--verbose</code>, <code>--no-verify</code>, getestet mit git 2.43)</li>
+        <li><a href="https://git-scm.com/docs/git-rebase">git-rebase</a> (<code>--autosquash</code>, getestet mit git 2.43)</li>
+        <li><a href="https://git-scm.com/docs/githooks">githooks</a> (<code>commit-msg</code>, <code>core.hooksPath</code>, Ausführungsrecht)</li>
+        <li><a href="https://github.com/git/git/blob/master/Documentation/RelNotes/2.44.0.adoc">git 2.44 Release Notes</a> (<code>--autosquash</code> ohne <code>-i</code>)</li>
+      </ol>
+    </div>
+  </div>
+</section>

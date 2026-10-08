@@ -1,0 +1,401 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Ein Werkstattbericht kommt rein: „ACC schaltet sich während der Fahrt ab.“ Der Diagnose-Assistent findet ähnliche Berichte. Was er nicht findet: dass das ACC das Signal <code>VehicleSpeed</code> nutzt, dass dieses Signal im ESP aus den Raddrehzahlen berechnet wird und dass der Raddrehzahlsensor vorne links seit gestern unplausible Werte meldet.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Vektorsuche beantwortet „Was ist ähnlich?“. Ein Graph beantwortet „Was hängt zusammen?“. Diagnosefragen sind fast immer von der zweiten Sorte.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Der beste Start ist Vector-Cypher: Die Vektorsuche findet den Einstieg, eine Cypher-Abfrage folgt den Beziehungen bis zur Ursache.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Die Beziehungen hast du in der Fahrzeugentwicklung meist schon, in Kommunikationsmatrix, ARXML und Funktionskatalog. Nutze sie vor jeder LLM-Extraktion.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Dieselbe Frage, zwei Ordnungen</h2>
+    <p>Acht Texte im Wissensspeicher, eine Frage. Erst ordnet die Vektorsuche sie nach Ähnlichkeit, dann ordnet der Graph dieselben Texte nach Beziehungen. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="s1-q"><span id="q1"></span><span id="q2"></span><span id="q3"></span></div>
+        <div class="s1-ax" id="s1-ax">Embedding-Raum, vereinfacht auf 2 Dimensionen</div>
+        <svg class="s1-svg" id="s1-svg"></svg>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Der Wissensspeicher.</b> Werkstattberichte, Handbuchseiten, ein Wiki-Artikel. Jeder Text ist ein Punkt im Embedding-Raum: Was ähnlich klingt, liegt nah beieinander.</p></div>
+        <div class="cap" data-at="0.15"><span class="n">02</span><p><b>Die Frage landet, die Vektorsuche nimmt die drei nächsten Texte.</b> Alle handeln vom ACC, keiner nennt die Ursache. F-201 liegt weit weg, weil „Sensor unplausibel“ ganz anders klingt.</p></div>
+        <div class="cap" data-at="0.4"><span class="n">03</span><p><b>Dieselben Texte, andere Ordnung.</b> Im Graphen zählen Beziehungen statt Abstände. Handbuch und Wiki haben keine Kante zu dieser Frage und fallen weg. Einstieg ist F-202, der beste Treffer der Vektorsuche.</p></div>
+        <div class="cap" data-at="0.6"><span class="n">04</span><p><b>Cypher folgt den Kanten.</b> F-202 betrifft das ACC, das ACC nutzt VehicleSpeed, das aus WheelSpeed_FL abgeleitet ist. Das ESP sendet es, und am ESP hängt der Sensor.</p></div>
+        <div class="cap" data-at="0.84"><span class="n">05</span><p><b>Am Ende des Pfads steht F-201, die Ursache.</b> Über VehicleSpeed hängen auch F-203 und F-204: drei Symptome, ein Fehler.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">01 Das Problem</span><h2>Wo Vektorsuche an ihre Grenzen stößt</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Klassisches RAG zerlegt Dokumente in Abschnitte, wandelt jeden in einen Vektor um und sucht zur Frage die ähnlichsten. Das ist schnell, einfach und für viele Fragen völlig ausreichend. Vier Fragetypen bringen es aber zuverlässig ins Straucheln, und in der Fahrzeugdiagnose sind sie Alltag.</p>
+      <ul class="pitfalls">
+        <li><h3>Mehrere Sprünge</h3><p>Funktion, Signal, abgeleitetes Signal, Steuergerät, Sensor. Ähnlichkeit kennt keine Sprünge, sie vergleicht nur Texte.</p></li>
+        <li><h3>Andere Worte, gleiche Ursache</h3><p>„ACC schaltet ab“, „Lenkung zu leicht“, „Tachonadel springt“: drei Berichte, kein gemeinsamer Begriff, eine Ursache. Für eine Vektorsuche sind das drei Themen.</p></li>
+        <li><h3>Wer ist noch betroffen?</h3><p>„Welche Funktionen hängen an <code>WheelSpeed_FL</code>?“ ist eine Frage an die Architektur. Die Top-k-Treffer liefern nur eine zufällige Auswahl.</p></li>
+        <li><h3>Gleiche Namen, andere Dinge</h3><p><code>VehicleSpeed</code> gibt es auf mehreren Bussen und in mehreren Varianten. Ein Graph trennt Dinge mit eindeutiger Identität, Vektoren vermischen sie.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="konzept">
+  <div class="sec-head grid-12"><span class="t-label">02 Das Konzept</span><h2>Ähnlichkeit gegen Zusammenhang</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>GraphRAG ersetzt die Vektorsuche nicht, es erweitert sie. Die verbreitetste Variante kombiniert beides: Die Vektorsuche findet den <strong>Einstiegspunkt</strong>, der Graph liefert den <strong>Zusammenhang</strong>. Wie das aussieht, hast du oben beim Scrollen gesehen.</p>
+      <p>Daneben gibt es zwei weitere Muster. Bei <strong>Text2Cypher</strong> übersetzt das LLM die Frage direkt in eine Graph-Abfrage, ideal für Impact-Analysen und Zählungen. Beim Ansatz aus dem <a href="https://arxiv.org/abs/2404.16130">Microsoft-GraphRAG-Paper</a> werden Gruppen verwandter Entitäten vorab zusammengefasst, um globale Fragen wie „Was sind die häufigsten Fehlerbilder?“ zu beantworten. Alle drei laufen auf Neo4j.</p>
+      <h3>Das Beispiel: eine Fahrzeugarchitektur als Graph</h3>
+      <p>Das Beispiel ist eine stark vereinfachte, ausgedachte E/E-Architektur. Ein Raddrehzahlsensor hängt am ESP-Steuergerät. Das ESP sendet <code>WheelSpeed_FL</code> und berechnet daraus <code>VehicleSpeed</code>. Drei Steuergeräte empfangen <code>VehicleSpeed</code> über den CAN-Bus: das Radar-Steuergerät für den Abstandsregeltempomaten (ACC), die Lenkung für die geschwindigkeitsabhängige Unterstützung und das Kombiinstrument für den Tacho.</p>
+      <p>Unten fällt zuerst der Sensor aus, dann das Kombiinstrument, danach sucht die Grafik vom ACC aus rückwärts nach Ursachen. Die Welle läuft Kante für Kante, die Zahl an jedem Bauteil ist die Anzahl der Sprünge. Berechnet wird das live aus den Kanten des Graphen, genau wie später in Neo4j. Klick danach selbst auf ein Bauteil.</p>
+    </div>
+    
+    <div class="wide fig" id="sim">
+      <div class="fig-head"><h3>Mach ein Bauteil kaputt</h3>
+        <div class="switch" role="group" aria-label="Modus" id="sim-mode"><button type="button" data-mode="out" aria-pressed="true">Ausfall simulieren</button><button type="button" data-mode="in" aria-pressed="false">Ursache suchen</button></div>
+      </div>
+      <svg class="sim-svg" id="sim-svg" role="group" aria-label="Fahrzeugarchitektur zum Anklicken: Raddrehzahlsensor am ESP-Steuergerät, das ESP berechnet VehicleSpeed und sendet es über den CAN-Bus an Radar-Steuergerät (ACC), Lenkungs-Steuergerät (Lenkunterstützung) und Kombiinstrument (Tachoanzeige)."></svg>
+      <div class="sim-out">
+        <span class="big" id="sim-n">0</span><span class="lbl" id="sim-lbl">Funktionen betroffen</span>
+        <p id="sim-say" aria-live="polite">Klick auf ein Bauteil.</p>
+      </div>
+    </div>
+    <div class="prose mt">
+      <p>Die Fehlerberichte liegen als eigene Knoten im Graphen, jeweils verknüpft mit der Stelle, an der sie beobachtet wurden. Das Datenmodell kommt mit sechs Knotentypen aus:</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Schema</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">(:Sensor)-[:CONNECTED_TO]-&gt;(:ECU)
+(:ECU)-[:SENDS]-&gt;(:Signal)          (:ECU)-[:RECEIVES]-&gt;(:Signal)
+(:Signal)-[:DERIVED_FROM]-&gt;(:Signal)
+(:Function)-[:RUNS_ON]-&gt;(:ECU)      (:Function)-[:USES]-&gt;(:Signal)
+(:Fault {id, text, embedding})-[:OBSERVED_AT]-&gt;(:Sensor | :Function)</pre></div>
+      <h3>Die Pipeline Schritt für Schritt</h3>
+      <p>Was passiert technisch, wenn der Assistent die Frage beantwortet? Fünf Stufen, von der Frage bis zur Antwort mit Begründungspfad. Die ersten drei sind klassisches RAG, die vierte macht daraus GraphRAG. Die Grafik läuft die Stufen einmal durch, die Cypher-Abfrage schreibt sich dabei Zeile für Zeile, und jede Zeile markiert den Teil des Pfads, den sie findet.</p>
+    </div>
+    
+    <div class="wide fig" id="flowfig">
+      <div class="fig-head"><h3>Von der Frage zur begründeten Antwort</h3><span class="t-label">Stufe 4 macht den Unterschied</span></div>
+      <ol class="flow">
+        <li data-s="0"><span class="nd" aria-hidden="true"></span><div><span class="t-label">01 Frage</span><p>Warum schaltet sich das ACC während der Fahrt ab, und welche anderen Funktionen sind betroffen?</p></div></li>
+        <li data-s="1"><span class="nd" aria-hidden="true"></span><div><span class="t-label">02 Embedding</span><p>Ein Embedding-Modell übersetzt den Text in Zahlen. Ähnliche Bedeutung heißt ähnliche Zahlen.</p>
+          <div class="vec" aria-hidden="true" id="vec"></div><div class="vec-num" id="vec-num">[0.021, −0.113, 0.087, 0.004, …] · 1536 Dimensionen</div></div></li>
+        <li data-s="2"><span class="nd" aria-hidden="true"></span><div><span class="t-label">03 Vektorindex</span><p>Neo4j sucht im Vektorindex die ähnlichsten Fehlerberichte. Der beste Treffer wird zum Einstieg. Bis hierhin ist das klassisches RAG.</p>
+          <ul class="hits" id="hits">
+            <li class="top" data-v="0.92"><span class="id">F-202</span><span>ACC schaltet sich während der Fahrt ab</span><span class="bar" aria-hidden="true"><i></i></span><span class="v">0.92</span></li>
+            <li data-v="0.54"><span class="id">F-203</span><span>Lenkung fühlt sich zu leicht an</span><span class="bar" aria-hidden="true"><i></i></span><span class="v">0.54</span></li>
+            <li data-v="0.41"><span class="id">F-204</span><span>Tachonadel springt auf null</span><span class="bar" aria-hidden="true"><i></i></span><span class="v">0.41</span></li>
+          </ul></div></li>
+        <li data-s="3" class="key"><span class="nd" aria-hidden="true"></span><div><span class="t-label">04 Traversal</span><p>Jetzt übernimmt der Graph: Cypher folgt Funktion, Signal und Ableitung bis zum Sensor.</p>
+          <pre class="cy" tabindex="0" id="cy"><span class="cl" data-on="0,1,2">MATCH (node)-[:OBSERVED_AT]-&gt;(f:Function)-[:USES]-&gt;(sig:Signal)</span><span class="cl" data-on="3">MATCH (sig)-[:DERIVED_FROM*0..3]-&gt;(src:Signal)</span><span class="cl" data-on="4,5">MATCH (src)&lt;-[:SENDS]-(ecu:ECU)&lt;-[:CONNECTED_TO]-(sensor:Sensor)</span><span class="cl" data-on="6">OPTIONAL MATCH (root:Fault)-[:OBSERVED_AT]-&gt;(sensor)</span></pre>
+          <div class="pchips" id="pchips"><span data-i="0">F-202</span><span class="ar" aria-hidden="true">→</span><span data-i="1">ACC</span><span class="ar" aria-hidden="true">→</span><span data-i="2">VehicleSpeed</span><span class="ar" aria-hidden="true">→</span><span data-i="3">WheelSpeed_FL</span><span class="ar" aria-hidden="true">→</span><span data-i="4">ESP</span><span class="ar" aria-hidden="true">→</span><span data-i="5">Sensor VL</span><span class="ar" aria-hidden="true">→</span><span data-i="6" class="root">F-201</span></div></div></li>
+        <li data-s="4"><span class="nd" aria-hidden="true"></span><div><span class="t-label">05 Antwort</span><p>Das Modell bekommt Pfad und Ursache als Kontext und begründet seine Antwort. Beispielhafte Ausgabe:</p>
+          <p class="answer" id="answer">Das ACC schaltet sich ab, weil das Signal VehicleSpeed ungültig ist. VehicleSpeed wird im ESP-Steuergerät aus WheelSpeed_FL berechnet, und der Raddrehzahlsensor vorne links liefert unplausible Werte (F-201). Prüfe zuerst diesen Sensor und seine Steckverbindung. Ebenfalls betroffen sind die Lenkunterstützung (F-203) und die Tachoanzeige (F-204).</p></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="praxis">
+  <div class="sec-head grid-12"><span class="t-label">03 Praxis</span><h2>GraphRAG mit Neo4j aufsetzen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Neo4j startest du lokal mit Docker. Das APOC-Plugin brauchst du später für den automatischen Graphaufbau, also aktivierst du es gleich mit. Es liegt dem Image bei.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">docker run -d --name neo4j -p 7474:7474 -p 7687:7687 \
+  -e NEO4J_AUTH=neo4j/dein-passwort \
+  -e NEO4J_PLUGINS=<span class="s">'["apoc"]'</span> \
+  neo4j:community
+
+pip install <span class="s">"neo4j-graphrag[openai]"</span></pre></div>
+      <p>Unter <code>http://localhost:7474</code> öffnest du den Neo4j Browser und siehst deinen Graphen. <code>neo4j-graphrag</code> ist das offizielle Python-Paket von Neo4j. Es bringt Retriever, LLM-Anbindungen für OpenAI, Anthropic, Bedrock, Ollama und weitere sowie eine Pipeline zum Graphaufbau mit.</p>
+      <h3>Architektur laden und Vektorindex anlegen</h3>
+      <p>Die Architektur schreibst du mit Cypher. In der Praxis kommt sie aus einem Import deiner Kommunikationsmatrix oder deiner ARXML-Dateien. Die Fehlertexte bekommen ein Embedding, darüber legst du einen Vektorindex. Neo4j speichert Graph und Vektoren in derselben Datenbank, du brauchst also keinen zweiten Vector Store.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">load.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> neo4j <span class="k">import</span> GraphDatabase
+<span class="k">from</span> neo4j_graphrag.embeddings <span class="k">import</span> OpenAIEmbeddings
+<span class="k">from</span> neo4j_graphrag.indexes <span class="k">import</span> create_vector_index
+
+driver = GraphDatabase.driver(<span class="s">"bolt://localhost:7687"</span>, auth=(<span class="s">"neo4j"</span>, <span class="s">"dein-passwort"</span>))
+embedder = OpenAIEmbeddings(model=<span class="s">"text-embedding-3-small"</span>)   <span class="c"># 1536 Dimensionen</span>
+
+driver.execute_query(<span class="s">"""
+CREATE (esp:ECU {name: "ESP-Steuergerät"}),
+       (radar:ECU {name: "Radar-Steuergerät"}),
+       (eps:ECU {name: "Lenkungs-Steuergerät"}),
+       (wss:Sensor {name: "Raddrehzahlsensor vorne links"}),
+       (ws:Signal {name: "WheelSpeed_FL"}),
+       (vs:Signal {name: "VehicleSpeed"}),
+       (acc:Function {name: "Abstandsregeltempomat (ACC)"}),
+       (servo:Function {name: "Geschwindigkeitsabhängige Lenkunterstützung"}),
+       (wss)-[:CONNECTED_TO]-&gt;(esp),
+       (esp)-[:SENDS]-&gt;(ws), (esp)-[:SENDS]-&gt;(vs), (vs)-[:DERIVED_FROM]-&gt;(ws),
+       (radar)-[:RECEIVES]-&gt;(vs), (eps)-[:RECEIVES]-&gt;(vs),
+       (acc)-[:RUNS_ON]-&gt;(radar),  (acc)-[:USES]-&gt;(vs),
+       (servo)-[:RUNS_ON]-&gt;(eps),  (servo)-[:USES]-&gt;(vs),
+       (:Fault {id: "F-201", text: "Raddrehzahlsensor vorne links liefert unplausible Werte."})-[:OBSERVED_AT]-&gt;(wss),
+       (:Fault {id: "F-202", text: "ACC schaltet sich während der Fahrt ab."})-[:OBSERVED_AT]-&gt;(acc),
+       (:Fault {id: "F-203", text: "Lenkung fühlt sich auf der Autobahn plötzlich zu leicht an."})-[:OBSERVED_AT]-&gt;(servo)
+       // ... Kombiinstrument, Tacho und F-204 wie in der Animation
+"""</span>)
+
+<span class="c"># Embeddings an die Fehlerberichte schreiben</span>
+faults, _, _ = driver.execute_query(<span class="s">"MATCH (f:Fault) RETURN f.id AS id, f.text AS text"</span>)
+<span class="k">for</span> f <span class="k">in</span> faults:
+    driver.execute_query(
+        <span class="s">"MATCH (f:Fault {id: $id}) CALL db.create.setNodeVectorProperty(f, 'embedding', $v)"</span>,
+        id=f[<span class="s">"id"</span>], v=embedder.embed_query(f[<span class="s">"text"</span>]),
+    )
+
+create_vector_index(driver, <span class="s">"fault_embeddings"</span>, label=<span class="s">"Fault"</span>,
+                    embedding_property=<span class="s">"embedding"</span>, dimensions=1536,
+                    similarity_fn=<span class="s">"cosine"</span>)</pre></div>
+    </div>
+    <div class="prose">
+      <h3>Der direkte Vergleich</h3>
+      <p>Jetzt dieselbe Frage an zwei Retriever. Der <code>VectorRetriever</code> sucht nur im Vektorindex. Der <code>VectorCypherRetriever</code> nutzt denselben Index als Einstieg und führt danach eine Cypher-Abfrage aus. Darin stehen dir der gefundene Knoten als <code>node</code> und seine Ähnlichkeit als <code>score</code> zur Verfügung.</p>
+    </div>
+    <div class="wide" id="tabs">
+      <div class="switch" role="group" aria-label="Retriever"><button type="button" data-t="p1" aria-pressed="true">Vector + Cypher</button><button type="button" data-t="p2" aria-pressed="false">Nur Vektor</button></div>
+      <div class="code" id="p1"><div class="code-bar"><span class="t-label">compare.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> neo4j_graphrag.retrievers <span class="k">import</span> VectorCypherRetriever
+
+RETRIEVAL_QUERY = <span class="s">"""
+MATCH (node)-[:OBSERVED_AT]-&gt;(f:Function)-[:USES]-&gt;(sig:Signal)
+MATCH path = (sig)-[:DERIVED_FROM*0..3]-&gt;(src:Signal)</span>
+<span class="hl"><span class="s">WHERE NOT (src)-[:DERIVED_FROM]-&gt;()</span></span><span class="s">MATCH (src)&lt;-[:SENDS]-(ecu:ECU)&lt;-[:CONNECTED_TO]-(sensor:Sensor)
+OPTIONAL MATCH (root:Fault)-[:OBSERVED_AT]-&gt;(sensor)
+OPTIONAL MATCH (other:Function)-[:USES]-&gt;(sig) WHERE other &lt;&gt; f
+OPTIONAL MATCH (sym:Fault)-[:OBSERVED_AT]-&gt;(other)
+WITH node, score, f, ecu, sensor, root, path,
+     collect(DISTINCT other.name) AS also_affected,
+     collect(DISTINCT sym.id) AS related_faults
+RETURN node.id AS fault, node.text AS text, score, f.name AS function,
+       [n IN nodes(path) | n.name] + [ecu.name, sensor.name] AS signal_path,
+       sensor.name AS sensor, root.id AS root_fault, also_affected, related_faults
+LIMIT 5
+"""</span>
+
+question = <span class="s">"Warum schaltet sich das ACC während der Fahrt ab, und welche anderen Funktionen sind betroffen?"</span>
+graph = VectorCypherRetriever(driver, <span class="s">"fault_embeddings"</span>, RETRIEVAL_QUERY, embedder)
+<span class="k">for</span> item <span class="k">in</span> graph.search(query_text=question, top_k=1).items:
+    print(item.content)</pre>
+        <div class="code-note">Die markierte Zeile hält nur das Ende der Ableitungskette. Warum sie nötig ist, zeigt <a href="#testen">Was beim Testen passiert ist</a>.</div></div>
+      <div class="code" id="p2" hidden><div class="code-bar"><span class="t-label">compare.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> neo4j_graphrag.retrievers <span class="k">import</span> VectorRetriever
+
+vector = VectorRetriever(driver, <span class="s">"fault_embeddings"</span>, embedder, return_properties=[<span class="s">"id"</span>, <span class="s">"text"</span>])
+<span class="k">for</span> item <span class="k">in</span> vector.search(query_text=question, top_k=3).items:
+    print(item.content)</pre></div>
+    </div>
+    <div class="prose">
+      <p>Das Ergebnis aus meinem Testlauf, gekürzt:</p>
+    </div>
+    <div class="wide">
+      <div class="compare">
+        <div><span class="t-label">Nur Vektor · Top 3</span><ul>
+          <li>F-202 ACC schaltet sich während der Fahrt ab</li>
+          <li>F-203 Lenkung fühlt sich zu leicht an</li>
+          <li>F-204 Tachonadel springt auf null</li>
+          <li><strong>Ursache F-201: fehlt.</strong> Zusammenhang zwischen den drei: keiner.</li></ul></div>
+        <div><span class="t-label">Vector + Cypher</span><ul>
+          <li>Fehler F-202 an Abstandsregeltempomat</li>
+          <li>Pfad: VehicleSpeed ← WheelSpeed_FL ← ESP-Steuergerät ← Raddrehzahlsensor VL</li>
+          <li><strong>Ursache: F-201</strong> am Raddrehzahlsensor vorne links</li>
+          <li><strong>Ebenfalls betroffen:</strong> Tachoanzeige, Lenkunterstützung (F-204, F-203)</li></ul></div>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout note"><span class="t-label">Offen gesagt</span><p>Ich hatte beim Testen keinen Zugang zur OpenAI-API. Der Test lief deshalb mit einem einfachen lokalen Embedder. Mit echten Embeddings kann die Reihenfolge der Vektortreffer anders sein. Am Kern ändert das nichts: Die Vektorsuche sagt nicht, dass die drei Fehler zusammenhängen, und die Ursache F-201 klingt ganz anders als die Frage.</p></div>
+      <h3>Das LLM anschließen</h3>
+      <p>Mit der Klasse <code>GraphRAG</code> verbindest du Retriever und Modell. Sie holt den Kontext, baut den Prompt und ruft das LLM auf. Ein <code>result_formatter</code> macht aus den Datenbank-Records vier klare Zeilen. Das spart Tokens und verbessert die Antworten.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">rag.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> neo4j_graphrag.generation <span class="k">import</span> GraphRAG
+<span class="k">from</span> neo4j_graphrag.llm <span class="k">import</span> OpenAILLM
+<span class="k">from</span> neo4j_graphrag.types <span class="k">import</span> RetrieverResultItem
+
+<span class="k">def</span> format_record(r):
+    <span class="k">return</span> RetrieverResultItem(
+        content=(
+            <span class="s">f"Fehler {r['fault']} an {r['function']}: {r['text']}\n"</span>
+            <span class="s">f"Signalpfad: {' ← '.join(r['signal_path'])}\n"</span>
+            <span class="s">f"Mögliche Ursache: {r['root_fault']} am {r['sensor']}\n"</span>
+            <span class="s">f"Ebenfalls betroffen: {', '.join(r['also_affected'])} (Fehler {', '.join(r['related_faults'])})"</span>
+        ),
+        metadata={<span class="s">"score"</span>: r[<span class="s">"score"</span>]},
+    )
+
+graph = VectorCypherRetriever(driver, <span class="s">"fault_embeddings"</span>, RETRIEVAL_QUERY, embedder,
+                              result_formatter=format_record)
+llm = OpenAILLM(model_name=<span class="s">"gpt-4.1"</span>, model_params={<span class="s">"temperature"</span>: 0})
+rag = GraphRAG(retriever=graph, llm=llm)
+
+result = rag.search(query_text=question, retriever_config={<span class="s">"top_k"</span>: 1}, return_context=<span class="k">True</span>)
+print(result.answer)</pre>
+        <div class="code-note">Kontext, den das Modell bekommt: „Fehler F-202 an Abstandsregeltempomat (ACC) … Signalpfad: VehicleSpeed ← WheelSpeed_FL ← ESP-Steuergerät ← Raddrehzahlsensor vorne links. Mögliche Ursache: F-201 …“</div></div>
+    </div>
+    <div class="prose">
+      <h3>Impact-Analyse mit Text2Cypher</h3>
+      <p>„Welche Funktionen hängen am Signal <code>WheelSpeed_FL</code>, direkt oder abgeleitet?“ Für so eine Frage hilft keine Ähnlichkeitssuche. Hier lässt du das LLM eine Cypher-Abfrage schreiben, die die Architektur vollständig durchläuft. Das ist dieselbe Rechnung wie oben in „Mach ein Bauteil kaputt“, nur in Neo4j.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">text2cypher.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> neo4j_graphrag.retrievers <span class="k">import</span> Text2CypherRetriever
+
+retriever = Text2CypherRetriever(
+<span class="hl">    driver=readonly_driver,     <span class="c"># Nutzer mit reinen Leserechten</span></span>    llm=llm,
+    examples=[
+        <span class="s">"USER INPUT: 'Welche Signale sendet das ESP-Steuergerät?' QUERY: "</span>
+        <span class="s">"MATCH (:ECU {name: 'ESP-Steuergerät'})-[:SENDS]-&gt;(s:Signal) RETURN s.name"</span>
+    ],
+)
+rag = GraphRAG(retriever=retriever, llm=llm)
+print(rag.search(query_text=<span class="s">"Welche Funktionen hängen an WheelSpeed_FL, direkt oder abgeleitet?"</span>).answer)
+
+<span class="c"># Erwartete Abfrage und Ergebnis auf den Beispieldaten:
+# MATCH (f:Function)-[:USES]-&gt;(s:Signal)-[:DERIVED_FROM*0..3]-&gt;(:Signal {name: "WheelSpeed_FL"})
+# MATCH (f)-[:RUNS_ON]-&gt;(e:ECU) RETURN f.name, e.name, s.name
+#   ABS/ESP                       ESP-Steuergerät       WheelSpeed_FL
+#   Abstandsregeltempomat (ACC)   Radar-Steuergerät     VehicleSpeed
+#   Lenkunterstützung             Lenkungs-Steuergerät  VehicleSpeed
+#   Tachoanzeige                  Kombiinstrument       VehicleSpeed</span></pre></div>
+    </div>
+    <div class="prose">
+      <div class="callout warning"><span class="t-label">Sicherheit</span><p>Ein LLM, das Datenbankabfragen schreibt, kann auch <code>DETACH DELETE</code> schreiben. Gib dem Text2Cypher-Retriever immer einen Datenbanknutzer mit reinen Leserechten. Wenige gute Beispiele in <code>examples</code> helfen mehr als lange Prompts.</p></div>
+      <h3>Den Graphen aus Dokumenten bauen</h3>
+      <p>Im Beispiel kamen die Beziehungen aus strukturierten Daten, und das ist der beste Weg. Für Lastenhefte, Diagnoseanleitungen oder Werkstattberichte ohne Struktur kann ein LLM Entitäten und Beziehungen extrahieren. Dafür gibt es den <code>SimpleKGPipeline</code>. Gib ihm ein Schema vor, sonst erfindet das Modell bei jedem Dokument neue Labels.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">build_graph.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">import</span> asyncio
+<span class="k">from</span> neo4j_graphrag.experimental.pipeline.kg_builder <span class="k">import</span> SimpleKGPipeline
+
+kg_builder = SimpleKGPipeline(
+    llm=llm, driver=driver, embedder=embedder,
+    schema={
+        <span class="s">"node_types"</span>: [<span class="s">"ECU"</span>, <span class="s">"Sensor"</span>, <span class="s">"Signal"</span>, <span class="s">"Function"</span>],
+        <span class="s">"relationship_types"</span>: [<span class="s">"CONNECTED_TO"</span>, <span class="s">"SENDS"</span>, <span class="s">"USES"</span>, <span class="s">"RUNS_ON"</span>],
+        <span class="s">"patterns"</span>: [
+            (<span class="s">"Sensor"</span>, <span class="s">"CONNECTED_TO"</span>, <span class="s">"ECU"</span>),
+            (<span class="s">"ECU"</span>, <span class="s">"SENDS"</span>, <span class="s">"Signal"</span>),
+            (<span class="s">"Function"</span>, <span class="s">"USES"</span>, <span class="s">"Signal"</span>),
+            (<span class="s">"Function"</span>, <span class="s">"RUNS_ON"</span>, <span class="s">"ECU"</span>),
+        ],
+    },
+    from_file=<span class="k">False</span>,   <span class="c"># True, um PDFs oder Markdown zu laden</span>
+)
+
+asyncio.run(kg_builder.run_async(
+    text=<span class="s">"Der Raddrehzahlsensor vorne links ist am ESP-Steuergerät angeschlossen. Das ESP sendet WheelSpeed_FL."</span>
+))</pre></div>
+    </div>
+    <div class="prose">
+      <p>Die Pipeline teilt den Text in Abschnitte, speichert sie als <code>Chunk</code>-Knoten mit Embedding, extrahiert die Entitäten und verknüpft sie mit ihrer Quelle. So springst du später von jeder Entität zurück zur Seite im Lastenheft.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">04 Beim Testen</span><h2>Was beim Testen passiert ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Alle Beispiele habe ich gegen eine echte Neo4j-Instanz laufen lassen. Diese vier Dinge stehen so in keiner Doku.</p>
+      <ul class="pitfalls">
+        <li><h3>Pipeline bricht ohne APOC ab</h3><p>Fehler: <code>There is no procedure with the name apoc.refactor.mergeNodes</code>. Der <code>SimpleKGPipeline</code> braucht APOC zum Zusammenführen von Entitäten und für <code>apoc.merge.relationship</code>. Mit <code>perform_entity_resolution=False</code> verschwindet nur der erste Fehler. Lösung: <code>NEO4J_PLUGINS='["apoc"]'</code> beim Start. In Neo4j Aura ist APOC Core schon dabei.</p></li>
+        <li><h3>Jeder Pfad kommt doppelt</h3><p><code>DERIVED_FROM*0..3</code> liefert jede Zwischenstation als eigenes Ergebnis, also <code>VehicleSpeed</code> allein und <code>VehicleSpeed ← WheelSpeed_FL</code>. Weil das ESP beide Signale sendet, findet auch die kurze Fassung einen Sensor. Lösung: <code>WHERE NOT (src)-[:DERIVED_FROM]-&gt;()</code> behält nur das Ende der Kette. Unten mit drei Einstiegen, also <code>top_k=3</code>:</p></li>
+      </ul>
+    </div>
+    
+    <div class="wide fig" id="dup">
+      <div class="dup-q" tabindex="0" role="region" aria-label="Ausschnitt der Retrieval-Query">MATCH path = (sig)-[:DERIVED_FROM*0..3]-&gt;(src:Signal)
+<span class="fix" id="dup-fix"></span>MATCH (src)&lt;-[:SENDS]-(ecu:ECU)&lt;-[:CONNECTED_TO]-(sensor:Sensor)</div>
+      <div class="dup-head"><span class="t-label">signal_path pro Ergebnis</span><span><b id="dup-n">6</b> <span class="t-label">Zeilen</span></span></div>
+      <div class="dup-rows" id="dup-rows"></div>
+      <p class="fig-cap" id="dup-say" aria-live="polite">Ohne die Zeile: zwei Ergebnisse pro Fehlerbericht.</p>
+    </div>
+    <div class="prose">
+      <ul class="pitfalls">
+        <li><h3>Rohe Records im Prompt</h3><p>Ohne Formatter landet <code>&lt;Record fault='F-202' signal_path=[…]&gt;</code> im Kontext. Das Modell versteht es, aber ein <code>result_formatter</code> halbiert den Kontext und macht die Antwort klarer.</p></li>
+        <li><h3>Gut vernetzte Knoten fluten den Kontext</h3><p><code>VehicleSpeed</code> hat in echten Architekturen dutzende Empfänger. Ohne <code>LIMIT</code> in der Retrieval-Query wächst der Kontext mit jedem Steuergerät.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">05 Entscheidung</span><h2>Vektor oder Graph?</h2></div>
+  <div class="grid-12">
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Vektor oder Graph">
+        <table>
+          <thead><tr><th scope="col">Situation</th><th scope="col">Vektorsuche reicht</th><th scope="col">GraphRAG lohnt sich</th></tr></thead>
+          <tbody>
+            <tr><td>Art der Fragen</td><td>„Was steht im Handbuch zu X?“</td><td>„Was hängt mit X zusammen?“</td></tr>
+            <tr><td>Daten</td><td>Fließtext: Handbücher, Wikis, FAQs</td><td>Klare Entitäten: Steuergeräte, Signale, Funktionen, Varianten</td></tr>
+            <tr><td>Antwort steckt in</td><td>einem oder wenigen Absätzen</td><td>der Verbindung mehrerer Fakten</td></tr>
+            <tr><td>Impact und Zählen</td><td>selten nötig</td><td>Kern der Aufgabe</td></tr>
+            <tr><td>Nachvollziehbarkeit</td><td>Quelle angeben reicht</td><td>Begründungspfad muss sichtbar sein</td></tr>
+            <tr><td>Aufwand</td><td>Stunden</td><td>Tage: Schema, Import, Pflege</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Faustregel</span><p>Starte mit Vektorsuche. Sammle die Fragen, an denen sie scheitert. Wenn die meisten an Beziehungen hängen, ist das dein Signal für einen Graphen. In der Fahrzeugentwicklung hast du die Beziehungen oft schon: in Kommunikationsmatrizen, DBC- und ARXML-Dateien, Funktionskatalogen und Stücklisten.</p></div>
+
+      <h3>Selbsttest</h3>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="a">
+          <legend>Warum findet die Vektorsuche den Sensorfehler F-201 nicht?</legend>
+          <label><input type="radio" name="q1" value="a"> Sein Text klingt ganz anders als die Frage nach dem ACC.</label>
+          <label><input type="radio" name="q1" value="b"> Der Vektorindex ist zu klein.</label>
+          <label><input type="radio" name="q1" value="c"> F-201 hat kein Embedding.</label>
+          <p class="why" hidden>Vektorsuche vergleicht die Bedeutung von Texten. „Sensor liefert unplausible Werte“ hat mit „ACC schaltet ab“ sprachlich nichts zu tun. Die Verbindung steckt in der Architektur, nicht im Text.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="b">
+          <legend>Wofür nutzt der VectorCypherRetriever den Vektorindex?</legend>
+          <label><input type="radio" name="q2" value="a"> Um die Antwort zu formulieren.</label>
+          <label><input type="radio" name="q2" value="b"> Um den Einstiegsknoten zu finden, von dem die Cypher-Abfrage startet.</label>
+          <label><input type="radio" name="q2" value="c"> Um den Graphen aus Dokumenten zu bauen.</label>
+          <p class="why" hidden>Die Vektorsuche liefert den Startpunkt, hier F-202. Danach übernimmt die Retrieval-Query und folgt den Beziehungen bis zur Ursache.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>„Welche Funktionen hängen an WheelSpeed_FL?“ Welcher Weg passt?</legend>
+          <label><input type="radio" name="q3" value="a"> VectorRetriever mit <code>top_k=10</code></label>
+          <label><input type="radio" name="q3" value="b"> SimpleKGPipeline</label>
+          <label><input type="radio" name="q3" value="c"> Text2CypherRetriever mit Leserechten</label>
+          <p class="why" hidden>Das ist eine Frage an die Struktur, keine Ähnlichkeitsfrage. Eine generierte Cypher-Abfrage läuft die Architektur vollständig durch. Der Nutzer braucht nur Leserechte.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste für dein erstes GraphRAG</h3>
+      <ul class="checklist" data-key="graphrag-neo4j">
+        <li><label><input type="checkbox"> <span><b>20 echte Fragen gesammelt</b> und markiert, welche an Beziehungen hängen. Das Datenmodell ergibt sich aus den Sprüngen, die sie brauchen.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Vorhandene Architekturdaten importiert</b> statt extrahiert: Kommunikationsmatrix, DBC, ARXML, Funktionskatalog.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Neo4j mit APOC</b> gestartet, Vektorindex über den Fehlertexten angelegt.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>VectorCypherRetriever</b> mit eigener Retrieval-Query gebaut, mit <code>LIMIT</code>.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>result_formatter</b> ergänzt, damit der Kontext kurz und lesbar ist.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Volltextindex</b> für Signalnamen und Fehlercodes ergänzt (<code>HybridCypherRetriever</code>).</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Text2Cypher nur mit Leserechten</b>, Timeout und Logging.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Gegen Vektor-RAG gemessen:</b> dieselben Testfragen durch beide Varianten.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://neo4j.com/docs/neo4j-graphrag-python/current/">neo4j-graphrag für Python: Dokumentation</a></li>
+        <li><a href="https://pypi.org/project/neo4j-graphrag/">neo4j-graphrag auf PyPI</a> (getestet mit 1.22.0)</li>
+        <li><a href="https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/">Neo4j Cypher Manual: Vektorindizes</a></li>
+        <li><a href="https://hub.docker.com/_/neo4j">Neo4j Docker Image</a> (getestet mit 2026.09.0 Community)</li>
+        <li><a href="https://arxiv.org/abs/2404.16130">Edge et al.: From Local to Global, A Graph RAG Approach to Query-Focused Summarization (2024)</a></li>
+      </ol>
+    </div>
+  </div>
+</section>

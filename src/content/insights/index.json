@@ -1,0 +1,190 @@
+[
+	{
+		"slug": "langfuse-crashkurs",
+		"no": "01",
+		"category": "Observability",
+		"title": "Langfuse-Crashkurs",
+		"subtitle": "Sieh, was deine LLM-App wirklich tut",
+		"teaser": "Crashkurs Langfuse: Tracing, Prompt-Versionen und Experimente für LLM-Apps, mit getestetem Code für das Python SDK 4.16.",
+		"description": "Crashkurs Langfuse: Tracing, Prompt-Versionen und Experimente für LLM-Apps, mit getestetem Code für das Python SDK 4.16.",
+		"lede": "Für alle, die eine LLM-Anwendung bauen und bei falschen Antworten raten müssen, woran es lag. Nach diesem Crashkurs tracest du jeden Schritt, versionierst Prompts und findest Fehler mit Experimenten, bevor jemand sie meldet.",
+		"facts": [
+			"Python SDK 4.16",
+			"Code getestet am 04.10.2026"
+		],
+		"minutes": 18,
+		"date": "2026-10-04",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "git-commits",
+		"no": "02",
+		"category": "Teamarbeit",
+		"title": "Git-Commits im Team",
+		"subtitle": "klein schneiden, klar benennen",
+		"teaser": "Für Entwicklerteams, deren git log aus „Update“ und „Fixes“ besteht: wie du Änderungen in kleine Commits schneidest, eine Nachricht schreibst, die man später findet, und das Format mit einem Hook absicherst.",
+		"description": "Für Entwicklerteams, deren git log aus „Update“ und „Fixes“ besteht: wie du Änderungen in kleine Commits schneidest, eine Nachricht schreibst, die man später findet, und das Format mit einem Hook absicherst.",
+		"lede": "Für Teams, deren <code>git log</code> aus „Update“ und „Fixes“ besteht. Danach schneidest du Änderungen in Commits, die man wiederfindet, schreibst eine Nachricht, die ohne Code verständlich ist, und sicherst das Format im Repository ab.",
+		"facts": [
+			"git 2.43, POSIX-sh",
+			"Getestet am 04.10.2026"
+		],
+		"minutes": 13,
+		"date": "2026-10-04",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "graphrag-neo4j",
+		"no": "03",
+		"category": "KI-Architektur",
+		"title": "GraphRAG mit Neo4j",
+		"subtitle": "wenn Ähnlichkeit nicht reicht",
+		"teaser": "Vektorsuche findet Ähnliches, ein Wissensgraph findet Zusammenhänge. Am Beispiel einer Fahrzeugarchitektur: wo klassisches RAG die Ursache übersieht, wie GraphRAG mit Neo4j sie findet und wann sich der Aufwand lohnt.",
+		"description": "Vektorsuche findet Ähnliches, ein Wissensgraph findet Zusammenhänge. Am Beispiel einer Fahrzeugarchitektur: wo klassisches RAG die Ursache übersieht, wie GraphRAG mit Neo4j sie findet und wann sich der Aufwand lohnt.",
+		"lede": "Vektorsuche findet ähnliche Texte, ein Graph findet Zusammenhänge. Am Beispiel einer Fahrzeugarchitektur siehst du, wo klassisches RAG die Ursache eines Fehlers übersieht, wie du sie mit Neo4j und neo4j-graphrag findest und wann sich der Aufwand lohnt.",
+		"facts": [
+			"neo4j-graphrag 1.22, Neo4j 2026.09",
+			"Getestet am 03.10.2026"
+		],
+		"minutes": 18,
+		"date": "2026-10-03",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "opus-5-5-prompting",
+		"no": "04",
+		"category": "Prompting",
+		"title": "So promptest du Claude Opus 5.5",
+		"subtitle": "welche Sätze raus, welche rein",
+		"teaser": "Welche Sätze du aus deinen Prompts für Claude Opus 5.5 streichen und welche du ergänzen solltest. Mit Vorher/Nachher-Beispielen und einem Baukasten für deinen System-Prompt.",
+		"description": "Welche Sätze du aus deinen Prompts für Claude Opus 5.5 streichen und welche du ergänzen solltest. Mit Vorher/Nachher-Beispielen und einem Baukasten für deinen System-Prompt.",
+		"lede": "Für alle, die Prompts für Claude schreiben. Opus 5.5 denkt immer mit, meldet sich unterwegs und legt schneller los. Manche Sätze in deinen Prompts helfen deshalb nicht mehr, ein paar neue schon. Hier steht, welche.",
+		"facts": [
+			"Claude Opus 5.5",
+			"Stand 04.10.2026"
+		],
+		"minutes": 11,
+		"date": "2026-10-04",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "matt-pocock-workflow",
+		"no": "05",
+		"category": "Coding-Agenten",
+		"title": "Coding-Agenten im Alltag",
+		"subtitle": "erst abstimmen, dann bauen",
+		"teaser": "Ein Workflow für Coding-Agenten von der Idee bis zum Merge: ausfragen lassen, Wissen in Dateien statt im Chat, Tickets als Graph, Test-first und Review mit zwei Achsen. Mit getestetem Beispiel.",
+		"description": "Ein Workflow für Coding-Agenten von der Idee bis zum Merge: ausfragen lassen, Wissen in Dateien statt im Chat, Tickets als Graph, Test-first und Review mit zwei Achsen. Mit getestetem Beispiel.",
+		"lede": "Der Agent ist selten das Problem, die Abstimmung ist es. Ein frei verfügbarer Satz von Skills führt dich von der Idee bis zum Merge: Du lässt dich ausfragen, das Wissen wandert in Dateien, und jedes Ticket startet in einem frischen Kontext. Für Entwickler, Tech Leads und Product Owner, die mit Claude Code oder Codex arbeiten und mehr wollen als Vibe Coding.",
+		"facts": [
+			"Skills mit Stand 04.10.2026",
+			"Getestet mit Node 22.22"
+		],
+		"minutes": 12,
+		"date": "2026-10-04",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "matt-skills-1-3",
+		"no": "06",
+		"category": "Coding-Agenten",
+		"title": "Matt Pococks Skills 1.3",
+		"subtitle": "ganze Specs umsetzen, PRs prüfbar machen, aus Sitzungen lernen",
+		"teaser": "Was Version 1.3 von Matt Pococks Skills für Coding-Agenten bringt: implement-spec setzt eine ganze Spec in einem Lauf um, pr macht Pull Requests prüfbar, retro lernt aus Sitzungen, und CONTEXT.md heißt jetzt GLOSSARY.md.",
+		"description": "Was Version 1.3 von Matt Pococks Skills für Coding-Agenten bringt: implement-spec setzt eine ganze Spec in einem Lauf um, pr macht Pull Requests prüfbar, retro lernt aus Sitzungen, und CONTEXT.md heißt jetzt GLOSSARY.md.",
+		"lede": "Matt Pocock hat Version 1.3 seiner Skills für Coding-Agenten veröffentlicht. Drei Skills, die zentral für seine eigene Arbeit sind, gehören jetzt fest zum Set: <code>implement-spec</code> setzt eine ganze Spec in einem Lauf um, <code>pr</code> gibt jedem Pull Request eine prüfbare Form, und <code>retro</code> schaut auf eine Sitzung zurück und verbessert die Umgebung des Agenten. Dazu kommt eine Umbenennung, die du nicht verpassen solltest: <code>CONTEXT.md</code> heißt jetzt <code>GLOSSARY.md</code>.",
+		"facts": [
+			"Version 1.3.1",
+			"Stand 06.10.2026"
+		],
+		"minutes": 15,
+		"date": "2026-10-06",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "matt-top-5-skills",
+		"no": "07",
+		"category": "Coding-Agenten",
+		"title": "Matt Pococks fünf wichtigste Skills",
+		"subtitle": "vom ersten Satz bis zum fertigen Feature",
+		"teaser": "Fünf Skills von Matt Pocock, ein Workflow: vom ersten Satz über Fragen, Tickets, parallele Umsetzung und Tests bis zur Retrospektive, an einem durchgehenden Beispiel.",
+		"description": "Fünf Skills von Matt Pocock, ein Workflow: vom ersten Satz über Fragen, Tickets, parallele Umsetzung und Tests bis zur Retrospektive, an einem durchgehenden Beispiel.",
+		"lede": "Für alle, die mit Claude Code oder einem anderen Coding-Agenten bauen und öfter nachbessern, als ihnen lieb ist. Nach diesem Beitrag kennst du die fünf Skills, die aus einem vagen Satz einen geprüften Pull Request machen, und weißt, wann du welchen aufrufst.",
+		"facts": [
+			"mattpocock/skills 1.3.1",
+			"Stand 6. Oktober 2026"
+		],
+		"minutes": 14,
+		"date": "2026-10-06",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "claude-design-kritiker",
+		"no": "08",
+		"category": "Design mit KI",
+		"title": "Design mit Claude",
+		"subtitle": "So vermeidest du den KI-Einheitslook",
+		"teaser": "Warum Claude ohne Vorlage Einheitsdesign baut und wie eine Kritiker-Schleife aus Mess-Skript und drei Bild-Kritikern das ändert. Mit getestetem Code.",
+		"description": "Warum Claude ohne Vorlage Einheitsdesign baut und wie eine Kritiker-Schleife aus Mess-Skript und drei Bild-Kritikern das ändert. Mit getestetem Code.",
+		"lede": "Für alle, die mit Claude Websites, Mails oder Folien bauen und den typischen KI-Look loswerden wollen. Du lernst drei Stufen gegen Einheitsdesign kennen und baust die wichtigste selbst: eine Kritiker-Schleife, die misst, statt zu schwärmen.",
+		"facts": [
+			"Node 22.22, Playwright 1.56.1, Claude-Subagents",
+			"Getestet am 04.10.2026"
+		],
+		"minutes": 14,
+		"date": "2026-10-04",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "motion-graphics-claude",
+		"no": "09",
+		"category": "Motion Graphics",
+		"title": "Motion Graphics mit Claude",
+		"subtitle": "Videos als Code statt aus dem Videomodell",
+		"teaser": "Wie Claude animierte Grafiken als Webseite baut und Bild für Bild zu einem Video rendert. Mit getestetem Mini-Renderer, Prompts für Short, Werbespot und Erklärvideo.",
+		"description": "Wie Claude animierte Grafiken als Webseite baut und Bild für Bild zu einem Video rendert. Mit getestetem Mini-Renderer, Prompts für Short, Werbespot und Erklärvideo.",
+		"lede": "Für Entwickler, Produktteams und Schulungsverantwortliche, die Erklärvideos, Werbespots für Software oder Shorts brauchen und keinen Motion Designer haben. Danach weißt du, wie Claude ein Video als Webseite baut, wie du es dafür promptest und wo der Ansatz aufhört.",
+		"facts": [
+			"Node 22.22, Playwright 1.56, FFmpeg 6.1",
+			"Getestet am 04.10.2026"
+		],
+		"minutes": 13,
+		"date": "2026-10-04",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "context7-vibecoding",
+		"no": "10",
+		"category": "Coding-Agenten",
+		"title": "Vibecoding ohne Halluzinationen",
+		"subtitle": "Best Practices mit Context7",
+		"teaser": "Dein Agent schreibt Code für eine Library-Version, die du gar nicht installiert hast. So gibst du ihm mit Context7 aktuelle Dokumentation statt Erinnerungen und baust einen Workflow, der auch nach dem dritten Prompt noch hält.",
+		"description": "Dein Agent schreibt Code für eine Library-Version, die du gar nicht installiert hast. So gibst du ihm mit Context7 aktuelle Dokumentation statt Erinnerungen und baust einen Workflow, der auch nach dem dritten Prompt noch hält.",
+		"lede": "Dein Agent schreibt Code für eine Library-Version, die du gar nicht installiert hast. So gibst du ihm aktuelle Dokumentation statt Erinnerungen, und so baust du einen Workflow, der auch nach dem dritten Prompt noch hält.",
+		"facts": [
+			"Für Entwickler mit KI-Agenten",
+			"Stand 03.10.2026"
+		],
+		"minutes": 14,
+		"date": "2026-10-03",
+		"author": "Michel Leotta"
+	},
+	{
+		"slug": "claude-code-38-tricks",
+		"no": "11",
+		"category": "Claude Code",
+		"title": "Claude Code: 38 Tricks",
+		"subtitle": "für Kontext, Prompts und Agents",
+		"teaser": "Arbeitsbuch mit 38 Tricks für Claude Code in 8 Kategorien: CLAUDE.md, Kontext, Prompting, Verifikation, Agents, Skills und Hooks, Automatisierung, Sicherheit. Mit Beispielen zum Kopieren, Best Practices aus der offiziellen Doku und einer Team-Challenge.",
+		"description": "Arbeitsbuch mit 38 Tricks für Claude Code in 8 Kategorien: CLAUDE.md, Kontext, Prompting, Verifikation, Agents, Skills und Hooks, Automatisierung, Sicherheit. Mit Beispielen zum Kopieren, Best Practices aus der offiziellen Doku und einer Team-Challenge.",
+		"lede": "Für alle, die mit Claude Code mehr wollen als „geht so“. Danach hältst du den Kontext sauber, stellst Aufgaben prüfbar und erweiterst Claude Code mit Skills, Hooks und Agents. Sortiert nach Art, mit Beispielen zum Kopieren und Best Practices aus der offiziellen Doku.",
+		"facts": [
+			"Offizielle Doku, Okt. 2026",
+			"Stand 03.10.2026",
+			"Für Teams"
+		],
+		"minutes": 25,
+		"date": "2026-10-03",
+		"author": "Michel Leotta"
+	}
+]

@@ -1,0 +1,163 @@
+---
+/**
+ * Einzelner Insights-Beitrag.
+ * Inhalt, Figuren-CSS und Figuren-Skript kommen aus src/content/insights/<slug>.*.
+ * Laden für schlechte Verbindungen: Text steht sofort, Figuren laden danach. Die GSAP-Plugins für
+ * Scroll-Sequenzen kommen nur bei schneller Verbindung und ohne reduzierte Bewegung dazu.
+ */
+import Layout from '@/layouts/Layout.astro';
+import CtaBanner from '@/components/sections/CtaBanner.astro';
+import InsightCard from '@/components/insights/InsightCard.astro';
+import '@/styles/insights.css';
+import { INSIGHTS, insightContent, insightToc, insightSeo, insightJsonLd, formatDate, initials, related, type Insight } from '@/lib/insights';
+import kitUrl from '@/scripts/insights/kit.js?url';
+import gsapCoreUrl from '@/scripts/insights/gsap-core.js?url';
+import gsapPluginsUrl from '@/scripts/insights/gsap-plugins.js?url';
+
+export function getStaticPaths() {
+	return INSIGHTS.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: Insight };
+const { body, css, script } = insightContent(post.slug);
+const toc = insightToc(body);
+const more = related(post);
+const facts = [
+	{ k: 'Rubrik', v: post.category },
+	{ k: 'Lesezeit', v: `${post.minutes} Minuten` },
+	{ k: 'Stand', v: formatDate(post.date) },
+	{ k: 'Technik', v: post.facts.filter((f) => !/\d{1,2}\.\s?\S+\s?\d{4}|Stand|Getestet|getestet/.test(f)).join(', ') || post.facts[0] },
+];
+---
+
+<Layout seo={insightSeo(post)} extraJsonLd={insightJsonLd(post)}>
+	{css && <style slot="head" is:inline set:html={css} />}
+
+	<main class="ins" id="top">
+		<header class="ins-hero">
+			<div class="ins-hero__grid" aria-hidden="true"></div>
+			<div class="ins-hero__glow" aria-hidden="true"></div>
+			<div class="ins-hero__scan" aria-hidden="true"></div>
+			<div class="ins-hero__in">
+				<nav class="ins-crumbs" aria-label="Brotkrumen">
+					<a href="/insights">Insights</a><span aria-hidden="true">/</span><span class="cat">{post.category}</span>
+				</nav>
+				<h1 style={`view-transition-name: t-${post.slug}`}>
+					{post.title}<span class="sub">{post.subtitle}</span>
+				</h1>
+				<p class="lede" set:html={post.lede} />
+				<dl class="ins-facts">
+					{facts.map((f) => (
+						<div><dt>{f.k}</dt><dd>{f.v}</dd></div>
+					))}
+				</dl>
+			</div>
+		</header>
+
+		<!-- Lesezeile klebt nur, solange der Beitrag läuft -->
+		<div class="ins-main">
+			<div class="ins-bar">
+				<div class="ins-bar__in">
+					<p class="ins-bar__now" aria-live="off"><span class="t-label">Abschnitt</span><span data-now>{toc[0]?.title ?? post.title}</span></p>
+					{toc.length > 1 && (
+						<details class="ins-toc">
+							<summary>
+								Inhalt
+								<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg>
+							</summary>
+							<ol>
+								{toc.map((t) => <li><a href={`#${t.id}`}>{t.title}</a></li>)}
+							</ol>
+						</details>
+					)}
+				</div>
+				<span class="ins-bar__progress" aria-hidden="true"></span>
+			</div>
+
+			<div class="ins-body" set:html={body} />
+		</div>
+
+		<footer class="ins-end">
+			<div class="ins-end__in">
+				<div class="ins-author">
+					<span class="av" aria-hidden="true">{initials(post.author)}</span>
+					<p><b>{post.author}</b> baut als Full-Stack-Entwickler und Systemarchitekt KI-Anwendungen bei Cloud Pioneers und schreibt hier auf, was er dabei herausfindet.</p>
+				</div>
+				<section aria-labelledby="more-h">
+					<div class="mb-6 flex items-end justify-between gap-4">
+						<h2 id="more-h" class="text-2xl font-medium md:text-3xl">Weiterlesen</h2>
+						<a href="/insights" class="font-mono text-[11px] tracking-[0.14em] text-muted-foreground uppercase transition-colors hover:text-foreground">Alle Insights →</a>
+					</div>
+					<div class="ins-cards">
+						{more.map((p) => <InsightCard post={p} />)}
+					</div>
+				</section>
+			</div>
+		</footer>
+
+		<CtaBanner eyebrow="Für Ihr Team" headline="Sie wollen das in Ihren Projekten einsetzen? Wir unterstützen bei Einführung und Umsetzung." buttonLabel="Gespräch vereinbaren" />
+	</main>
+
+	<!--
+		Figuren nachladen, erst nach dem Text. Immer: GSAP-Kern (~28 KB gzip), Baukasten, Beitragsskript.
+		Nur bei schneller Verbindung und ohne reduzierte Bewegung: Plugins für Scroll-Sequenzen (~45 KB gzip).
+		Sonst „lite“: Figuren zeigen ihren Endzustand und bleiben per Klick bedienbar.
+	-->
+	<script is:inline data-core={gsapCoreUrl} data-plugins={gsapPluginsUrl} data-kit={kitUrl} data-fig={script}>
+		(function () {
+			var d = document.currentScript.dataset,
+				c = navigator.connection || {},
+				slow = c.saveData || /(^|-)2g|3g/.test(c.effectiveType || ''),
+				lite = slow || matchMedia('(prefers-reduced-motion: reduce)').matches,
+				queue = [d.core].concat(lite ? [] : [d.plugins], [d.kit, d.fig]).filter(Boolean);
+			window.__insLite = lite;
+			function next() {
+				var u = queue.shift();
+				if (!u) return;
+				var s = document.createElement('script');
+				s.src = u;
+				s.onload = s.onerror = next;
+				document.body.appendChild(s);
+			}
+			if (document.readyState === 'loading') addEventListener('DOMContentLoaded', next);
+			else next();
+		})();
+	</script>
+
+	<script>
+		// Lesezeile: aktueller Abschnitt, Inhaltsverzeichnis, Fortschritt (Fallback ohne CSS-Scroll-Timeline)
+		const bar = document.querySelector<HTMLElement>('.ins-bar');
+		const now = bar?.querySelector<HTMLElement>('[data-now]');
+		const toc = bar?.querySelector<HTMLDetailsElement>('.ins-toc');
+		const links = [...(bar?.querySelectorAll<HTMLAnchorElement>('.ins-toc a') ?? [])];
+		const sections = links.map((a) => document.getElementById(a.hash.slice(1))).filter((s): s is HTMLElement => !!s);
+
+		const mark = (id: string) => {
+			const a = links.find((l) => l.hash === '#' + id);
+			if (!a || !now) return;
+			links.forEach((l) => l.setAttribute('aria-current', String(l === a)));
+			now.textContent = a.textContent;
+		};
+		const io = new IntersectionObserver(
+			(entries) => entries.forEach((e) => e.isIntersecting && mark(e.target.id)),
+			{ rootMargin: '-120px 0px -60% 0px' }
+		);
+		sections.forEach((s) => io.observe(s));
+		links.forEach((a) => a.addEventListener('click', () => toc?.removeAttribute('open')));
+		document.addEventListener('click', (e) => {
+			if (toc?.open && !toc.contains(e.target as Node)) toc.removeAttribute('open');
+		});
+
+		if (!CSS.supports('animation-timeline: scroll()')) {
+			const p = bar?.querySelector<HTMLElement>('.ins-bar__progress');
+			let ticking = false;
+			const update = () => {
+				const max = document.documentElement.scrollHeight - innerHeight;
+				p?.style.setProperty('--p', String(max > 0 ? scrollY / max : 0));
+				ticking = false;
+			};
+			addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+			update();
+		}
+	</script>
+</Layout>

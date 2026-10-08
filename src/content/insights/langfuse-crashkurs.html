@@ -1,0 +1,571 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Ein Kunde schreibt dem Support-Bot: „Kann ich etwas zurückgeben?“ Der Bot antwortet: „Dazu habe ich nichts gefunden.“ Dabei steht die Rückgabe-Regel in der Wissensbasis. Im Server-Log findest du genau eine Zeile: <code>POST /chat 200</code>. Alles grün, und trotzdem falsch.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Ein Trace zerlegt eine Anfrage in verschachtelte Schritte, sodass du siehst, welcher Schritt eine falsche Antwort verursacht hat.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Mit <code>@observe</code> und <code>propagate_attributes</code> trägt jeder Schritt in wenigen Zeilen Typ, Nutzer, Session, Modell und Tokens.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Ein Experiment mit drei festen Beispielen hat beim Schreiben dieses Beitrags einen echten Retriever-Fehler gefunden, den kein Log gezeigt hätte.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Die Geschichte</span>
+    <h2 id="s1-h">Vom Log-Eintrag zum Trace</h2>
+    <p>Dieselbe Anfrage wird von einer Log-Zeile zu einem Baum, in dem die Ursache steht. Die Sequenz startet, sobald sie im Bild ist.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage">
+        <div class="s1-panel">
+          <div class="s1-chat">
+            <div class="bubble user"><small>Kunde</small>Kann ich etwas zurückgeben?</div>
+            <div class="bubble"><small>Bot</small><span class="txt">Dazu habe ich nichts gefunden.</span></div>
+          </div>
+          <div class="s1-log"><span class="line" aria-label="POST /chat 200 4.3s">POST /chat 200 4.3s</span><span class="t-label">Trace · fa69c809</span></div>
+          <div class="s1-tree">
+            <div class="node" data-d="0"><span class="ty">span</span><span class="nm">handle</span><span class="s1-attrs"><span class="attr">user <b>u-42</b></span><span class="attr">session <b>chat-7</b></span></span></div>
+            <div class="node" data-d="1"><span class="ty">span</span><span class="nm">rag_answer</span></div>
+            <div class="node focus" data-d="2" id="s1-ret"><span class="ty"><span class="mk m0" aria-hidden="true"></span> retriever</span><span class="nm">retrieve</span><span class="out">output <b id="s1-empty">[]</b></span></div>
+            <div class="node" data-d="2" id="s1-gen"><span class="ty"><span class="mk m2" aria-hidden="true"></span> generation</span><span class="nm">answer</span><span class="s1-attrs"><span class="attr">claude-haiku-4-5</span><span class="attr">412 → 18 Tokens</span></span></div>
+          </div>
+          <div class="s1-why"><span class="t-label">Ursache</span><span>Der Retriever hat nichts gefunden, das Modell hatte keine Quelle.</span></div>
+        </div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Eine Zeile, keine Antwort.</b> Das Log sagt nur: Anfrage angekommen, Status 200, 4,3 Sekunden. Was dazwischen passiert ist, bleibt unsichtbar.</p></div>
+        <div class="cap" data-at="0.28"><span class="n">02</span><p><b>Die Zeile zerfällt in Schritte.</b> Langfuse zeichnet jede Funktion als Observation auf. Zusammen bilden sie einen Trace: einen Baum, verschachtelt wie die Aufrufe im Code.</p></div>
+        <div class="cap" data-at="0.56"><span class="n">03</span><p><b>Jeder Schritt bekommt Kontext.</b> Am Trace hängen Nutzer und Session, an der Generation Modell und Tokens. Danach kannst du filtern, vergleichen und Kosten zuordnen.</p></div>
+        <div class="cap" data-at="0.8"><span class="n">04</span><p><b>Die Ursache steht im Baum.</b> Der Retriever hat eine leere Liste geliefert. Das Modell hat korrekt geantwortet, es hatte nur nichts in der Hand.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">02 Das Problem</span><h2 class="split">Warum Logs bei LLM-Apps nicht reichen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Klassisches Logging ist für deterministische Software gebaut: Gleicher Input, gleicher Output, und wenn etwas schiefgeht, steht ein Stacktrace im Log. Eine LLM-Anwendung verhält sich anders. Dieselbe Frage kann unterschiedliche Antworten erzeugen, ein Agent entscheidet erst zur Laufzeit, welche Werkzeuge er aufruft, und jeder Modellaufruf kostet Geld.</p>
+      <p>Vor allem schlägt sie leise fehl. Im Szenario oben gab es keinen Fehler und keinen Timeout. Jeder Schritt hat getan, was er sollte, nur das Ergebnis war falsch. Um das zu finden, brauchst du nicht mehr Log-Zeilen, sondern die Kette: Welcher Schritt hat was bekommen und was zurückgegeben?</p>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Log und Trace im Vergleich">
+        <table>
+          <thead><tr><th>Frage</th><th>Log-Zeile</th><th>Trace</th></tr></thead>
+          <tbody>
+            <tr><td>Kam die Anfrage an?</td><td>ja</td><td>ja</td></tr>
+            <tr><td>Welche Dokumente hat die Suche geliefert?</td><td>nein</td><td>ja, als Output des Retrievers</td></tr>
+            <tr><td>Welcher Prompt ging an das Modell?</td><td>nein</td><td>ja, als Input der Generation</td></tr>
+            <tr><td>Wer hat wie viele Tokens verbraucht?</td><td>nein</td><td>ja, pro Nutzer, Session und Modell</td></tr>
+            <tr><td>War die Antwort gut?</td><td>nein</td><td>mit Scores ja</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Langfuse ist eine Open-Source-Plattform für genau diese Kette: Tracing, Prompt-Verwaltung und Evaluation in einem Werkzeug. Der Kern steht unter MIT-Lizenz, du kannst es selbst betreiben oder die Cloud nutzen. Seit Januar 2026 gehört Langfuse zu ClickHouse; Lizenz, Cloud-Adressen und Self-Hosting bleiben laut Ankündigung gleich.</p>
+      <h3>Wofür du Traces brauchst</h3>
+      <ul>
+        <li><b>Debugging:</b> Lag es am Retriever oder am Modell?</li>
+        <li><b>Latenz:</b> Welcher Schritt bremst die Antwort?</li>
+        <li><b>Kosten:</b> Welcher Nutzer, welches Feature verbraucht die Tokens?</li>
+        <li><b>Qualität:</b> Ist die neue Prompt-Version besser oder schlechter?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="s2" aria-labelledby="s2-h">
+  <div class="sec-head grid-12"><span class="t-label">03 Das Konzept</span><h2 id="s2-h">Vier Begriffe, ein Zoom</h2></div>
+  <div class="grid-12">
+    <div class="prose"><p>Die Kamera fährt einmal durch alle vier Ebenen, vom einzelnen Modellaufruf bis zur Bewertung. Danach kannst du jede Ebene selbst anklicken.</p></div>
+    <div class="full fig">
+      <div class="zstage">
+        <div class="cam">
+          <div class="sess">
+            <div class="lvl" id="lv-sess"><span class="t-label">Session</span><span class="v">chat-7 · 3 Traces</span></div>
+            <div class="traces">
+              <div class="trc side" id="t1"><span class="score">user_feedback <b>1</b></span><p class="q">„Wie lange dauert der Versand?“</p><div class="mini" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+              <div class="trc" id="t2">
+                <span class="score bad" id="t2-score">user_feedback <b>0</b></span>
+                <div class="lvl" id="lv-trace"><span class="t-label">Trace</span><span class="v">„Kann ich etwas zurückgeben?“</span></div>
+                <div class="rows">
+                  <div class="node" data-d="0"><span class="ty">span</span><span class="nm">handle</span></div>
+                  <div class="node" data-d="1"><span class="ty">span</span><span class="nm">rag_answer</span></div>
+                  <div class="node" data-d="2"><span class="ty"><span class="mk m0" aria-hidden="true"></span> retriever</span><span class="nm">retrieve</span></div>
+                  <div class="node" data-d="2" id="gen" style="flex-wrap:wrap">
+                    <span class="ty"><span class="mk m2" aria-hidden="true"></span> generation</span><span class="nm">answer</span>
+                    <span class="gen-detail"><span class="attr" id="lv-obs">Observation</span><span class="attr">claude-haiku-4-5</span><span class="attr">412 → 18</span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="trc side" id="t3"><p class="q">„Okay, danke trotzdem.“</p><div class="mini" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="zcaps" role="group" aria-label="Ebene wählen">
+        <li><button type="button" data-lv="obs" aria-pressed="false"><b>Observation</b>Der kleinste Baustein: ein Schritt mit Input, Output und Typ. Hier die Generation mit Modell und Tokens.</button></li>
+        <li><button type="button" data-lv="trace" aria-pressed="false"><b>Trace</b>Alle Observations einer Anfrage, verschachtelt wie die Funktionsaufrufe im Code.</button></li>
+        <li><button type="button" data-lv="sess" aria-pressed="false"><b>Session</b>Mehrere Traces einer Unterhaltung, verbunden über dieselbe <code>session_id</code>.</button></li>
+        <li><button type="button" data-lv="score" aria-pressed="true"><b>Score</b>Eine Bewertung an Trace oder Observation: Daumen, Urteil eines Modells oder eigene Metrik.</button></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="grid-12" aria-label="Observation-Typen">
+  <div class="wide" style="margin-top:56px">
+    <h3 style="font-size:22px;margin:0 0 6px">Zehn Typen für Observations</h3>
+    <p style="margin:0;max-width:66ch;color:var(--ink-2)">Alles funktioniert auch nur mit <code>span</code>. Die genaueren Typen lohnen sich trotzdem: Die Oberfläche stellt Agenten damit lesbarer dar, und du kannst gezielt nach Typ filtern.</p>
+    <div class="tiles">
+      <div class="tile"><span class="tile-in"><b>span</b><span class="d">Ein beliebiger Abschnitt mit Dauer.</span></span></div>
+      <div class="tile"><span class="tile-in"><b><span class="mk m2" aria-hidden="true"></span>generation</b><span class="d">Modellaufruf mit Modell, Tokens, Kosten.</span></span></div>
+      <div class="tile"><span class="tile-in"><b><span class="mk m0" aria-hidden="true"></span>retriever</b><span class="d">Suche in Vektor-DB oder Index.</span></span></div>
+      <div class="tile"><span class="tile-in"><b>embedding</b><span class="d">Aufruf eines Embedding-Modells.</span></span></div>
+      <div class="tile"><span class="tile-in"><b><span class="mk m1" aria-hidden="true"></span>tool</b><span class="d">Werkzeug, das ein Agent aufruft.</span></span></div>
+      <div class="tile"><span class="tile-in"><b>agent</b><span class="d">Steuert, welche Schritte folgen.</span></span></div>
+      <div class="tile"><span class="tile-in"><b>chain</b><span class="d">Feste Folge von Schritten.</span></span></div>
+      <div class="tile"><span class="tile-in"><b>evaluator</b><span class="d">Bewertet eine Ausgabe.</span></span></div>
+      <div class="tile"><span class="tile-in"><b>guardrail</b><span class="d">Prüft oder blockt Ein- und Ausgaben.</span></span></div>
+      <div class="tile"><span class="tile-in"><b>event</b><span class="d">Zeitpunkt ohne Dauer.</span></span></div>
+    </div>
+    <div class="legend" aria-label="Legende der Marker"><span><span class="mk m0"></span>Suche</span><span><span class="mk m2"></span>Modell</span><span><span class="mk m1"></span>Werkzeug</span></div>
+    <div class="callout note"><span class="t-label">Unter der Haube</span><p>Langfuse baut auf OpenTelemetry auf. Eine Observation ist technisch ein OTel-Span mit Zusatzattributen. Deshalb kann jede Sprache mit OTel-Exporter nach Langfuse senden, nicht nur Python und TypeScript.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="setup">
+  <div class="sec-head grid-12"><span class="t-label">04 Praxis</span><h2 class="split">Einrichten: Cloud oder selbst betreiben</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die Cloud ist in wenigen Minuten startklar und hat einen kostenlosen Hobby-Tarif. Selbst betreiben lohnt sich, wenn Daten dein Netz nicht verlassen dürfen. Schalte um und sieh, was sich ändert und was gleich bleibt.</p>
+    </div>
+    <div class="wide">
+      <div class="switch" role="group" aria-label="Betriebsart" id="arch-switch">
+        <button type="button" data-mode="cloud" aria-pressed="true">Cloud</button>
+        <button type="button" data-mode="self" aria-pressed="false">Self-Hosting</button>
+      </div>
+      
+      <div class="arch" id="arch" data-mode="cloud">
+        <div class="col"><div class="box" style="view-transition-name:a-app">Deine App<small>Python oder TypeScript</small></div><div class="box soft" style="view-transition-name:a-sdk">Langfuse SDK<small>sendet OTLP über HTTP</small></div></div>
+        <div class="col arrow-r" aria-hidden="true" style="text-align:center">→</div>
+        <div class="col">
+          <div class="box" style="view-transition-name:a-web">Langfuse Web<small class="cloud-only">cloud.langfuse.com (EU)</small><small class="self-only">dein Server, Port 3000</small></div>
+          <div class="sub cloud-only" style="view-transition-name:a-regions">
+            <div class="box soft">US<small>us.cloud.langfuse.com</small></div>
+            <div class="box soft">Japan<small>jp.cloud.langfuse.com</small></div>
+            <div class="box soft" style="grid-column:1/-1">HIPAA<small>hipaa.cloud.langfuse.com, nur Enterprise</small></div>
+          </div>
+          <div class="sub self-only">
+            <div class="box soft" style="view-transition-name:a-worker">Worker<small>verarbeitet im Hintergrund</small></div>
+            <div class="box soft" style="view-transition-name:a-pg">Postgres<small>Projekte, Prompts</small></div>
+            <div class="box soft" style="view-transition-name:a-ch">ClickHouse<small>Traces, Scores</small></div>
+            <div class="box soft" style="view-transition-name:a-redis">Redis / Valkey<small>Warteschlange</small></div>
+            <div class="box soft" style="view-transition-name:a-s3;grid-column:1/-1">S3 oder MinIO<small>Rohdaten und Medien</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prose">
+      <h3>Schlüssel und Paket</h3>
+      <p>Lege ein Projekt an und erzeuge unter Settings ein Schlüsselpaar. Die drei Werte kommen in die Umgebung. Das SDK braucht Python 3.10 oder neuer.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">.env</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">LANGFUSE_PUBLIC_KEY=<span class="s">"pk-lf-..."</span>
+LANGFUSE_SECRET_KEY=<span class="s">"sk-lf-..."</span>
+LANGFUSE_BASE_URL=<span class="s">"https://cloud.langfuse.com"</span></pre></div>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">pip install <span class="s">"langfuse==4.16.0"</span></pre></div>
+      <p>Für Self-Hosting reicht zum Ausprobieren Docker Compose (<code>git clone</code> des Langfuse-Repos, dann <code>docker compose up</code>, danach <code>http://localhost:3000</code>). Für Produktion empfiehlt Langfuse Kubernetes mit Helm, weil Compose weder Hochverfügbarkeit noch Backups mitbringt. Die aktuelle Server-Version 4 braucht ClickHouse ab 25.12.</p>
+      <div class="callout warning"><span class="t-label">Alter Name</span><p><code>LANGFUSE_HOST</code> funktioniert noch, ist im SDK aber als veraltet markiert. Nimm <code>LANGFUSE_BASE_URL</code>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="s3" aria-labelledby="s3-h">
+  <div class="sec-head grid-12"><span class="t-label">Instrumentieren</span><h2 id="s3-h">Code wird zum Baum</h2></div>
+  <div class="grid-12">
+    <div class="prose"><p>Links steht der getestete Code, rechts der Trace, den er erzeugt. Der Cursor schaltet einzelne <code>@observe</code>-Zeilen aus und wieder ein, und der Baum ordnet sich neu, so wie es das SDK im Test getan hat. Danach kannst du selbst klicken.</p></div>
+    <div class="full fig ct">
+      <div class="codewin" tabindex="0" role="region" aria-label="Code rag.py">
+<pre><span class="c"># rag.py · Modell ist eine Attrappe, läuft ohne API-Key</span>
+<span class="k">from</span> langfuse <span class="k">import</span> observe, get_client, propagate_attributes
+
+langfuse = get_client()
+DOCS = {<span class="s">"Rückgabe"</span>: <span class="s">"Rücksendungen sind 30 Tage ..."</span>,
+        <span class="s">"Versand"</span>: <span class="s">"Der Versand dauert 2 bis 4 Werktage."</span>}
+
+<button type="button" class="dec-t" data-k="ret" aria-pressed="true">@observe(as_type="retriever")</button>
+<span class="k">def</span> retrieve(question: str) -> list[str]:
+    <span class="k">return</span> [t <span class="k">for</span> k, t <span class="k">in</span> DOCS.items()
+            <span class="k">if</span> k.lower() <span class="k">in</span> question.lower()]
+
+<button type="button" class="dec-t" data-k="gen" aria-pressed="true">@observe(as_type="generation", name="answer")</button>
+<span class="k">def</span> generate(question: str, docs: list[str]) -> str:
+    answer = docs[0] <span class="k">if</span> docs <span class="k">else</span> <span class="s">"Dazu habe ich nichts gefunden."</span>
+    langfuse.update_current_generation(
+        model=<span class="s">"claude-haiku-4-5"</span>,
+        usage_details={<span class="s">"input"</span>: 412, <span class="s">"output"</span>: 18})
+    <span class="k">return</span> answer
+
+<button type="button" class="dec-t" data-k="rag" aria-pressed="true">@observe()</button>
+<span class="k">def</span> rag_answer(question: str) -> str:
+    <span class="k">return</span> generate(question, retrieve(question))
+
+<button type="button" class="dec-t" data-k="handle" aria-pressed="true">@observe()</button>
+<span class="k">def</span> handle(question: str, user_id: str, chat_id: str) -> str:
+    <button type="button" class="dec-t" data-k="prop" aria-pressed="true">with propagate_attributes(user_id=user_id, session_id=chat_id):</button>
+        <span class="k">return</span> rag_answer(question)</pre>
+      </div>
+      <div class="tree-wrap">
+        <div class="tree-live" aria-label="Erzeugter Trace">
+          <div class="node" data-d="0" id="n-handle"><span class="ty">span</span><span class="nm">handle</span><span class="tags"><span class="attr u">u-42</span><span class="attr c">chat-7</span></span></div>
+          <div class="node" data-d="1" id="n-rag"><span class="ty">span</span><span class="nm">rag_answer</span><span class="tags"><span class="attr u">u-42</span><span class="attr c" hidden>chat-7</span></span></div>
+          <div class="node" data-d="2" id="n-ret"><span class="ty"><span class="mk m0" aria-hidden="true"></span> retriever</span><span class="nm">retrieve</span><span class="tags"><span class="attr u">u-42</span><span class="attr c" hidden>chat-7</span></span></div>
+          <div class="node" data-d="2" id="n-gen"><span class="ty"><span class="mk m2" aria-hidden="true"></span> generation</span><span class="nm">answer</span><span class="tags"><span class="attr g">haiku-4-5</span><span class="attr g">412 → 18</span><span class="attr u">u-42</span><span class="attr c" hidden>chat-7</span></span></div>
+          <p class="tree-empty" id="tree-empty" hidden>Kein Trace: Keine Funktion ist beobachtet.</p>
+        </div>
+        <p class="tree-sum" id="tree-sum" aria-live="polite">4 Observations · Root: handle · Nutzer und Session an allen</p>
+        <ul class="tree-notes">
+          <li>Schalte <code>rag_answer</code> aus: <code>retrieve</code> und <code>answer</code> hängen sich direkt an <code>handle</code>.</li>
+          <li>Schalte <code>handle</code> aus: <code>propagate_attributes</code> wirkt trotzdem, auch ohne Eltern-Observation.</li>
+          <li>Schalte beide aus: <code>retrieve</code> und <code>answer</code> landen in zwei getrennten Traces.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="grid-12" aria-label="Weitere Wege">
+  <div class="prose" style="margin-top:56px">
+    <p>Der Test dazu ruft <code>handle("Wie lange dauert der Versand?", user_id="u-42", chat_id="chat-7")</code> auf und prüft den Baum, der beim Server ankommt. Die Ausgabe war genau die vier Knoten von oben, <code>user.id</code> und <code>session.id</code> standen auch am Retriever.</p>
+    <h3>Ohne eigene Funktion: der Context Manager</h3>
+    <p>Mitten in einer Schleife gibt es keine Funktion zum Dekorieren. Dann öffnest du die Observation selbst. Alles im <code>with</code>-Block wird ihr Kind.</p>
+    <div class="code"><div class="code-bar"><span class="t-label">agent.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">with</span> langfuse.start_as_current_observation(as_type=<span class="s">"agent"</span>, name=<span class="s">"support-agent"</span>) <span class="k">as</span> agent:
+    <span class="k">for</span> step <span class="k">in</span> plan:
+        <span class="k">with</span> langfuse.start_as_current_observation(
+            as_type=<span class="s">"tool"</span>, name=step.tool, input=step.args
+        ) <span class="k">as</span> tool:
+            tool.update(output=run_tool(step))
+    agent.update(output=final_answer)</pre></div>
+    <h3>Mit Framework: fast kein Code</h3>
+    <p>Für OpenAI tauschst du den Import (<code>from langfuse.openai import openai</code>), für LangChain und LangGraph übergibst du <code>CallbackHandler()</code> aus <code>langfuse.langchain</code>. Dazu kommen Integrationen für LlamaIndex, LiteLLM, Vercel AI SDK, Pydantic AI und weitere.</p>
+    <div class="code"><div class="code-bar"><span class="t-label">graph.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> langfuse.langchain <span class="k">import</span> CallbackHandler
+
+handler = CallbackHandler()
+graph.invoke(
+    {<span class="s">"messages"</span>: [(<span class="s">"user"</span>, <span class="s">"Wo ist meine Bestellung?"</span>)]},
+    config={<span class="s">"callbacks"</span>: [handler]},
+)</pre></div>
+    <p>Das braucht zusätzlich das Paket <code>langchain</code>. Im Test mit einem kleinen LangGraph-Graphen kam der Baum <code>LangGraph</code> → <code>bot</code> → Generation an, ohne eine Zeile <code>@observe</code>.</p>
+    <h3>Tokens und Kosten</h3>
+    <p>Integrationen erfassen Tokens und Kosten von selbst. Bei eigenen Modellaufrufen gibst du sie mit <code>update_current_generation(model=..., usage_details=...)</code> mit, wie im Code oben. Langfuse kennt die Preise gängiger Modelle und rechnet daraus die Kosten. Im Dashboard siehst du sie pro Tag, Modell, Nutzer und Kombination von Tags. Ein typischer Fund: Ein einzelner Nutzer oder ein einzelner Prompt verursacht einen überproportionalen Teil der Kosten.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Welcher Weg wann">
+      <table>
+        <thead><tr><th>Weg</th><th>Wann</th><th>Aufwand</th></tr></thead>
+        <tbody>
+          <tr><td>Integration</td><td>Du nutzt ein unterstütztes Framework oder SDK</td><td>eine Zeile</td></tr>
+          <tr><td><code>@observe</code></td><td>Deine eigenen Funktionen</td><td>eine Zeile pro Funktion</td></tr>
+          <tr><td>Context Manager</td><td>Schleifen, Teile einer Funktion</td><td>ein Block</td></tr>
+          <tr><td>OpenTelemetry</td><td>.NET, Java, Go und alles mit OTel-Exporter, Ziel <code>/api/public/otel</code>, nur HTTP</td><td>Exporter konfigurieren</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Ohne Python: OpenTelemetry, zum Beispiel in .NET</h3>
+    <p>Langfuse nimmt Spans von jedem OpenTelemetry-SDK an, über HTTP als JSON oder Protobuf. gRPC geht nicht. Das ist wichtig, weil der .NET-Exporter standardmäßig gRPC spricht. Am einfachsten setzt du die Standard-Variablen, die jedes OTel-SDK liest. Angemeldet wird per Basic Auth mit <code>public_key:secret_key</code>.</p>
+    <div class="code"><div class="code-bar"><span class="t-label">Umgebung</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">AUTH=$(echo -n <span class="s">"pk-lf-...:sk-lf-..."</span> | base64 -w0)
+OTEL_EXPORTER_OTLP_ENDPOINT=<span class="s">"https://cloud.langfuse.com/api/public/otel"</span>
+OTEL_EXPORTER_OTLP_PROTOCOL=<span class="s">"http/protobuf"</span>
+OTEL_EXPORTER_OTLP_HEADERS=<span class="s">"Authorization=Basic $AUTH,x-langfuse-ingestion-version=4"</span></pre></div>
+    <p>Das SDK hängt <code>/v1/traces</code> selbst an. Getestet habe ich diese Konfiguration mit dem Python-OTel-SDK gegen den lokalen Ersatz-Server, weil in der Testumgebung kein .NET installiert war.</p>
+    <h3>Was im Hintergrund passiert</h3>
+    <p>Das SDK schickt nicht jeden Span sofort los. Es sammelt fertige Observations in einem Puffer und sendet sie gebündelt im Hintergrund. Das hält deine App schnell, hat aber eine Folge für kurzlebige Prozesse.</p>
+  </div>
+  
+  <div class="wide fig flow" id="flow" data-auto>
+    <div class="flow-stage">
+      <div class="fbox" id="f-app"><span class="t-label">Deine App</span>
+        <span class="fn" data-k="handle">handle</span><span class="fn d1" data-k="rag">rag_answer</span><span class="fn d2" data-k="ret">retrieve</span><span class="fn d2" data-k="gen">answer</span>
+        <span class="stamp" id="f-end">Prozess beendet</span>
+      </div>
+      <div class="fbox" id="f-buf"><span class="t-label">SDK-Puffer</span>
+        <div class="slots" id="f-slots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="flushlbl" id="f-flush">langfuse.flush()</span>
+        <span class="lost" id="f-lost">2 Spans verloren</span>
+      </div>
+      <div class="fbox" id="f-lf"><span class="t-label">Langfuse</span>
+        <div class="lf-rows"><span data-k="handle">handle</span><span class="d1" data-k="rag">rag_answer</span><span class="d2" data-k="ret">retrieve</span><span class="d2" data-k="gen">answer</span></div>
+      </div>
+    </div>
+    <div class="caps fcaps" aria-live="polite">
+      <div class="cap on" data-at="0"><span class="n">01</span><p><b>Fertige Funktionen werden Spans.</b> In der Reihenfolge, in der sie enden: erst <code>retrieve</code>, dann <code>answer</code>, dann <code>rag_answer</code>, zuletzt <code>handle</code>.</p></div>
+      <div class="cap" data-at="1"><span class="n">02</span><p><b>Gebündelt im Hintergrund.</b> Das SDK sendet den Puffer, wenn er voll ist oder ein Intervall abläuft (<code>flush_at</code>, <code>flush_interval</code>). Deine Anfrage wartet nicht darauf.</p></div>
+      <div class="cap" data-at="2"><span class="n">03</span><p><b>Skript endet, Puffer weg.</b> Ein Skript, ein Notebook oder eine Serverless-Funktion beendet sich, bevor das Intervall abläuft. Was noch im Puffer liegt, kommt nie an.</p></div>
+      <div class="cap" data-at="3"><span class="n">04</span><p><b>Darum <code>flush()</code> vor dem Ende.</b> <code>langfuse.flush()</code> sendet den Puffer sofort. Danach darf der Prozess enden.</p></div>
+    </div>
+  </div>
+  <div class="prose">
+    <div class="callout warning"><span class="t-label">Merksatz</span><p>Vor dem Ende von Skripten, Notebooks und Serverless-Funktionen immer <code>langfuse.flush()</code> aufrufen.</p></div>
+    <h3>In Tests abschalten</h3>
+    <p>In Unit-Tests und in der CI willst du meist keine Traces. Eine Variable reicht, der Code bleibt unverändert. Im Test lief die Pipeline normal durch und beim Server kam kein einziger Span an.</p>
+    <div class="code"><div class="code-bar"><span class="t-label">Umgebung</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">LANGFUSE_TRACING_ENABLED=false</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="s4" aria-labelledby="s4-h">
+  <div class="sec-head grid-12"><span class="t-label">05 Prompts</span><h2 id="s4-h">Ein Label entscheidet, welcher Prompt live ist</h2></div>
+  <div class="grid-12">
+    <div class="prose"><p>Prompts liegen in Langfuse, nicht im Code. Jede Änderung wird eine neue Version, die neueste trägt automatisch <code>latest</code>. Die App fragt nach dem Label <code>production</code>. Der Cursor zieht das Label einmal auf v3 und wieder zurück. Danach kannst du es selbst ziehen oder die Knöpfe nutzen.</p></div>
+    <div class="full fig">
+      <div class="s4-app">
+        <span class="call">langfuse.get_prompt("support-answer")</span>
+        <span aria-hidden="true">→ App bekommt</span>
+        <span class="gets" id="gets" aria-live="polite">v2</span>
+      </div>
+      <p class="cache" id="cache">Kein Deploy nötig. Neue Fassungen kommen an, sobald der Cache im SDK abläuft (Standard 60 Sekunden).</p>
+      <div class="vscroll" tabindex="0" role="region" aria-label="Prompt-Versionen">
+        <div class="vrow" id="vrow">
+          <span class="ptag prod" id="tag-prod" title="Ziehen, um das Label zu verschieben"><span aria-hidden="true">⠿</span> production</span>
+          <span class="ptag latest" id="tag-latest">latest</span>
+          <article class="ver" id="v1"><h3>v1 <span class="t-label">1. Okt.</span></h3><p>Beantworte die Frage freundlich.</p><div class="fb">erste Fassung, erfindet Fristen</div><button type="button" class="btn sm" data-v="v1" aria-pressed="false">production hierher</button></article>
+          <article class="ver live" id="v2"><h3>v2 <span class="t-label">2. Okt.</span></h3><p>Beantworte die Frage nur mit diesen Quellen: {{docs}}</p><div class="fb">Quellenpflicht</div><button type="button" class="btn sm" data-v="v2" aria-pressed="true">production hierher</button></article>
+          <article class="ver" id="v3"><h3>v3 <span class="t-label">4. Okt.</span></h3><p>Antworte in einem Satz. Quellen: {{docs}}</p><div class="fb">kürzer, aber mehr Daumen runter</div><button type="button" class="btn sm" data-v="v3" aria-pressed="false">production hierher</button></article>
+        </div>
+      </div>
+    </div>
+    <div class="prose"><p>Weil jede Generation ihre Prompt-Version kennt, siehst du Feedback und Kosten pro Version. Fällt v3 ab, ziehst du das Label zurück auf v2. Das ist die ganze Rücknahme.</p></div>
+  </div>
+</section>
+
+<section class="grid-12" aria-label="Prompt im Code">
+  <div class="prose" style="margin-top:56px">
+    <div class="code"><div class="code-bar"><span class="t-label">prompt.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">prompt = langfuse.get_prompt(
+    <span class="s">"support-answer"</span>,                 <span class="c"># lädt standardmäßig das Label production</span>
+    fallback=<span class="s">"Beantworte die Frage nur mit diesen Quellen: {{docs}}"</span>,
+)
+text = prompt.compile(docs=<span class="s">"Versand: 2 bis 4 Werktage"</span>)
+<span class="hl">langfuse.update_current_generation(prompt=prompt)  <span class="c"># Version an die Generation hängen</span></span></pre></div>
+    <p>Den <code>fallback</code> habe ich getestet, indem der Server keinen Prompt lieferte: Das SDK meldet den Fehler, gibt den Ersatztext zurück und setzt <code>prompt.is_fallback</code> auf <code>True</code>. So startet deine App auch dann, wenn Langfuse gerade nicht erreichbar ist.</p>
+  </div>
+</section>
+
+<section class="sec" id="s5" aria-labelledby="s5-h">
+  <div class="sec-head grid-12"><span class="t-label">06 Qualität</span><h2 id="s5-h">Ein Experiment findet den Fehler aus dem Szenario</h2></div>
+  <div class="grid-12">
+    <div class="prose"><p>Das ist beim Testen wirklich so passiert. <code>run_experiment</code> schickt drei feste Fragen durch die Pipeline, ein Evaluator prüft, ob das Erwartete in der Antwort steht. Ergebnis: 0,667. Der Trace der zweiten Frage zeigt die Ursache. Die Grafik lässt den Lauf erst ohne, dann mit Fix laufen.</p></div>
+    <div class="full fig">
+      <div class="ctrl">
+        <button type="button" class="btn primary" id="xp-fix">Fix anwenden und neu laufen lassen</button>
+        <button type="button" class="btn" id="xp-base">Ohne Fix laufen lassen</button>
+        <span class="hint" id="xp-state" aria-live="polite">Lauf ohne Fix: contains_expected 0,667</span>
+      </div>
+      <div class="xp-fig">
+        <div>
+          <div class="xp" role="table" aria-label="Experiment rag-baseline">
+            <div class="xp-row h" role="row"><span role="columnheader">Frage</span><span class="e" role="columnheader">Erwartet</span><span class="o" role="columnheader">Antwort</span><span class="sc" role="columnheader">Score</span></div>
+            <div class="xp-row" role="row" id="x1"><span role="cell">Wie lange dauert der Versand?</span><span class="e" role="cell">2 bis 4 Werktage</span><span class="o" role="cell"><span class="ans">Der Versand dauert 2 bis 4 Werktage.</span></span><span class="sc" role="cell"><span class="sv">1</span></span></div>
+            <div class="xp-row" role="row" id="x2"><span class="ring-f" aria-hidden="true"></span><span role="cell">Kann ich etwas zurückgeben?</span><span class="e" role="cell">30 Tage</span><span class="o" role="cell"><span class="ans a-old">Dazu habe ich nichts gefunden.</span><span class="ans a-new">Rücksendungen sind 30 Tage kostenlos möglich.</span></span><span class="sc" role="cell"><span class="sv s-old">0</span><span class="sv s-new">1</span></span></div>
+            <div class="xp-row" role="row" id="x3"><span role="cell">Habt ihr Gutscheine?</span><span class="e" role="cell">nichts gefunden</span><span class="o" role="cell"><span class="ans">Dazu habe ich nichts gefunden.</span></span><span class="sc" role="cell"><span class="sv">1</span></span></div>
+          </div>
+          <div class="xp-why">
+            <div class="node focus" id="x-trace"><span class="ty"><span class="mk m0" aria-hidden="true"></span> retriever</span><span class="nm">retrieve</span><span class="out">„Rückgabe“ steckt nicht in „zurückgeben“ → []</span></div>
+            <div><span class="fixchip" id="x-fix">Fix: DOCS = {("rückgabe", "zurück"): ...}</span></div>
+          </div>
+        </div>
+        <div class="gauge">
+          <div class="g-wrap"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--line)" stroke-width="8"/><circle id="ring" cx="60" cy="60" r="50" fill="none" stroke="var(--ink)" stroke-width="8" transform="rotate(-90 60 60)"/></svg>
+          <div class="num" id="xnum">0.667</div></div>
+          <span class="t-label">contains_expected</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="grid-12" aria-label="Experiment im Code">
+  <div class="prose" style="margin-top:56px">
+    <div class="code"><div class="code-bar"><span class="t-label">experiment.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">from</span> langfuse <span class="k">import</span> get_client, Evaluation
+<span class="k">from</span> rag <span class="k">import</span> rag_answer
+
+langfuse = get_client()
+data = [
+    {<span class="s">"input"</span>: <span class="s">"Wie lange dauert der Versand?"</span>, <span class="s">"expected_output"</span>: <span class="s">"2 bis 4 Werktage"</span>},
+    {<span class="s">"input"</span>: <span class="s">"Kann ich etwas zurückgeben?"</span>, <span class="s">"expected_output"</span>: <span class="s">"30 Tage"</span>},
+    {<span class="s">"input"</span>: <span class="s">"Habt ihr Gutscheine?"</span>, <span class="s">"expected_output"</span>: <span class="s">"nichts gefunden"</span>},
+]
+
+<span class="k">def</span> task(*, item, **kwargs):
+    <span class="k">return</span> rag_answer(item[<span class="s">"input"</span>])
+
+<span class="k">def</span> contains_expected(*, input, output, expected_output, **kwargs):
+    <span class="k">return</span> Evaluation(name=<span class="s">"contains_expected"</span>, value=float(expected_output <span class="k">in</span> output))
+
+result = langfuse.run_experiment(
+    name=<span class="s">"rag-baseline"</span>, data=data, task=task, evaluators=[contains_expected]
+)
+print(result.format())   <span class="c"># zeigt u. a. contains_expected: 0.667</span></pre></div>
+    <p>Hier stehen die Beispiele im Code. In Langfuse kannst du sie auch als Dataset ablegen, etwa aus echten Traces gesammelt, und Läufe in der Oberfläche vergleichen.</p>
+    <h3>Scores aus drei Quellen</h3>
+    <div class="code"><div class="code-bar"><span class="t-label">feedback.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># im laufenden Trace, z. B. nach einer eigenen Prüfung</span>
+langfuse.score_current_trace(name=<span class="s">"contains_sources"</span>, value=1, data_type=<span class="s">"BOOLEAN"</span>)
+
+<span class="c"># später, wenn der Nutzer auf Daumen runter klickt</span>
+langfuse.create_score(trace_id=trace_id, name=<span class="s">"user_feedback"</span>, value=0, data_type=<span class="s">"BOOLEAN"</span>)</pre></div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Quellen für Scores">
+      <table>
+        <thead><tr><th>Quelle</th><th>Stärke</th><th>Schwäche</th></tr></thead>
+        <tbody>
+          <tr><td>Nutzer-Feedback</td><td>ehrlich, billig</td><td>spärlich, die meisten klicken nie</td></tr>
+          <tr><td>LLM-as-a-Judge</td><td>bewertet jede Antwort automatisch</td><td>kostet Tokens, braucht selbst Kontrolle</td></tr>
+          <tr><td>Experimente und Annotation Queues</td><td>reproduzierbar, Menschen prüfen gezielt</td><td>Beispiele musst du pflegen</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="fallstricke">
+  <div class="sec-head grid-12"><span class="t-label">07 Beim Testen</span><h2 class="split">Was beim Testen passiert ist</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <div class="callout note"><span class="t-label">So wurde getestet</span><p>Ohne Langfuse-Konto und ohne Docker: Ein kleiner lokaler Server nimmt die OTLP-Daten des SDK an und gibt den Baum aus (<code>fake_langfuse.py</code>). Die Oberfläche von Langfuse ist deshalb in diesem Beitrag nicht zu sehen, alles andere lief mit dem echten SDK 4.16.0.</p></div>
+      <ul class="pitfalls">
+        <li>
+          <h3>Masking, das nur Strings kennt, lässt Daten durch</h3>
+          <p><code>@observe</code> übergibt den Input als Dictionary: <code>{"args": [...], "kwargs": {...}}</code>. Meine erste Mask-Funktion hat nur Strings ersetzt. Die Ausgabe war sauber, der Input nicht.</p>
+          
+          <div class="fx" id="fx-mask">
+            <div class="fx-head"><span class="t-label">Was beim Server ankommt</span>
+              <div class="switch" role="group" aria-label="Mask-Funktion"><button type="button" data-m="str" aria-pressed="true">Nur Strings</button><button type="button" data-m="rec" aria-pressed="false">Rekursiv</button></div>
+            </div>
+            <div class="mask-one">
+              <div class="row leak" id="m-in"><small>Input</small>{"args": ["<span id="m-in-v">anna@example.com</span>"], "kwargs": {}}</div>
+              <div class="row"><small>Output</small>Kunde <span id="m-out-v">[EMAIL]</span> gefunden</div>
+              <p class="leak-note" id="m-note" aria-live="polite">Input ungefiltert: Die Funktion bekommt ein dict, keinen String.</p>
+            </div>
+          </div>
+          <div class="code"><div class="code-bar"><span class="t-label">observability.py</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">import</span> re
+<span class="k">from</span> langfuse <span class="k">import</span> Langfuse
+
+EMAIL = re.compile(<span class="s">r"[\w.+-]+@[\w-]+\.[\w.]+"</span>)
+
+<span class="k">def</span> mask_pii(data, **kwargs):
+    <span class="c"># rekursiv, weil @observe Inputs als dict übergibt</span>
+    <span class="k">if</span> isinstance(data, str):
+        <span class="k">return</span> EMAIL.sub(<span class="s">"[EMAIL]"</span>, data)
+<span class="hl">    <span class="k">if</span> isinstance(data, dict):
+        <span class="k">return</span> {k: mask_pii(v) <span class="k">for</span> k, v <span class="k">in</span> data.items()}</span>    <span class="k">if</span> isinstance(data, (list, tuple)):
+        <span class="k">return</span> [mask_pii(v) <span class="k">for</span> v <span class="k">in</span> data]
+    <span class="k">return</span> data
+
+langfuse = Langfuse(
+    mask=mask_pii,            <span class="c"># läuft vor dem Export über jeden Input und Output</span>
+    sample_rate=0.2,          <span class="c"># nur 20 % der Traces senden</span>
+    environment=<span class="s">"production"</span>,
+    release=<span class="s">"2026.10.1"</span>,
+)</pre></div>
+        </li>
+        <li>
+          <h3>Sampling ist Zufall, nicht genau 20 Prozent</h3>
+          <p>Mit <code>sample_rate=0.2</code> habe ich 500 Aufrufe gemacht. Beim Server kamen 115 an, also 23 Prozent. Das ist richtig so: Jeder Trace wird einzeln ausgelost. Für Kosten pro Nutzer brauchst du deshalb genug Verkehr oder kein Sampling.</p>
+          
+          <div class="fx" id="fx-dots">
+            <div class="fx-head"><span class="t-label">500 Aufrufe, sample_rate=0.2</span><span class="dots-count" id="dots-n">115</span></div>
+            <div class="dots" id="dots" aria-hidden="true"></div>
+            <div class="ctrl" style="margin-top:12px"><button type="button" class="btn" id="dots-btn">500 Aufrufe neu auslosen</button><span class="hint" id="dots-hint" aria-live="polite">Gemessen im Test: 115 von 500 gesendet.</span></div>
+          </div>
+        </li>
+        <li>
+          <h3><code>propagate_attributes</code> wirkt nur ab dem Block</h3>
+          <p>Eine Observation, die vor dem <code>with</code> entsteht, bekommt keine <code>user_id</code>. Im Test hatte der erste <code>lookup</code> vor dem Block keine Nutzer-ID, der zweite im Block schon. Die umgebende Funktion <code>handle</code> bekam sie ebenfalls. Öffne den Block deshalb so früh wie möglich, sonst fehlen Schritte in den Kosten pro Nutzer. Werte für <code>user_id</code>, <code>session_id</code> und Metadaten dürfen höchstens 200 Zeichen lang sein. Nimm IDs, keine E-Mail-Adressen.</p>
+        </li>
+        <li>
+          <h3><code>update_current_trace</code> gibt es nicht mehr</h3>
+          <p>Ältere Anleitungen setzen Nutzer und Session mit <code>update_current_trace</code>. In SDK 4 ist die Methode entfernt. Ersatz ist <code>propagate_attributes</code>, für Ein- und Ausgabe des Traces <code>set_current_trace_io</code> (bereits als veraltet markiert) und <code>set_current_trace_as_public</code>.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">08 Entscheidung</span><h2 class="split">Was du wann brauchst</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Entscheidungshilfe">
+        <table>
+          <thead><tr><th>Situation</th><th>Nimm</th></tr></thead>
+          <tbody>
+            <tr><td>Erster Prototyp, keine sensiblen Daten</td><td>Cloud Hobby, Integration oder <code>@observe</code></td></tr>
+            <tr><td>Personenbezogene oder interne Daten</td><td>Self-Hosting mit Helm, Masking von Anfang an</td></tr>
+            <tr><td>Prompts ändern sich oft, Fachleute schreiben mit</td><td>Prompt-Verwaltung mit Labels</td></tr>
+            <tr><td>Jede Änderung soll vorher geprüft werden</td><td>Dataset und <code>run_experiment</code>, auch in der CI</td></tr>
+            <tr><td>Viel Verkehr, Kosten für Speicher</td><td><code>sample_rate</code>, aber nicht, wenn du Kosten pro Nutzer brauchst</td></tr>
+            <tr><td>.NET, Java oder Go</td><td>OpenTelemetry-Exporter auf <code>/api/public/otel</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Gewohnheiten, die sich lohnen</h3>
+      <ul>
+        <li><b>Sprechende, stabile Namen.</b> <code>retrieve-docs</code> statt <code>func_3</code>. Ändern sich Namen mit jedem Deploy, kannst du Versionen nicht mehr vergleichen.</li>
+        <li><b>Ab dem ersten Prototyp tracen.</b> Später nachzurüsten ist teurer, und die frühen Fehler sind die lehrreichsten.</li>
+        <li><b>Mindestens ein Score pro Trace.</b> Ein Daumen vom Nutzer oder eine einfache Prüfung genügt.</li>
+        <li><b>Jede Woche zehn zufällige Traces lesen.</b> 20 Minuten im Kalender finden Fehler, nach denen niemand gesucht hat.</li>
+        <li><b><code>environment</code> und <code>release</code> setzen.</b> <code>Langfuse(environment="production", release="2026.10.05")</code> schreibt beides an jeden Span, so trennst du Test von Produktion und siehst, ab welchem Release etwas anders läuft.</li>
+      </ul>
+
+      <h3>Selbsttest</h3>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="b">
+          <legend>Der Bot antwortet falsch, das Log zeigt Status 200. Wo schaust du zuerst?</legend>
+          <label><input type="radio" name="q1" value="a"> Im Prompt, der ist meistens schuld.</label>
+          <label><input type="radio" name="q1" value="b"> Im Trace: Output des Retrievers und Input der Generation.</label>
+          <label><input type="radio" name="q1" value="c"> In der Modellversion.</label>
+          <p class="why" hidden>Der Trace zeigt, was jeder Schritt bekommen und geliefert hat. Im Beispiel war der Prompt in Ordnung, die Suche lieferte eine leere Liste.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Du verschiebst das Label <code>production</code> auf v3. Was passiert?</legend>
+          <label><input type="radio" name="q2" value="a"> Nichts, bis du die App neu deployst.</label>
+          <label><input type="radio" name="q2" value="b"> Alle Instanzen wechseln in derselben Millisekunde.</label>
+          <label><input type="radio" name="q2" value="c"> Jede Instanz holt v3, sobald ihr Cache abläuft.</label>
+          <p class="why" hidden>Das SDK cacht Prompts (Standard 60 Sekunden) und erneuert sie im Hintergrund. Ein Deploy ist nicht nötig.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="a">
+          <legend>Deine Mask-Funktion ersetzt E-Mails in Strings. Ist der Input von <code>@observe</code> damit sicher?</legend>
+          <label><input type="radio" name="q3" value="a"> Nein, er kommt als Dictionary an. Die Funktion muss rekursiv sein.</label>
+          <label><input type="radio" name="q3" value="b"> Ja, Langfuse wandelt vorher alles in Strings um.</label>
+          <label><input type="radio" name="q3" value="c"> Ja, Inputs werden ohnehin nicht gesendet.</label>
+          <p class="why" hidden>Genau das ist im Test passiert: Der Output war maskiert, der Input <code>{"args": [...]}</code> nicht.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste</h3>
+      <ul class="checklist" id="check">
+        <li><label><input type="checkbox"> Schlüssel in der Umgebung, <code>LANGFUSE_BASE_URL</code> statt <code>LANGFUSE_HOST</code></label></li>
+        <li><label><input type="checkbox"> Root-Funktion und Modellaufrufe mit <code>@observe</code> oder Integration</label></li>
+        <li><label><input type="checkbox"> <code>propagate_attributes</code> ganz oben mit IDs statt Klarnamen</label></li>
+        <li><label><input type="checkbox"> Rekursives Masking mit einem echten Aufruf getestet</label></li>
+        <li><label><input type="checkbox"> <code>flush()</code> am Ende von Skripten und Serverless-Funktionen</label></li>
+        <li><label><input type="checkbox"> Prompt aus Langfuse mit <code>fallback</code> und Verknüpfung zur Generation</label></li>
+        <li><label><input type="checkbox"> Drei bis zehn Beispiele als Experiment vor jeder Änderung</label></li>
+        <li><label><input type="checkbox"> <code>environment</code> und <code>release</code> gesetzt</label></li>
+        <li><label><input type="checkbox"> Fester Termin pro Woche zum Lesen von Traces</label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://langfuse.com/docs/observability/sdk/upgrade-path/python-v3-to-v4">Langfuse Docs: Upgrade Python SDK v3 auf v4</a>, gelesen 04.10.2026</li>
+        <li><a href="https://langfuse.com/docs/observability/features/observation-types">Langfuse Docs: Observation Types</a></li>
+        <li><a href="https://langfuse.com/docs/prompt-management/features/caching">Langfuse Docs: Prompt Caching</a> und <a href="https://langfuse.com/docs/prompt-management/features/link-to-traces">Link to Traces</a></li>
+        <li><a href="https://langfuse.com/docs/evaluation/experiments/experiments-via-sdk">Langfuse Docs: Experiments via SDK</a></li>
+        <li><a href="https://langfuse.com/docs/opentelemetry/get-started">Langfuse Docs: OpenTelemetry</a> (OTLP nur über HTTP, Header <code>x-langfuse-ingestion-version</code>)</li>
+        <li><a href="https://langfuse.com/integrations/frameworks/langchain">Langfuse Docs: LangChain und LangGraph</a>, getestet mit langchain 1.4.3 und langgraph 1.2.12</li>
+        <li><a href="https://langfuse.com/self-hosting">Langfuse Self-Hosting</a>, Server Version 4</li>
+        <li><a href="https://langfuse.com/blog/joining-clickhouse">Langfuse Blog: Langfuse joins ClickHouse</a>, 16.01.2026</li>
+        <li><a href="https://pypi.org/project/langfuse/4.16.0/">langfuse 4.16.0 auf PyPI</a>, Python 3.10 bis 3.13</li>
+      </ol>
+    </div>
+  </div>
+</section>

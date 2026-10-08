@@ -7,7 +7,7 @@ import LinkButton from '@/components/ui/LinkButton.astro';
 import { NAV as links, CONTACT_CTA } from '@/data/navigation';
 
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isActive = (href: string) => !href.includes('#') && current === href;
+const isActive = (href: string) => !href.includes('#') && (current === href || (href !== '/' && current.startsWith(href + '/')));
 ---
 
 <header

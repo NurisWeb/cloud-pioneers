@@ -3,11 +3,12 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { PAGES, type PageSeo } from '@/lib/seo';
 import { OgImage, ogFonts } from '@/lib/og-template';
+import { INSIGHTS, insightSeo } from '@/lib/insights';
 
 export const prerender = true;
 
 export function getStaticPaths() {
-	return Object.values(PAGES).map((page) => ({
+	return [...Object.values(PAGES), ...INSIGHTS.map(insightSeo)].map((page) => ({
 		params: { slug: page.slug },
 		props: { page },
 	}));

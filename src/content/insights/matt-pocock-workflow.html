@@ -1,0 +1,393 @@
+<section class="sec grid-12" aria-label="Szenario">
+  <p class="scenario">Du schreibst deinem Coding-Agenten: „Bau einen CSV-Export für die Freigabeliste.“ Kurz darauf liegen ein paar hundert Zeilen da, die Tests sind grün. Im Review merkst du: Exportiert wird auch, was noch in Prüfung ist, Excel zeigt alles in einer Spalte, und protokolliert wird nichts. Der Agent hat genau gemacht, was du gesagt hast. Nicht, was du gemeint hast.</p>
+  <ul class="takeaways" aria-label="Das nimmst du mit">
+    <li><span class="t-label">Mitnehmen 1</span>Wenn du nur eine Sache übernimmst: Lass dich vor jeder Änderung mit <code>/grill-with-docs</code> ausfragen, bevor die erste Zeile Code entsteht.</li>
+    <li><span class="t-label">Mitnehmen 2</span>Wissen gehört in Dateien, nicht in den Chat. Erst dann kannst du den Kontext leeren und jedes Ticket in einem frischen Fenster bauen.</li>
+    <li><span class="t-label">Mitnehmen 3</span>Tickets mit Blocking-Kanten bilden einen Graphen. Alles ohne offene Blocker kann sofort gebaut werden, auch parallel.</li>
+  </ul>
+</section>
+
+<section class="story" id="s1" aria-labelledby="s1-h">
+  <div class="story-intro grid-12">
+    <span class="t-label">Scroll weiter</span>
+    <h2 id="s1-h">Ein Satz, fünf Entscheidungen</h2>
+    <p>Der Auftrag aus dem Szenario, so wie ein Agent ihn beim Ausfragen sieht. Scroll langsam: Die Grafik folgt deinem Scrollen, rückwärts läuft sie zurück.</p>
+  </div>
+  <div class="track">
+    <div class="frame">
+      <div class="stage" aria-hidden="true">
+        <div class="s1-ask" id="s1-ask"><span class="t-label">Dein Auftrag</span><p id="s1-sent">„Bau einen CSV-Export für die Freigabeliste.“</p></div>
+        <svg class="s1-svg" id="s1-svg"></svg>
+        <div class="s1-spec" id="s1-spec"><span class="t-label">SPEC.md</span><ol></ol></div>
+      </div>
+      <div class="caps" aria-live="polite">
+        <div class="prog" aria-hidden="true"></div>
+        <div class="cap" data-at="0"><span class="n">01</span><p><b>Ein Satz als Auftrag.</b> Für dich ist er klar. Für den Agenten stecken darin Lücken, die er ohne Fragen mit Annahmen füllt.</p></div>
+        <div class="cap" data-at="0.13"><span class="n">02</span><p><b>Der Satz zerfällt in fünf Entscheidungen.</b> Zwei hängen an anderen: Was „freigegeben“ heißt, folgt aus 01, das Trennzeichen aus 02.</p></div>
+        <div class="cap" data-at="0.31"><span class="n">03</span><p><b>Runde 1 ist die Front.</b> Diese drei Fragen hängen von nichts ab. Der Agent stellt sie zusammen, jede mit seiner Empfehlung. Entscheiden musst du.</p></div>
+        <div class="cap" data-at="0.53"><span class="n">04</span><p><b>Erst jetzt sind 04 und 05 stellbar.</b> Die Antworten aus Runde 1 schalten sie frei. Sie bilden die neue Front, Runde 2.</p></div>
+        <div class="cap" data-at="0.75"><span class="n">05</span><p><b>Aus den Antworten wird SPEC.md.</b> Nichts davon steht mehr nur im Chat. Genau deshalb darf das Fenster später geleert werden.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="sec-head grid-12"><span class="t-label">01 Das Problem</span><h2>Vier Fehlerbilder, vier Antworten</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Grundlage dieses Beitrags ist ein Satz von Skills für Coding-Agenten, der frei auf GitHub liegt, unter MIT-Lizenz. Ein <strong>Skill</strong> ist nichts weiter als eine Markdown-Datei mit Anweisungen, die ein Agent wie Claude Code oder Codex bei Bedarf lädt. Die Skills sind gegen vier Fehlerbilder gebaut, die immer wieder auftauchen. Keines davon ist neu. Agenten machen sie nur schneller.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Fehlerbilder und Skills">
+        <table>
+          <thead><tr><th scope="col">Fehlerbild</th><th scope="col">Ursache</th><th scope="col">Antwort im Workflow</th></tr></thead>
+          <tbody>
+            <tr><td><b>Er baut nicht, was du willst</b></td><td>Lücken im Auftrag füllt der Agent mit Annahmen</td><td><code>/grill-with-docs</code>: ausfragen lassen, bevor gebaut wird</td></tr>
+            <tr><td><b>Er redet zu viel</b></td><td>Keine gemeinsame Sprache, also umschreibt er in zwanzig Worten, was ein Begriff in einem sagt</td><td>Glossar und ADRs, die beim Ausfragen nebenbei entstehen</td></tr>
+            <tr><td><b>Der Code läuft nicht</b></td><td>Ohne Rückmeldung fliegt der Agent blind</td><td><code>tdd</code>: rot vor grün, dazu Typen und Zugriff auf die laufende Anwendung</td></tr>
+            <tr><td><b>Am Ende steht ein Haufen Matsch</b></td><td>Agenten beschleunigen auch den Verfall der Codebasis</td><td><code>codebase-design</code> und <code>/improve-codebase-architecture</code>: tiefe Module</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Das erste Fehlerbild ist das häufigste und das teuerste. Deshalb ist <code>/grill-with-docs</code> der meistgenutzte Skill des Workflows.</p>
+      <h3>Lass dich ausfragen</h3>
+      <p>Bei einer <strong>Grilling-Session</strong> fragt dich der Agent systematisch aus, bevor er baut. Er denkt dabei in einem <strong>Entscheidungsbaum</strong>: Manche Fragen kann er sofort stellen, andere erst, wenn eine frühere beantwortet ist. Die Menge der Fragen, die gerade stellbar sind, heißt im Skill die <strong>Front</strong>. Der Agent fragt die ganze Front auf einmal, als eine Runde, jede Frage mit seiner Empfehlung.</p>
+      <p>Die Geschichte oben zeigt eine solche Session für den Auftrag aus dem Szenario. Die Tabelle nennt zu jeder Frage, was der Agent ohne Frage gebaut hätte.</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Fünf Fragen hinter einem Satz">
+        <table>
+          <thead><tr><th scope="col">Nr.</th><th scope="col">Frage des Agenten</th><th scope="col">Deine Antwort</th><th scope="col">Ohne Fragen gebaut</th></tr></thead>
+          <tbody>
+            <tr><td>01</td><td>Welche Einträge sollen in den Export?<small>Runde 1. Die Liste kennt released, in_review und draft.</small></td><td>Nur freigegebene</td><td>Alle Einträge</td></tr>
+            <tr><td>02</td><td>Wer liest die Datei weiter?<small>Runde 1.</small></td><td>Die Fachabteilung in Excel</td><td>nicht bedacht</td></tr>
+            <tr><td>03</td><td>Muss jeder Export protokolliert werden?<small>Runde 1.</small></td><td>Ja, im Audit-Log</td><td>kein Protokoll</td></tr>
+            <tr><td>04</td><td>Was heißt „freigegeben“ genau?<small>Runde 2, folgt aus 01. Die Antwort landet im Glossar.</small></td><td>Nur Status released</td><td>nicht bedacht</td></tr>
+            <tr><td>05</td><td>Welches Trennzeichen?<small>Runde 2, folgt aus 02. Excel mit deutscher Ländereinstellung trennt am Semikolon.</small></td><td>Semikolon</td><td>Komma</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Bei <strong>allen fünf</strong> Entscheidungen hätte der Agent ohne Fragen anders gebaut oder gar nicht daran gedacht.</p>
+      <p>Zwei Dinge fallen auf. Erstens die <strong>Reihenfolge</strong>: Was „freigegeben“ genau heißt, ist erst eine sinnvolle Frage, wenn feststeht, dass nur Freigegebenes exportiert wird. Sonst lautet die Folgefrage ganz anders. Zweitens die <strong>Arbeitsteilung</strong>: Fakten wie die vorhandenen Status sucht der Agent selbst, oft mit Sub-Agenten. Entscheidungen trifft nur der Mensch. So steht es wörtlich im Skill:</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">skills/productivity/grilling/SKILL.md · Auszug</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">Interview the user relentlessly until you reach a shared understanding.
+Map this as a <span class="k">design tree</span>: every decision branches into the decisions
+that hang off it.
+
+Work the tree in <span class="k">rounds</span>. The <span class="k">frontier</span> is every decision whose
+prerequisites are already settled. Ask the whole frontier in one round:
+number each question and give your recommended answer.
+
+<span class="hl">Finding facts is your job, never the user's. [...] The decisions are the user's.</span></pre>
+        <div class="code-note">Das ist fast der ganze Skill. <code>/grill-me</code> besteht nur aus einem Verweis auf diese Datei. Du kannst also morgen ohne Installation anfangen: Kopier die Absätze in deinen Prompt.</div></div>
+    </div>
+    <div class="prose">
+      <p>Mit <code>/grill-with-docs</code> statt <code>/grill-me</code> schreibt der Agent nebenbei mit. Begriffe, die ihr schärft, landen im <strong>Glossar</strong> (<code>GLOSSARY.md</code>), schwer umkehrbare Entscheidungen in einem <strong>ADR</strong>, einer kurzen Notiz mit dem Was und Warum. Das Repository nennt die gemeinsame Sprache die vielleicht stärkste Technik von allen. Ein Beispiel daraus macht aus „wenn eine Lektion in einem Abschnitt eines Kurses ‚echt‘ gemacht wird“ den Begriff „Materialisierungs-Kaskade“. Variablen, Funktionen und Dateien heißen danach genauso, und der Agent braucht weniger Worte, um zu denken.</p>
+      <div class="callout warning"><span class="t-label">Wann es nicht lohnt</span><p>Grilling kostet Zeit und Aufmerksamkeit: Du musst jede Runde lesen und entscheiden. Für einen Tippfehler, eine Umbenennung oder einen Fix mit eindeutigem Ziel ist das zu viel. Die Faustregel: Sobald du beim Formulieren des Auftrags merkst, dass du „irgendwie“ oder „wie üblich“ schreibst, steckt eine Entscheidung darin.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="wissen">
+  <div class="sec-head grid-12"><span class="t-label">02 Das Konzept</span><h2>Wo das Wissen wohnt</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Nach dem Ausfragen folgt bei größeren Vorhaben ein fester Weg: <code>/to-spec</code> fasst das Gespräch zu einer Spec zusammen, <code>/to-tickets</code> schneidet sie in Tickets, und jedes Ticket baut <code>/implement</code>. Spannend ist dabei weniger die Reihenfolge der Befehle als das, was mit dem Kontextfenster passiert.</p>
+      <p>Sprachmodelle denken nicht über das ganze Fenster gleich scharf. Den Bereich, in dem sie präzise arbeiten, nennt der Workflow die <strong>Smart Zone</strong>. Die Grenze liegt bei aktuellen Modellen bei etwa 150.000 Tokens (Stand: Skill <code>ask-matt</code>, Oktober 2026). Zwischen zwei Abschnitten, etwa nach den Tickets und vor dem Bauen, liegt eine <strong>Phasengrenze</strong>. Dort entscheidest du, wie es weitergeht.</p>
+      <p>Die Grafik vergleicht die drei naheliegenden Wege. Alle drei Bahnen laufen mit derselben Uhr: erst die Planung, dann die Phasengrenze, dann die Arbeit an Ticket 01. Die gestrichelte Linie ist das Ende der Smart Zone. Klick auf einen Zeitpunkt, um dorthin zu springen.</p>
+    </div>
+    
+    <div class="wide fig" id="ctx">
+      <div class="fig-head"><h3>Drei Wege an der Phasengrenze</h3>
+        <div class="switch" role="group" aria-label="Zeitpunkt" id="ctx-steps"><button type="button" data-s="0" aria-pressed="true">Planung</button><button type="button" data-s="1" aria-pressed="false">Grenze</button><button type="button" data-s="2" aria-pressed="false">Ticket 01</button></div>
+      </div>
+      <p class="ctx-say" id="ctx-say" aria-live="polite">Ausfragen, Spec und Tickets haben das Fenster gut zur Hälfte gefüllt. Als Nächstes soll Ticket 01 gebaut werden.</p>
+      <div class="lanes">
+        <div class="lane" data-l="go"><div class="lane-h"><span><b>Weitermachen</b><span class="sub">alles bleibt drin</span></span><span class="vd"></span></div><div class="mtr"></div><p class="lane-say"></p></div>
+        <div class="lane" data-l="cp"><div class="lane-h"><span><b>/compact</b><span class="sub">zusammenfassen</span></span><span class="vd"></span></div><div class="mtr"></div><p class="lane-say"></p></div>
+        <div class="lane" data-l="cl"><div class="lane-h"><span><b>/clear</b><span class="sub">leeren, aus Dateien laden</span></span><span class="vd"></span></div><div class="mtr"></div><p class="lane-say"></p></div>
+      </div>
+      <p class="fig-cap">Werte in Prozent des Kontextfensters. Die Smart Zone endet bei etwa 150.000 Tokens, hier bei 75 Prozent. Die Breiten sind ein Beispiel, nicht gemessen.</p>
+    </div>
+    <div class="prose mt">
+      <p>Daraus folgt die Regel zur <strong>Kontext-Hygiene</strong>: Ausfragen, Spec und Tickets bleiben in einem ununterbrochenen Fenster, damit alle drei auf demselben Denken aufbauen. Danach wird geleert, und jedes Ticket beginnt frisch. Das geht nur, weil das Wissen vorher die Form gewechselt hat, vom Gesprächsverlauf in Glossar, ADRs, Spec und Tickets. <code>/compact</code> ist nicht verboten, aber es macht aus der Primärquelle (dem Gespräch, wie es war) eine Sekundärquelle (eine Zusammenfassung davon). Der Workflow prüft es deshalb als letzte Option, nicht als erste.</p>
+      <h3>Gegen den Matsch: tiefe Module</h3>
+      <p>Das vierte Fehlerbild löst kein einzelner Befehl. Der Workflow übernimmt dafür John Ousterhouts Idee der <strong>tiefen Module</strong>: viel Verhalten hinter einer kleinen Schnittstelle. Ein tiefes Modul ist für Menschen und Agenten leicht zu benutzen und leicht zu testen, weil es nur eine schmale Stelle gibt, an der man ansetzt. Diese Stelle heißt <strong>Seam</strong>. Der Skill <code>codebase-design</code> liefert das Vokabular, <code>/to-spec</code> fragt vor jeder Spec, an welchen Seams getestet wird (möglichst wenige, im Idealfall einer), und <code>/improve-codebase-architecture</code> sucht alle paar Tage nach Stellen, die tiefer werden könnten. Was es nicht ist, steht gleich dabei: eine Bestandsaufnahme, keine Rettung. Den Matsch aufräumen musst du immer noch selbst.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="praxis">
+  <div class="sec-head grid-12"><span class="t-label">03 Praxis</span><h2>Der Workflow in der Praxis</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Am Beispiel aus dem Szenario: ein CSV-Export für eine Liste freigegebener Softwarestände je Fahrzeugvariante.</p>
+      <h3>Einrichten</h3>
+      <p>Es gibt zwei Wege, und du solltest nur einen nehmen. Das Plugin ist ein verwaltetes Paket, das sich selbst aktualisiert. <code>skills.sh</code> kopiert die Dateien in dein Projekt, damit du sie anpassen kannst. Danach einmal pro Repository den Setup-Skill ausführen: Er fragt nach Issue-Tracker (GitHub, Linear oder lokale Dateien), Triage-Labels und Ablage für Dokumente.</p>
+      <div class="code"><div class="code-bar"><span class="t-label">Terminal</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c"># Claude Code: als Plugin aus dem offiziellen Marketplace</span>
+claude plugins install mattpocock-skills
+
+<span class="c"># Codex, andere Agenten oder zum Selbst-Anpassen</span>
+npx skills@latest add mattpocock/skills
+
+<span class="c"># danach im Agenten, einmal pro Repository</span>
+/setup-matt-pocock-skills</pre></div>
+      <h3>Eine Sitzung von Anfang bis Ende</h3>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">Claude Code · Ablauf</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">&gt; /grill-with-docs</span> Ich will die Freigabeliste als CSV exportieren.
+  <span class="c"># zwei Runden Fragen, GLOSSARY.md und ADR entstehen nebenbei</span>
+<span class="k">&gt; /to-spec</span>
+  <span class="c"># Problem, Lösung, User Stories, Seams. Keine neuen Fragen.</span>
+<span class="k">&gt; /to-tickets</span>
+  <span class="c"># fünf Tickets mit Blocking-Kanten, du prüfst Zuschnitt und Kanten</span>
+<span class="hl"><span class="k">&gt; /clear</span></span><span class="k">&gt; /implement</span> .scratch/csv-export/issues/01-freigegebene-exportieren.md
+  <span class="c"># tdd, Typecheck, code-review, Commit. Dann /clear und das nächste Ticket.</span></pre></div>
+    </div>
+    <div class="prose">
+      <h3 id="tickets">Tickets als Graph</h3>
+      <p><code>/to-tickets</code> schneidet die Spec in <strong>Tracer Bullets</strong>: Jedes Ticket geht einen schmalen, aber vollständigen Weg durch alle Schichten, von der Datenabfrage bis zur Oberfläche, und ist danach vorführbar. Jedes nennt außerdem die Tickets, die es <strong>blockieren</strong>. Damit sind Tickets keine Liste, sondern ein Graph. Und in diesem Graphen gibt es wieder eine <strong>Front</strong>: alle Tickets, deren Blocker erledigt sind.</p>
+      <ul class="pitfalls">
+        <li><h3>01 Export</h3><p>Hat keine Blocker: freigegebene Einträge als CSV, durch alle Schichten.</p></li>
+        <li><h3>02 Rechte, 03 Protokoll und 04 Dateiname</h3><p>Hängen nur an 01. Sobald 01 fertig ist, bilden sie die Front, und <code>/implement-spec</code> lässt drei Sub-Agenten parallel daran arbeiten, jeden in seinem eigenen Worktree.</p></li>
+        <li><h3>05 Freischalten</h3><p>Macht den Export für alle Nutzer sichtbar. Das darf erst passieren, wenn Rechte und Protokoll stehen. Deshalb wartet es auf 02 und 03, aber nicht auf 04.</p></li>
+      </ul>
+      <p>Die Grafik plant diese fünf Tickets wie ein Planer: Ein Ticket startet genau dann, wenn alle seine Blocker fertig sind und ein Agent frei ist. Die Dauern sind ausgedachte Beispielwerte. Schalte eine Kante ab und sieh, wie sich der Ablauf ändert.</p>
+    </div>
+    
+    <div class="wide fig" id="plan">
+      <div class="fig-head"><h3>Tickets planen sich selbst</h3><span class="t-label" id="pl-t">Takt 0</span></div>
+      <div class="pl-top">
+        <svg class="pl-svg" id="pl-svg" viewBox="0 0 360 236" aria-hidden="true"></svg>
+        <div class="pl-ctrl"><span class="t-label">Blocking-Kanten</span><div class="pl-btns" id="pl-btns" role="group" aria-label="Blocking-Kanten an- und abschalten"></div><p>Gedrückt heißt: Die Kante gilt. Durchgestrichen heißt: abgeschaltet.</p></div>
+      </div>
+      <div class="pl-chart" role="img" id="pl-chart" aria-label="Ablaufplan">
+        <div class="pl-labels" aria-hidden="true" id="pl-labels"></div>
+        <div class="pl-area" id="pl-area"></div>
+      </div>
+      <p class="fig-cap" id="pl-say" aria-live="polite"></p>
+    </div>
+    <div class="prose mt">
+      <p>Fachlich ist eine abgeschaltete Kante oft falsch: Freischalten ohne fertiges Protokoll heißt, Exporte ohne Audit-Log. Die Kanten im Ticket sind also keine Formalität, sie bestimmen, was parallel laufen darf.</p>
+      <p>Jedes Ticket wird als eigene Datei oder als Issue geschrieben. Pfade und Code-Schnipsel gehören laut Skill nicht hinein, weil sie schnell veralten:</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">.scratch/csv-export/issues/01-freigegebene-exportieren.md</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k"># 01: Freigegebene Einträge exportieren</span>
+
+**What to build:** Auf der Freigabeliste lädt „Export“ eine CSV-Datei herunter,
+die nur freigegebene Einträge enthält, mit den Spalten der Excel-Vorlage.
+
+<span class="hl">**Blocked by:** None (can start immediately)</span>
+**Status:** ready-for-agent
+
+- [ ] Export enthält nur Einträge mit Status released
+- [ ] Spalten Variante und Softwarestand, getrennt durch Semikolon</pre></div>
+    </div>
+    <div class="prose">
+      <h3>Test-first am Seam</h3>
+      <p><code>/implement</code> nutzt den Skill <code>tdd</code>: erst ein Test, der scheitert, dann nur so viel Code, dass er besteht. Getestet wird nur am vereinbarten Seam, hier die Funktion <code>toReleaseCsv</code>. Beide Zyklen unten habe ich mit Node 22.22 und dem eingebauten Test-Runner nachgestellt.</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">export-csv.test.ts</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">import</span> { test } <span class="k">from</span> <span class="s">"node:test"</span>;
+<span class="k">import</span> assert <span class="k">from</span> <span class="s">"node:assert/strict"</span>;
+<span class="k">import</span> { toReleaseCsv } <span class="k">from</span> <span class="s">"./export-csv.ts"</span>;
+
+<span class="c">// Seam: toReleaseCsv ist die einzige öffentliche Schnittstelle des Exports</span>
+test(<span class="s">"exportiert nur freigegebene Einträge"</span>, () =&gt; {
+  <span class="k">const</span> csv = toReleaseCsv([
+    { variant: <span class="s">"V1"</span>, version: <span class="s">"4.2.0"</span>, status: <span class="s">"released"</span> },
+    { variant: <span class="s">"V2"</span>, version: <span class="s">"4.3.0-rc1"</span>, status: <span class="s">"in_review"</span> },
+  ]);
+<span class="hl">  assert.equal(csv, <span class="s">"Variante;Softwarestand\nV1;4.2.0"</span>);</span>});</pre>
+        <div class="code-note">Der erwartete Wert ist ein fester Text aus dem Ticket. Tests, die das Ergebnis so berechnen wie der Code selbst, nennt der Skill tautologisch: Sie können nie widersprechen.</div></div>
+      <div class="code"><div class="code-bar"><span class="t-label">node --test · rot</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">not ok 1 - exportiert nur freigegebene Einträge
+  error: |-
+    + actual - expected
+    + ''
+    - 'Variante;Softwarestand\nV1;4.2.0'</pre></div>
+      <div class="code"><div class="code-bar"><span class="t-label">export-csv.ts · erste Fassung</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="k">export type</span> ReleaseEntry = { variant: string; version: string; status: <span class="s">"released"</span> | <span class="s">"in_review"</span> };
+
+<span class="c">// Spaltennamen wie in der Excel-Vorlage der Fachabteilung (Antwort auf Frage 02 und 05)</span>
+<span class="k">const</span> HEADER = <span class="s">"Variante;Softwarestand"</span>;
+
+<span class="k">export function</span> toReleaseCsv(entries: ReleaseEntry[]): string {
+  <span class="k">const</span> rows = entries
+<span class="hl">    .filter((e) =&gt; e.status === <span class="s">"released"</span>)</span>    .map((e) =&gt; <span class="s">`${e.variant};${e.version}`</span>);
+  <span class="k">return</span> [HEADER, ...rows].join(<span class="s">"\n"</span>);
+}</pre></div>
+    </div>
+    <div class="prose">
+      <p>Grün. Die Regeln aus dem Skill dazu: <strong>ein Test, eine minimale Umsetzung, dann der nächste</strong>, nie alle Tests vorab, denn die prüfen sonst ausgedachtes Verhalten. <strong>Kein Mocking interner Teile</strong>: Ein Test, der beim Umbauen bricht, obwohl sich das Verhalten nicht geändert hat, testet die falsche Stelle. Und <strong>Refactoring gehört ins Review</strong>, nicht in die Schleife.</p>
+      <h3>Review mit zwei Achsen</h3>
+      <p>Zum Schluss jedes Tickets läuft <code>code-review</code> über den Diff, in zwei Sub-Agenten mit getrenntem Kontext. Code kann alle Standards erfüllen und trotzdem das Falsche tun, oder genau das Richtige tun und jede Konvention brechen. Gemeinsam bewertet, verdeckt das eine das andere. So könnten die Funde zur ersten Fassung von <code>toReleaseCsv</code> aussehen:</p>
+    </div>
+    <div class="wide">
+      <div class="compare">
+        <div><span class="t-label">Achse 1 · Standards</span><h4>Hält sich der Code an die Regeln des Repos?</h4><ul>
+          <li><strong>Beispiel-Fund:</strong> „Mögliche Primitive Obsession: Der Status ist ein loser String. Im Glossar ist ‚Freigegeben‘ ein eigener Begriff, im Code fehlt er.“</li>
+          <li>Grundlage: dokumentierte Standards plus feste Code-Smells nach Fowler. Was der Linter prüft, wird übersprungen.</li></ul></div>
+        <div><span class="t-label">Achse 2 · Spec</span><h4>Tut der Code, was das Ticket verlangt?</h4><ul>
+          <li><strong>Beispiel-Fund:</strong> „Das Ticket verlangt eine Datei für Excel. Ein Variantenname mit Semikolon zerlegt die Zeile, weil Werte nicht maskiert werden.“</li>
+          <li>Grundlage: das Ticket, jeder Fund mit Zitat daraus.</li></ul></div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>Der Spec-Fund ist ein echter Fehler in der ersten Fassung. Er wird zum nächsten roten Test:</p>
+    </div>
+    <div class="wide">
+      <div class="code"><div class="code-bar"><span class="t-label">export-csv.test.ts · zweiter Test</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">// Fund aus dem Review (Achse Spec): Semikolon im Wert zerlegt die Zeile</span>
+test(<span class="s">"maskiert Werte mit Semikolon"</span>, () =&gt; {
+  <span class="k">const</span> csv = toReleaseCsv([{ variant: <span class="s">"V3;Sport"</span>, version: <span class="s">"4.2.0"</span>, status: <span class="s">"released"</span> }]);
+<span class="hl">  assert.equal(csv, <span class="s">'Variante;Softwarestand\n"V3;Sport";4.2.0'</span>);</span>});</pre></div>
+      <div class="code"><div class="code-bar"><span class="t-label">node --test · rot</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0">ok 1 - exportiert nur freigegebene Einträge
+not ok 2 - maskiert Werte mit Semikolon
+    + 'Variante;Softwarestand\nV3;Sport;4.2.0'
+    - 'Variante;Softwarestand\n"V3;Sport";4.2.0'</pre></div>
+      <div class="code"><div class="code-bar"><span class="t-label">export-csv.ts · nach dem Review</span><button class="copy" type="button">Kopieren</button></div><pre tabindex="0"><span class="c">// Werte mit Semikolon, Anführungszeichen oder Zeilenumbruch in Anführungszeichen setzen</span>
+<span class="k">function</span> cell(value: string): string {
+  <span class="k">return</span> /[;"\n]/.test(value) ? <span class="s">`"${value.replaceAll('"', '""')}"`</span> : value;
+}
+
+<span class="k">export function</span> toReleaseCsv(entries: ReleaseEntry[]): string {
+  <span class="k">const</span> rows = entries
+    .filter((e) =&gt; e.status === <span class="s">"released"</span>)
+<span class="hl">    .map((e) =&gt; <span class="s">`${cell(e.variant)};${cell(e.version)}`</span>);</span>  <span class="k">return</span> [HEADER, ...rows].join(<span class="s">"\n"</span>);
+}</pre>
+        <div class="code-note">Ausgabe danach: <code>ok 1</code>, <code>ok 2</code>, <code># pass 2</code>, <code># fail 0</code>.</div></div>
+    </div>
+    <div class="prose">
+      <p>Beide Zyklen noch einmal im Zeitraffer. Das Terminal rechnet dabei wirklich: Es ruft die jeweilige Fassung von <code>toReleaseCsv</code> auf und vergleicht mit dem erwarteten Text. Rechts liest eine Tabellenvorschau die Ausgabe so, wie Excel sie am Semikolon trennt.</p>
+    </div>
+    
+    <div class="wide fig" id="tdd">
+      <div class="fig-head"><h3>Rot, grün, rot, grün</h3><span class="t-label">Zwei Zyklen</span></div>
+      <div class="tdd">
+        <div class="term">
+          <div class="code-bar"><span class="t-label" id="tdd-file">export-csv.test.ts</span><button class="copy" type="button">Kopieren</button></div>
+          <div class="screen" id="tdd-screen" tabindex="0" role="region" aria-label="Terminal mit Testlauf"></div>
+        </div>
+        <div class="pv">
+          <span class="t-label">Vorschau in Excel</span>
+          <div class="pv-raw" id="pv-raw" tabindex="0" role="region" aria-label="CSV-Ausgabe roh"></div>
+          <div class="pv-table" id="pv-table" aria-hidden="true"></div>
+          <p class="pv-say" id="pv-say" aria-live="polite"></p>
+        </div>
+      </div>
+      <ul class="picks" id="tdd-picks">
+        <li><button type="button" aria-pressed="false" data-i="0"><b>Test 1</b>leere Funktion, rot</button></li>
+        <li><button type="button" aria-pressed="false" data-i="1"><b>Erste Fassung</b>filtern, grün</button></li>
+        <li><button type="button" aria-pressed="false" data-i="2"><b>Test 2</b><code>V3;Sport</code>, rot</button></li>
+        <li><button type="button" aria-pressed="false" data-i="3"><b>Fix</b>maskieren, grün</button></li>
+      </ul>
+    </div>
+    <div class="prose mt">
+      <p>Danach formt <code>/pr</code> die Beschreibung (kleinstes Bild der Änderung, Vorher und Nachher, wie leicht sich der Merge zurücknehmen lässt), und <code>/retro</code> verbessert die Umgebung: Ein mechanischer Fehler wird zu einem automatischen Check im Linter, in einem Pre-Commit-Hook oder in der CI. Nur echte Ermessensfragen landen als Regel in den Coding-Standards. <code>AGENTS.md</code> und <code>CLAUDE.md</code> bleiben schlank und verweisen vor allem auf andere Dateien.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="testen">
+  <div class="sec-head grid-12"><span class="t-label">04 Beim Testen</span><h2>Stolperstellen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Die ersten beiden Punkte sind beim Nachstellen der Test-first-Zyklen passiert. Die übrigen stehen als Warnung in der Doku der Skills. Einen gemessenen Lauf von <code>/grill-with-docs</code> an einem echten Projekt, mit Zahl der Fragen, Runden und Dauer, reiche ich als Nachtrag nach.</p>
+      <ul class="pitfalls">
+        <li><h3>Rot aus dem falschen Grund</h3><p>Mein erster Lauf war rot, aber mit <code>ERR_MODULE_NOT_FOUND</code>: Die Datei <code>export-csv.ts</code> gab es noch nicht. So ein Rot sagt nichts über Verhalten. Lösung: zuerst eine leere Funktion mit der richtigen Signatur anlegen. Dann scheitert der Test an der Aussage (<code>''</code> statt der erwarteten CSV), und genau dieses Rot zählt.</p></li>
+        <li><h3>Import nur mit Endung</h3><p>Node 22 führt TypeScript direkt aus, indem es die Typen entfernt. Importe löst es dabei nur mit vollständiger Endung auf: <code>./export-csv.ts</code>. Prüfst du zusätzlich mit <code>tsc</code>, braucht die <code>tsconfig.json</code> dafür <code>allowImportingTsExtensions</code> zusammen mit <code>noEmit</code>.</p></li>
+        <li><h3>Jeder Skill doppelt</h3><p>Plugin und <code>skills.sh</code> gleichzeitig heißt: Jeder Skill ist zweimal da. Entscheide dich für einen Weg.</p></li>
+        <li><h3>Zusammenfassen mitten in der Phase</h3><p><code>/compact</code> mitten in der Umsetzung lässt den Agenten den Faden verlieren. Entscheide nur an Phasengrenzen. Mittendrin heißt es: weitermachen oder den Rest an Sub-Agenten geben.</p></li>
+        <li><h3>Eigene Tickets triagieren</h3><p><code>/triage</code> ist für Issues, die von außen kommen. Tickets aus <code>/to-tickets</code> sind schon bereit für den Agenten.</p></li>
+      </ul>
+      <div class="callout note"><span class="t-label">Offen gesagt</span><p>Grundlage dieses Beitrags ist das Skill-Repository mit Stand 4. Oktober 2026. Es entwickelt sich schnell, und Namen ändern sich: Das Glossar hieß zum Beispiel früher <code>CONTEXT.md</code>. Wenn ein Befehl anderswo anders heißt, gilt der aktuelle Stand im Repository.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="entscheidung">
+  <div class="sec-head grid-12"><span class="t-label">05 Entscheidung</span><h2>Welcher Einstieg wann?</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <p>Nicht jede Aufgabe braucht den ganzen Weg. Das Repository hat dafür einen eigenen Skill, der dir den passenden Einstieg nennt. Die Kurzfassung:</p>
+    </div>
+    <div class="wide">
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Einstieg nach Situation">
+        <table>
+          <thead><tr><th scope="col">Situation</th><th scope="col">Einstieg</th><th scope="col">Danach</th></tr></thead>
+          <tbody>
+            <tr><td>Klare Änderung, passt in eine Sitzung</td><td><code>/grill-with-docs</code></td><td><code>/implement</code> im selben Fenster</td></tr>
+            <tr><td>Feature über mehrere Sitzungen</td><td><code>/grill-with-docs</code>, <code>/to-spec</code>, <code>/to-tickets</code></td><td><code>/implement</code> pro Ticket oder <code>/implement-spec</code></td></tr>
+            <tr><td>Frage, die nur lauffähiger Code beantwortet</td><td><code>/prototype</code> in eigenem Verzeichnis</td><td>Erkenntnis per <code>/handoff</code> zurück ins Ausfragen</td></tr>
+            <tr><td>Etwas ist kaputt und schwer zu fassen</td><td><code>/diagnosing-bugs</code></td><td>Regressionstest, bei Bedarf <code>/improve-codebase-architecture</code></td></tr>
+            <tr><td>Bugreports und Wünsche stapeln sich</td><td><code>/triage</code></td><td><code>/implement</code></td></tr>
+            <tr><td>Großes, nebliges Vorhaben</td><td><code>/wayfinder</code></td><td><code>/to-spec</code>, dann wie oben</td></tr>
+            <tr><td>Kein Repository, nur ein Plan oder Text</td><td><code>/grill-me</code></td><td>Keine feste Folge</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout tip"><span class="t-label">Fünf Fragen</span><p>An jeder Phasengrenze prüft der Workflow fünf Fragen in fester Reihenfolge, das erste Ja gewinnt: Braucht die nächste Phase dieses Gespräch als Primärquelle? Dann <strong>weitermachen</strong>. Ist der Kontext egal? Dann <code>/clear</code>. Wechseln Werkzeug, Verzeichnis oder Person? Dann <code>/handoff</code>. Läuft die Aufgabe ohne dich, etwa ein Review? Dann ein <strong>Sub-Agent</strong>. Sonst <code>/compact</code>, mit einer Anweisung, was die Zusammenfassung behalten soll.</p></div>
+
+      <h3>Selbsttest</h3>
+      <p>Drei Fragen, jede mit Erklärung. Wer sich an eine Antwort erinnern muss, behält sie länger.</p>
+      <form class="quizzes" onsubmit="return false">
+        <fieldset class="quiz" data-ok="a">
+          <legend>Warum darfst du nach <code>/to-tickets</code> den Kontext leeren?</legend>
+          <label><input type="radio" name="q1" value="a"> Weil Glossar, ADR, Spec und Tickets das Wissen schon als Dateien halten.</label>
+          <label><input type="radio" name="q1" value="b"> Weil sich der Agent das Gespräch über <code>/clear</code> hinweg merkt.</label>
+          <label><input type="radio" name="q1" value="c"> Weil <code>/clear</code> das Gespräch vorher automatisch zusammenfasst.</label>
+          <p class="why" hidden><code>/clear</code> löscht wirklich alles. Es ist nur deshalb gefahrlos, weil das Wissen vorher die Form gewechselt hat: vom Gesprächsverlauf in Dateien, die das nächste Fenster gezielt lädt.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="b">
+          <legend>Welche Tickets lässt <code>/implement-spec</code> gleichzeitig bauen?</legend>
+          <label><input type="radio" name="q2" value="a"> Alle Tickets der Spec auf einmal.</label>
+          <label><input type="radio" name="q2" value="b"> Alle, deren Blocker erledigt sind, also die Front.</label>
+          <label><input type="radio" name="q2" value="c"> Immer nur eines, damit sich nichts überschneidet.</label>
+          <p class="why" hidden>Die Blocking-Kanten machen aus den Tickets einen Graphen. Was keine offenen Blocker hat, kann sofort starten, jedes in seinem eigenen Worktree. Freischalten wartet, bis Rechte und Protokoll stehen.</p>
+        </fieldset>
+        <fieldset class="quiz" data-ok="c">
+          <legend>Dein erster Test ist rot mit <code>ERR_MODULE_NOT_FOUND</code>. Was jetzt?</legend>
+          <label><input type="radio" name="q3" value="a"> Weiter zur Umsetzung, rot ist rot.</label>
+          <label><input type="radio" name="q3" value="b"> Den Test löschen und erst nach dem Code schreiben.</label>
+          <label><input type="radio" name="q3" value="c"> Eine leere Funktion mit der richtigen Signatur anlegen und erneut laufen lassen.</label>
+          <p class="why" hidden>Dieses Rot sagt nichts über Verhalten. Erst wenn der Test an seiner Aussage scheitert, beweist das spätere Grün, dass der Code das Richtige tut.</p>
+        </fieldset>
+      </form>
+
+      <h3>Checkliste für deinen ersten Lauf</h3>
+      <ul class="checklist" data-key="coding-agenten-workflow">
+        <li><label><input type="checkbox"> <span><b>Skills auf genau einem Weg installiert:</b> Plugin oder <code>skills.sh</code>. Oder erst einmal nur den Text von <code>grilling</code> in den Prompt kopiert.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Setup-Skill</b> im Repository ausgeführt: Tracker, Labels, Ablage für Dokumente.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Vor der Änderung ausfragen lassen,</b> bis die Front leer ist und nichts mehr stillschweigend angenommen wird.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Glossar angelegt</b> und die Begriffe im Code genauso benannt.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Vor <code>/clear</code> geprüft,</b> dass alles Wichtige in Glossar, Spec und Tickets steht.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Tickets mit Blocking-Kanten,</b> jedes vorführbar und klein genug für ein frisches Fenster.</span></label></li>
+        <li><label><input type="checkbox"> <span><b>Seams vereinbart, rot vor grün:</b> und das Rot scheitert an der Aussage, nicht an einem fehlenden Modul.</span></label></li>
+        <li><label><input type="checkbox"> <span><b><code>/retro</code> nach dem Lauf:</b> mechanische Fehler werden zu Checks, nicht zu neuen Zeilen in <code>AGENTS.md</code>.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="sec-head grid-12"><span class="t-label">Quellen</span><h2>Quellen und Versionen</h2></div>
+  <div class="grid-12">
+    <div class="prose">
+      <ol class="sources">
+        <li><a href="https://github.com/mattpocock/skills">Skill-Repository: README</a> (MIT-Lizenz, Stand 4. Oktober 2026)</li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/ask-matt/SKILL.md">Einstiegs-Skill: Hauptweg, Einstiege, Kontext-Hygiene und Smart Zone</a></li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/ask-matt/PHASE-BOUNDARIES.md">Phase boundaries: die fünf Fragen an der Phasengrenze</a></li>
+        <li><a href="https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md">grilling</a>, <a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/to-tickets/SKILL.md">to-tickets</a>, <a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/implement-spec/SKILL.md">implement-spec</a>, <a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md">tdd</a>, <a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/code-review/SKILL.md">code-review</a> und <a href="https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/SKILL.md">codebase-design</a></li>
+        <li><a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">Begriff Smart Zone</a></li>
+        <li><a href="https://nodejs.org/api/typescript.html">Node.js: TypeScript-Unterstützung durch Type Stripping</a> (getestet mit Node 22.22.0)</li>
+        <li>David Thomas, Andrew Hunt: The Pragmatic Programmer. John Ousterhout: A Philosophy of Software Design. Beide nennt das Repository als Grundlage.</li>
+      </ol>
+    </div>
+  </div>
+</section>

@@ -26,7 +26,7 @@ function ChipGroup({ options, value, onChange }) {
 						type="button"
 						onClick={() => onChange(opt.id)}
 						aria-pressed={active}
-						className="rounded-full border px-4 py-2.5 text-sm transition-all duration-200"
+						className="rounded-sm border px-4 py-2.5 text-sm transition-all duration-200"
 						style={{
 							borderColor: active ? (opt.signal ?? '#5B8DEF') : 'rgba(255,255,255,0.12)',
 							backgroundColor: active ? `${opt.signal ?? '#5B8DEF'}1A` : 'transparent',
