@@ -30,6 +30,11 @@ function lerp(p, [from, to], [outA, outB]) {
   return outA + (outB - outA) * t;
 }
 
+/* Perspektive der Bühne (muss mit .cpx-stage übereinstimmen) — Sheets werden
+ * um genau diesen Betrag zurückskaliert, damit das Vorwärts-Schieben in Z sie
+ * nicht größer als die Basiskarte erscheinen lässt (sonst sprengen sie den Rahmen). */
+const PERSPECTIVE = 1000;
+
 /* Ziel-Zustand bei voll abgehobenem Stapel: Z-Höhe + diagonaler Fächer-Versatz */
 const SHEETS = {
   infra:  { z: 80,  x: -36, y: 20 },
@@ -354,8 +359,9 @@ export default function HeroSheetStack({ image }) {
         @media (max-width: 760px) { .cpx-track { height: 380vh; } }
         .cpx-viewport { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #F5F6F7; }
         .cpx-nav-scrim { position: absolute; top: 0; left: 0; right: 0; z-index: 15; height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,.85) 0%, rgba(0,0,0,.55) 35%, rgba(0,0,0,.15) 70%, rgba(0,0,0,0) 100%); pointer-events: none; }
+        .cpx-bottom-scrim { position: absolute; bottom: 0; left: 0; right: 0; z-index: 12; height: 22vh; min-height: 160px; background: linear-gradient(to top, #060A12 0%, rgba(6,10,18,.75) 45%, rgba(6,10,18,0) 100%); pointer-events: none; }
 
-        .cpx-stage { position: relative; width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; perspective: 1000px; perspective-origin: 58% 40%; }
+        .cpx-stage { position: relative; width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; perspective: ${PERSPECTIVE}px; perspective-origin: 58% 40%; }
         .cpx-card-wrap { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; will-change: transform; }
         .cpx-layer { position: absolute; inset: 0; }
         .cpx-photo-clip { overflow: hidden; }
@@ -399,6 +405,7 @@ export default function HeroSheetStack({ image }) {
 
       <div className="cpx-viewport">
         <div className="cpx-nav-scrim" aria-hidden="true" />
+        <div className="cpx-bottom-scrim" aria-hidden="true" />
 
         <div className="cpx-stage">
           <div ref={wrapRef} className="cpx-card-wrap"
@@ -413,7 +420,7 @@ export default function HeroSheetStack({ image }) {
             {/* LAYER 1: Cloud-Infra */}
             <div className="cpx-layer cpx-layer-infra" style={{
               opacity: wfOpacity * 0.95,
-              transform: `translate3d(${sInfra.x}px, ${sInfra.y}px, ${sInfra.z}px)`,
+              transform: `translate3d(${sInfra.x}px, ${sInfra.y}px, ${sInfra.z}px) scale(${(PERSPECTIVE - sInfra.z) / PERSPECTIVE})`,
             }}>
               <InfraLayer />
             </div>
@@ -421,7 +428,7 @@ export default function HeroSheetStack({ image }) {
             {/* LAYER 2: Datenfluss */}
             <div className="cpx-layer cpx-layer-data" style={{
               opacity: wfOpacity * 0.92,
-              transform: `translate3d(${sData.x}px, ${sData.y}px, ${sData.z}px)`,
+              transform: `translate3d(${sData.x}px, ${sData.y}px, ${sData.z}px) scale(${(PERSPECTIVE - sData.z) / PERSPECTIVE})`,
             }}>
               <DataLayer />
             </div>
@@ -429,7 +436,7 @@ export default function HeroSheetStack({ image }) {
             {/* LAYER 3: Agenten-Graph */}
             <div className="cpx-layer cpx-layer-agents" style={{
               opacity: wfOpacity,
-              transform: `translate3d(${sAgents.x}px, ${sAgents.y}px, ${sAgents.z}px)`,
+              transform: `translate3d(${sAgents.x}px, ${sAgents.y}px, ${sAgents.z}px) scale(${(PERSPECTIVE - sAgents.z) / PERSPECTIVE})`,
             }}>
               <AgentLayer />
             </div>

@@ -14,6 +14,9 @@ import kitUrl from '@/scripts/insights/kit.js?url';
 import gsapCoreUrl from '@/scripts/insights/gsap-core.js?url';
 import gsapPluginsUrl from '@/scripts/insights/gsap-plugins.js?url';
 
+// Beiträge sind fest im Build enthalten, daher vorrendern (getStaticPaths wirkt nur mit prerender).
+export const prerender = true;
+
 export function getStaticPaths() {
 	return INSIGHTS.map((post) => ({ params: { slug: post.slug }, props: { post } }));
 }

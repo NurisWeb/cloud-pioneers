@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import sitemap from '@astrojs/sitemap';
 
+import node from '@astrojs/node';
+
 import { PAGES } from './src/lib/seo.ts';
 
 const noindexPaths = new Set(
@@ -17,8 +19,13 @@ const noindexPaths = new Set(
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: echte Domain eintragen, sobald verfügbar (steuert Sitemap + canonical URLs)
+  // Steuert Sitemap + canonical URLs
   site: 'https://cloud-pioneers.de',
+
+  // SSR: Seiten werden pro Request auf dem Node-Server gerendert.
+  // Seiten mit getStaticPaths setzen `export const prerender = true`.
+  output: 'server',
+  adapter: node({ mode: 'standalone' }),
 
   integrations: [
     react(),
